@@ -79,7 +79,7 @@
             @endif
              <div class="content">
                 <div class="title m-b-md">
-                    <span style="color: rebeccapurple">Welcome</span> Laravel
+                    <span style="color: rebeccapurple">Welcome</span> <span style="color: #ff863f">Laravel</span>
                 </div>
 
                 <div class="links">
