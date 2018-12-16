@@ -81,7 +81,7 @@
                 <div class="title m-b-md">
                     <span style="color: rebeccapurple">Welcome</span> <span style="color: #ff863f">Laravel</span>
                 </div>
-
+                
                 <div class="links">
                     <a href="https://laravel.com/docs">Documentation</a>
                     <a href="https://laracasts.com">Laracasts</a>
