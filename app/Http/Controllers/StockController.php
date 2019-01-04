@@ -12,9 +12,7 @@ class StockController extends SiteController
     }
     public function index(Request $request)
     {
-
         $this->content = view(config('settings.theme').'.contentCatalog')->with(['Variable' =>  'OK'])->render();
-
         return $this->renderOutput();
     }
 }
