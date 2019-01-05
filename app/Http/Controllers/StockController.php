@@ -8,11 +8,12 @@ class StockController extends SiteController
     public function __construct(StockRepository $stockRep)
     {
         $this->stockRep = $stockRep;
-        $this->template = config('settings.theme').'.catalog';
+        $this->template = config('settings.theme').'.index';
     }
-    public function index(Request $request)
+    public function index()
     {
-        $this->content = view(config('settings.theme').'.contentCatalog')->with(['Variable' =>  'OK'])->render();
+        $stocks = $this->stockRep->getStocks();
+        $this->content = view(config('settings.theme').'.contentIndex')->with(['stocks' =>  $stocks])->render();
         return $this->renderOutput();
     }
 }
