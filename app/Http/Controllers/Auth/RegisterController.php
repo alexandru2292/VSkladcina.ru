@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Http\Controllers\Controller;
+//use http\Env\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
-
+use Illuminate\Http\Request;
 class RegisterController extends Controller
 {
     /*
@@ -28,7 +29,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -46,13 +47,10 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator(array $data)
+    protected function validator(array  $data)
     {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
-        ]);
+
+
     }
 
     /**
@@ -61,12 +59,38 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\User
      */
-    protected function create(array $data)
+    protected function create(Request $request)
     {
-        return User::create([
-            'name' => $data['name'],
+        $data = $request->all();
+        if($data){
+            $rules = [
+//                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+                'password' => ['required', 'string', 'min:6', 'confirmed'],
+            ];
+            $messages = [
+                'required'       => 'Поле :attribute является обязательным для заполнения!',
+                'max'      => 'Поле  :attribute  должно содержать максимум :max  символов!',
+                'email.unique' => 'Адрес '. $data['email'] .' уже зарегистрирован'
+            ];
+            $validator = Validator::make($data,$rules , $messages);
+
+            if($validator->fails()){
+                return redirect()->route('index')->withErrors($validator)->withInput();
+            }
+        }
+        /* End VALIDATE platform */
+        $result =  User::create([
+//            'name' => $request->name,
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+
+        if(is_array($result) && !empty($result['error'])){
+            return back()->with(['status' => 'Пользватель не зарегистрирован!']);
+        }
+        return redirect()->route('index')->with(['status' => 'Пользватель зарегистрирован!']);
+
     }
 }

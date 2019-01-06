@@ -12,6 +12,7 @@
     <div class="bg-stars__star-2"></div>
     <div class="bg-stars__star-3"></div>
 </div>
+
 @yield('header')
 @yield('content')
 
@@ -43,16 +44,28 @@
 </div>
 <div id="popup-registration" class="popup popup-registration">
     <div class="popup-title">Регистрация</div>
-    <form action="#" class="form-validate">
+    <form action="{{ route('registerUser') }}"  method="POST" class="form-validate">
+        @csrf
         <div class="form-inline">
             <div class="form-group">
-                <input type="email" name="email" required class="form-control" placeholder="panyakin@mail.com" required>
+                <input type="email" name="email" required class="form-control" value="{{ old('email') }}" placeholder="panyakin@mail.com" required>
+                @if ($errors->has('email'))
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $errors->first('email') }}</strong>
+                    </span>
+                @endif
             </div>
             <div class="form-group">
-                <input type="password" name="password" class="form-control" placeholder="Пароль">
+                <input type="password" name="password"  class="form-control" placeholder="Пароль">
+
+                @if ($errors->has('password'))
+                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('password') }}</strong>
+                                    </span>
+                @endif
             </div>
             <div class="form-group">
-                <input type="password" name="password_repeat" class="form-control" placeholder="Повторите пароль" >
+                <input type="password" name="password_confirmation" class="form-control" placeholder="Повторите пароль" >
             </div>
         </div>
         <div class="form-group form-agreement">

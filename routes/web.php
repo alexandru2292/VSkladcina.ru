@@ -10,4 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', ['uses'=> 'StockController@index']);
+Route::get('/', ['uses'=> 'StockController@index'])->name('index');
+Auth::routes();
+Route::get('/home', 'HomeController@index')->name('home');
+Route::post('/registerUser', 'Auth\RegisterController@create')->name('registerUser');

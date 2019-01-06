@@ -97,3 +97,16 @@
         </div>
     </div>
 </header>
+@if(count($errors) > 0)
+    <div class="alert alert-danger" style="width: 30%; margin-left: 17%">
+        @foreach($errors->all() as $error)
+            <p>{{ $error }}</p>
+        @endforeach
+    </div>
+@endif
+
+@if(session('status'))
+    <div class="alert alert-success" role="alert"style="text-align: center">
+        {{ session('status') }}
+    </div>
+@endif
