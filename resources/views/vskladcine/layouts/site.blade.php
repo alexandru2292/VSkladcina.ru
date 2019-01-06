@@ -48,28 +48,39 @@
         @csrf
         <div class="form-inline">
             <div class="form-group">
-                <input type="email" name="email" required class="form-control" value="{{ old('email') }}" placeholder="panyakin@mail.com" required>
-                @if ($errors->has('email'))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $errors->first('email') }}</strong>
+                <input type="text" name="name"  class="form-control" value="{{ old('name') }}" placeholder="Имя" required>
+                @if ($errors->has('name'))
+                    <span class="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
+                         <input type="hidden" id="errName" value="{{  $errors->first('name') }}">
+                       {{ $errors->first('name') }}
                     </span>
                 @endif
             </div>
             <div class="form-group">
-                <input type="password" name="password"  class="form-control" placeholder="Пароль">
-
-                @if ($errors->has('password'))
-                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
+                <input type="email" name="email"  class="form-control" value="{{ old('email') }}" placeholder="panyakin@mail.com" required>
+                @if ($errors->has('email'))
+                    <span class="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
+                         <input type="hidden" id="errEmail" name="errorEmail" value="{{  $errors->first('email') }}">
+                       {{ $errors->first('email') }}
+                    </span>
                 @endif
             </div>
             <div class="form-group">
-                <input type="password" name="password_confirmation" class="form-control" placeholder="Повторите пароль" >
+                <input type="password" name="password"  class="form-control" placeholder="Пароль" required>
+
+                @if ($errors->has('password'))
+                    <span class="errorPassword" role="alert" style="color: #de4444; font-weight: 300">
+                        <input type="hidden" id="errPassword" name="errorPassword" value="{{  $errors->first('password') }}">
+                        {{ $errors->first('password') }}
+                    </span>
+                @endif
+            </div>
+            <div class="form-group">
+                <input type="password" name="password_confirmation" class="form-control" placeholder="Повторите пароль" required>
             </div>
         </div>
         <div class="form-group form-agreement">
-            <input type="checkbox" name="agreement" id="agreement-register" class="checkbox checkbox--toggle">
+            <input type="checkbox" name="agreement" id="agreement-register" class="checkbox checkbox--toggle" required>
             <label for="agreement-register">Я согласен с <a href="#">условиями обработки данных</a> на данном сайте</label>
         </div>
         <div class="form-group form-buttons">
@@ -463,5 +474,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 <script src="js/libs.min.js"></script>
 <script src="js/scripts.js"></script>
+<script src="js/MyScript.js"></script>
 </body>
 </html>

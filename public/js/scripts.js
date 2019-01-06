@@ -490,20 +490,20 @@ $(document).ready(function() {
 		jQuery.validator.setDefaults({
 			messages: {
 				 name: {
-					 required: "Введите имя"
+					 required: "Введите имя."
 				 },
 				 email: {
-					 required: "Введите почту",
-					 email: "Не верно введена почта" 
+					 required: "Введите почту.",
+					 email: "Не верно введена почта."
 				 },
 				 message: {
-					 required: "Введите сообщение"
+					 required: "Введите сообщение."
 				 },
 				 password: {
-					 required: "Введите пароль"
+					 required: "Введите пароль."
 				 },
-				 password_repeat: {
-					 required: "Введите пароль"
+				password_confirmation: {
+					 required: "Введите пароль."
 				 }
 			 }
 		});

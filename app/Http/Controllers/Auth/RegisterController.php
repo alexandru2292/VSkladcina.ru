@@ -64,14 +64,20 @@ class RegisterController extends Controller
         $data = $request->all();
         if($data){
             $rules = [
-//                'name' => ['required', 'string', 'max:255'],
+                'name' => ['required', 'string', 'max:255', 'min:2'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
                 'password' => ['required', 'string', 'min:6', 'confirmed'],
             ];
             $messages = [
-                'required'       => 'Поле :attribute является обязательным для заполнения!',
+                'password.required'       => 'Пароль является обязательным для заполнения!',
+                'email.required'       => 'E-mail является обязательным для заполнения!',
                 'max'      => 'Поле  :attribute  должно содержать максимум :max  символов!',
-                'email.unique' => 'Адрес '. $data['email'] .' уже зарегистрирован'
+                'email.unique' => 'Адрес '. $data['email'] .' уже зарегистрирован!',
+                'password.confirmed' => 'Подтверждение пароля не совпадает!',
+                'password.min' => 'Пароль должен содержать не менее :min символов!',
+                'email.email' => 'Адрес должен быть действительным адресом электронной почты!',
+                'name.min' => 'Имя должно содержать не менее :min символов.'
+
             ];
             $validator = Validator::make($data,$rules , $messages);
 
@@ -81,7 +87,7 @@ class RegisterController extends Controller
         }
         /* End VALIDATE platform */
         $result =  User::create([
-//            'name' => $request->name,
+            'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
