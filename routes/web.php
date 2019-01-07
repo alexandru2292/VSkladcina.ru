@@ -14,3 +14,4 @@ Route::get('/', ['uses'=> 'StockController@index'])->name('index');
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/registerUser', 'Auth\RegisterController@create')->name('registerUser');
+Route::post('/loginUser', 'Auth\LoginController@login')->name('loginUser');

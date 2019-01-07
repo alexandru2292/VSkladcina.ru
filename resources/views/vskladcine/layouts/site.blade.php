@@ -13,6 +13,7 @@
     <div class="bg-stars__star-3"></div>
 </div>
 
+
 @yield('header')
 @yield('content')
 

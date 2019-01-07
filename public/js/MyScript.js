@@ -1,17 +1,41 @@
-    var errorEmail = $("#errEmail").length;
-    var errPassword = $("#errPassword").length;
-    var errName = $("#errName").length;
-    if(errPassword > 0 ||  errorEmail > 0 || errName > 0){
-        $.fancybox.open({
-            src  : "#popup-registration",
-            type : 'inline',
-            opts : {
-                afterClose : function( instance, current ) {
-                    $.fancybox.close();
-                }
+/**
+ *
+ * @type {jQuery}
+ */
+
+var errorEmail = $("#errEmail").length;
+var errPassword = $("#errPassword").length;
+var errName = $("#errName").length;
+
+if (errPassword > 0 || errorEmail > 0 || errName > 0) {
+    $.fancybox.open({
+        src: "#popup-registration",
+        type: 'inline',
+        opts: {
+            afterClose: function (instance, current) {
+                $.fancybox.close();
             }
-        });
-    }
+        }
+    });
+}
+
+var statusName = $("#statusName").length;
+var statusEmail = $("#statusEmail").length;
+var statusPassword = $("#statusPassword").length;
+
+if (statusName > 0 || statusEmail > 0 || statusPassword > 0) {
+    $(".dropdown-menu").css("display", "block");
+    $(document).mouseup(function (e) {
+        var container = $(".dropdown-menu");
+        if (container.has(e.target).length === 0){
+            container.hide();
+        }
+    });
+    $(".dropdown-auth").on("click", function () {
+        $(".openAuth").css("display", "block");
+    });
+}
+
 
 // if(){
 //     $.fancybox.open({

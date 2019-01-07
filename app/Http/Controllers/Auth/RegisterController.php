@@ -69,19 +69,19 @@ class RegisterController extends Controller
                 'password' => ['required', 'string', 'min:6', 'confirmed'],
             ];
             $messages = [
-                'password.required'       => 'Пароль является обязательным для заполнения!',
-                'email.required'       => 'E-mail является обязательным для заполнения!',
-                'max'      => 'Поле  :attribute  должно содержать максимум :max  символов!',
-                'email.unique' => 'Адрес '. $data['email'] .' уже зарегистрирован!',
-                'password.confirmed' => 'Подтверждение пароля не совпадает!',
-                'password.min' => 'Пароль должен содержать не менее :min символов!',
-                'email.email' => 'Адрес должен быть действительным адресом электронной почты!',
-                'name.min' => 'Имя должно содержать не менее :min символов.'
-
+                'password.required'       => 'Пароль является обязательным для заполнения',
+                'email.required'       => 'E-mail является обязательным для заполнения',
+                'max'      => 'Поле  :attribute  должно содержать максимум :max  символов',
+                'email.unique' => 'Адрес '. $data['email'] .' уже зарегистрирован',
+                'password.confirmed' => 'Подтверждение пароля не совпадает',
+                'password.min' => 'Пароль должен содержать не менее :min символов',
+                'email.email' => 'Адрес должен быть действительным адресом электронной почты',
+                'name.min' => 'Имя должно содержать не менее :min символов'
             ];
             $validator = Validator::make($data,$rules , $messages);
 
             if($validator->fails()){
+                dd($validator->fails());
                 return redirect()->route('index')->withErrors($validator)->withInput();
             }
         }

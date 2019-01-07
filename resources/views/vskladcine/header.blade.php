@@ -54,7 +54,7 @@
                             <button class="dropdown-toggle btn-toggle btn-toggle--user" type="button" data-toggle="dropdown">
                                 <span><svg class="icon icon-user"><use xlink:href="img/icons.svg#icon-user"/></svg></span>
                             </button>
-                            <div class="dropdown-menu">
+                            <div class="dropdown-menu openAuth">
                                 <div class="authorization">
                                     <div class="authorization__title">
                                         Авторизация
@@ -71,12 +71,28 @@
                                     <div class="authorization__title">
                                         Авторизация
                                     </div>
-                                    <form action="#" class="form-validate">
+                                    <form  action="{{ route('loginUser') }}" method="POST" class="form-validate">
+                                        @csrf
                                         <div class="form-group">
-                                            <input type="text" name="name" required class="form-control" placeholder="Ваше имя">
+                                            <input type="text" name="name" value="<?php isset($_POST['name']) ?  $_POST['name'] : ''?>" required class="form-control" placeholder="Ваше имя">
+                                            @if(session('status.name'))
+                                               <input type="hidden" value="{{ session('status.name')}}" id="statusName">
+                                               <span style="color: #de4444; font-weight: 300">{{ session('status.name')}}</span>
+                                            @endif
                                         </div>
                                         <div class="form-group">
-                                            <input type="email" name="email" required class="form-control" placeholder="Электронная почта">
+                                            <input type="email" name="email" value="{{ old('email') }}" required class="form-control" placeholder="Электронная почта">
+                                            @if(session('status.email'))
+                                                <input  type="hidden" value="{{ session('status.email')}}" id="statusEmail">
+                                                <span style="color: #de4444; font-weight: 300">{{ session('status.email')}}</span>
+                                            @endif
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="password" name="password"  required class="form-control" placeholder="Пароль">
+                                            @if(session('status.password'))
+                                                <input type="hidden" value="{{ session('status.password')}}" id="statusPassword">
+                                                <span style="color: #de4444; font-weight: 300">{{ session('status.password')}}</span>
+                                            @endif
                                         </div>
                                         <div class="form-group form-buttons">
                                             <button type="submit" class="btn btn-login">
