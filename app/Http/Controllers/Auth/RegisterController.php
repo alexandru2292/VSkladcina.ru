@@ -81,7 +81,7 @@ class RegisterController extends Controller
             $validator = Validator::make($data,$rules , $messages);
 
             if($validator->fails()){
-                dd($validator->fails());
+
                 return redirect()->route('index')->withErrors($validator)->withInput();
             }
         }

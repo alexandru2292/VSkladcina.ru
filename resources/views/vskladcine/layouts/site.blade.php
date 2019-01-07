@@ -6,12 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/main.css">
 </head>
-<body>
+@php
+    $router = app()->make('router');
+    $uri = $router->getCurrentRoute()->uri;
+@endphp
+<body class="{{ $uri == "404" ? 'page-404' : '' }}" >
+
+@if($uri != "404")
 <div class="bg-stars">
     <div class="bg-stars__star-1"></div>
     <div class="bg-stars__star-2"></div>
     <div class="bg-stars__star-3"></div>
 </div>
+@endif
+
 
 
 @yield('header')

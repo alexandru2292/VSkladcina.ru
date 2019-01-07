@@ -82,13 +82,12 @@ class LoginController extends Controller
                 $errors['email'] = $email;
                 $errors['password'] = $password;
 
-                return redirect('/')->with('status',$errors);
+                return back()->with('status',$errors);
             }
         }
 
 
         if(Hash::check($request->password, $user->password) && ($user->name == $request->name)){
-
             dd("LOGAT");
             return redirect()->route('index')->with(['status' => 'Пользватель залогинен!']);
         }else{
@@ -98,7 +97,7 @@ class LoginController extends Controller
             if(!Hash::check($request->password, $user->password)){
                 $errors['password'] = 'Неправильно указан логин и/или пароль';
             }
-            return redirect('/')->with('status',$errors);
+            return back()->with('status',$errors);
         }
 
 
