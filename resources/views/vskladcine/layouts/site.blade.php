@@ -10,7 +10,7 @@
     $router = app()->make('router');
     $uri = $router->getCurrentRoute()->uri;
 @endphp
-<body class="{{ $uri == "404" || session('loggedInUser') ? 'page-404' : '' }}" >
+<body class="{{ $uri == "404" && $uri == "profile" ? 'page-404' : '' }}" >
 
 @if($uri != "404" && $uri !== "profile")
 <div class="bg-stars">

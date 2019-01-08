@@ -36,11 +36,11 @@ class ProfileController extends SiteController
         }
     }
 
+    /**
+     * Delete user from session  and Exit from Profile
+     */
     public function exitFromProfile(){
         if(session('loggedInUser')){
-            /**
-             * Delete user from session  and Exit from Profile
-             */
             \Session::forget('loggedInUser');
             return redirect('/');
         }
