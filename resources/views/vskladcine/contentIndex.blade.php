@@ -258,6 +258,3 @@
         </div>
     </div>
 </div>
-<button type="button" data-src="#popup-feedback" data-fancybox="" class="connection-btn">
-    <svg class="icon icon-feedback"><use xlink:href="img/icons.svg#icon-feedback"/></svg>
-</button>

@@ -19,12 +19,13 @@
     <div class="bg-stars__star-3"></div>
 </div>
 @endif
-
-
-
+{{--{{ dd(session('loggedInUser')) }}--}}
 @yield('header')
 @yield('content')
 
+<button type="button" data-src="#popup-feedback" data-fancybox="" class="connection-btn">
+    <svg class="icon icon-feedback"><use xlink:href="img/icons.svg#icon-feedback"/></svg>
+</button>
 
 <div id="popup-feedback" class="popup popup-feedback">
     <div class="popup-title">Обратная связь с администратором</div>
@@ -51,6 +52,7 @@
     </form>
 
 </div>
+
 <div id="popup-registration" class="popup popup-registration">
     <div class="popup-title">Регистрация</div>
     <form action="{{ route('registerUser') }}"  method="POST" class="form-validate">
@@ -75,7 +77,7 @@
                 @endif
             </div>
             <div class="form-group">
-                <input type="password" name="password"  class="form-control" placeholder="Пароль" required>
+                <input type="password" name="password"  class="form-control"  value="{{ old('password') }}" placeholder="Пароль" required>
 
                 @if ($errors->has('password'))
                     <span class="errorPassword" role="alert" style="color: #de4444; font-weight: 300">
@@ -85,7 +87,7 @@
                 @endif
             </div>
             <div class="form-group">
-                <input type="password" name="password_confirmation" class="form-control" placeholder="Повторите пароль" required>
+                <input type="password" name="password_confirmation" value="{{ old('password') }}" class="form-control" placeholder="Повторите пароль" required>
             </div>
         </div>
         <div class="form-group form-agreement">

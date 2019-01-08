@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Hash;
@@ -30,7 +31,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = '/profile';
 
     /**
      * Create a new controller instance.
@@ -88,8 +89,8 @@ class LoginController extends Controller
 
 
         if(Hash::check($request->password, $user->password) && ($user->name == $request->name)){
-            dd("LOGAT");
-            return redirect()->route('index')->with(['status' => 'Пользватель залогинен!']);
+            session(['loggedInUser' => $user->id] );
+            return redirect()->route('profileIndex')->with(['status' => 'Пользватель залогинен!']);
         }else{
             if($user->name != $request->name){
                 $errors['name'] = "Неправильное имя";

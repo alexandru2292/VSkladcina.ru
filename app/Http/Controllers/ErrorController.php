@@ -9,8 +9,5 @@ class ErrorController extends Controller
         $content = view(config('settings.theme').'.404content')->render();
         return view('errors.404')->with(['header'=>$header, 'content' => $content]);
     }
-    public function fatal()
-    {
-        return view('errors.500');
-    }
+
 }

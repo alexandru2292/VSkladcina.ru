@@ -14,7 +14,9 @@ Route::get('/', ['uses'=> 'StockController@index'])->name('index');
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/registerUser', 'Auth\RegisterController@create')->name('registerUser');
+Route::get('/profile', 'ProfileController@index')->name('profileIndex');
+Route::get('/exit_from_profile', 'ProfileController@exitFromProfile')->name('profileExit');
 Route::post('/loginUser', 'Auth\LoginController@login')->name('loginUser');
 Route::get('404', ['as' => '404', 'uses' => 'ErrorController@notfound']);
-Route::get('500', ['as' => '500', 'uses' => 'ErrorController@fatal']);
+
 

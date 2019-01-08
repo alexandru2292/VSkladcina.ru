@@ -96,7 +96,7 @@ class RegisterController extends Controller
         if(is_array($result) && !empty($result['error'])){
             return back()->with(['status' => 'Пользватель не зарегистрирован!']);
         }
-        return redirect()->route('index')->with(['status' => 'Пользватель зарегистрирован!']);
+        return redirect()->route('profileIndex')->with(['status' => 'Пользватель зарегистрирован!']);
 
     }
 }
