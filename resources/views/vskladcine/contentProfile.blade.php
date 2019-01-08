@@ -28,8 +28,8 @@
                     <span>
                       Участие
                     </span>
-
-                        {{ dump($user) }}
+                        {{-- cu acest query vedem Rolulul Userului logat --}}
+                        {{ dump($user->role_user->load('role')->role->name) }}
                     <span>
                       24
                     </span>

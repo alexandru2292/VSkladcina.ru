@@ -24,6 +24,7 @@ class ProfileController extends SiteController
         if(session('loggedInUser')){
             $logginedUser = session('loggedInUser');
             $logginedUser = User::find($logginedUser);
+            $logginedUser->load('role_user');
         }
         /**
          * if the user is logged in, it allows entry on the profile page
