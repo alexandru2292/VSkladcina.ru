@@ -10,15 +10,17 @@
     $router = app()->make('router');
     $uri = $router->getCurrentRoute()->uri;
 @endphp
-<body class="{{ $uri == "404" ? 'page-404' : '' }}" >
+<body class="{{ $uri == "404" || session('loggedInUser') ? 'page-404' : '' }}" >
 
-@if($uri != "404")
+@if($uri != "404" && $uri !== "profile")
 <div class="bg-stars">
     <div class="bg-stars__star-1"></div>
     <div class="bg-stars__star-2"></div>
     <div class="bg-stars__star-3"></div>
 </div>
 @endif
+
+
 {{--{{ dd(session('loggedInUser')) }}--}}
 @yield('header')
 @yield('content')

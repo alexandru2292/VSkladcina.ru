@@ -1,7 +1,7 @@
 svg4everybody(); // support inline svg
 
 $(document).ready(function() {
-	
+
 	
 	var user = detect.parse(navigator.userAgent);
 	$("html").addClass(user.browser.family);
@@ -318,7 +318,7 @@ $(document).ready(function() {
 		
 		
 	});
-	
+
 	// popup authorization
 	if ($(".popup-authorization.active").length){
 		$.fancybox.open({

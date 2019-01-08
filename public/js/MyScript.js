@@ -1,4 +1,13 @@
 /**
+ * If uri = profile set clear blue bgcolor on Body
+ * @type {string}
+ */
+// var uri = location.pathname.substr(1)
+// if (uri == "profile") {
+//     $(".bg-stars").css("display", "none");
+// }
+/*--------------------------------------------*/
+/**
  * Open form register
  * @type {jQuery}
  */
@@ -48,6 +57,9 @@ if (statusName > 0 || statusEmail > 0 || statusPassword > 0) {
         $(".openAuth").css("display", "block");
     });
 }
+
+
+
 
 
 // if(){
