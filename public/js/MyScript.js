@@ -12,11 +12,10 @@
  * @type {jQuery}
  */
 
-var errorEmail = $("#errEmail").length;
-var errPassword = $("#errPassword").length;
-var errName = $("#errName").length;
+var registerError = $("#registerError").val();
 
-if (errPassword > 0 || errorEmail > 0 || errName > 0) {
+
+if (registerError) {
     $.fancybox.open({
         src: "#popup-registration",
         type: 'inline',
@@ -26,41 +25,49 @@ if (errPassword > 0 || errorEmail > 0 || errName > 0) {
             }
         }
     });
+
+
+    $("#errorEmail").hide();
+    $("#errorPassword").hide();
+
 }
 
 /**
  * Show errors in form login
  * @type {jQuery}
  */
-var statusName = $("#statusName").length;
-var statusEmail = $("#statusEmail").length;
-var statusPassword = $("#statusPassword").length;
+var loginError = $("#loginError").val();
 
-if (statusName > 0 || statusEmail > 0 || statusPassword > 0) {
-    $(".dropdown-menu").css("display", "block");
-
-
-    /**
-     * Close the form if you click outside the div block
-     */
-    $(document).mouseup(function (e) {
-        var container = $(".dropdown-menu");
-        if (container.has(e.target).length === 0){
-            container.hide();
-        }
-    });
+if (loginError) {
+    // $(".dropdown-menu").css("display", "block");
+    $(".openAuth").slideToggle(0);
 
     /**
      * Open the form login
      */
-    $(".dropdown-auth").on("click", function () {
-        $(".openAuth").css("display", "block");
+    $("#btnCloseOpen").on("click", function () {
+        $(".openAuth").slideToggle(0);
+
     });
+
+
+    /**
+     * hide error for form register
+     */
+    $(".errorRegName").hide();
+    $(".errorRegEmail").hide();
+    $(".errorRegPassword").hide();
 }
 
 
+/**
+ * Hide button "Dobaviti Skladcinu"
+ */
+var uri = window.location.pathname;
 
-
+if(uri == "/profile/stock/add"){
+    $(".addStock").hide();
+}
 
 // if(){
 //     $.fancybox.open({

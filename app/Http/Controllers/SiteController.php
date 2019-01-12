@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Menu;
-
+use \ATehnix\VkClient\Auth;
 class SiteController extends Controller
 {
 
@@ -16,11 +16,12 @@ class SiteController extends Controller
     protected $title;
     protected $content = false;
     protected $template;
-
     protected $vars = [];
 
     public function __construct()
     {
+
+
 
     }
     protected function renderOutput(){

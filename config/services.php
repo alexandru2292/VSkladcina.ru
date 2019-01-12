@@ -1,5 +1,4 @@
 <?php
-
 return [
 
     /*
@@ -38,6 +37,16 @@ return [
             'secret' => env('STRIPE_WEBHOOK_SECRET'),
             'tolerance' => env('STRIPE_WEBHOOK_TOLERANCE', 300),
         ],
+    ],
+    'facebook' => [
+        'client_id' => '305057693474635',
+        'client_secret' => '8ba08f3ecf0fb88566b69cacfcf8b446',
+        'redirect' => 'http://vskladcine.ru/callback',
+    ],
+    'vkontakte' => [
+        'client_id'     => env("VKONTAKTE_KEY"),
+        'client_secret' => env('VK_CLIENT_SECRET'),
+        'redirect'      => env("VKONTAKTE_REDIRECT_URI"),
     ],
 
 ];

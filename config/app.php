@@ -80,7 +80,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'ru',
 
     /*
     |--------------------------------------------------------------------------
@@ -162,6 +162,10 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
+        /**
+         * Socialite
+         */
+        Laravel\Socialite\SocialiteServiceProvider::class,
 
 
         /*
@@ -226,6 +230,17 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
+
+        /**
+         * Socialite
+         */
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+
+        /**
+         * atehnix/vk-client
+         */
+        ATehnix\LaravelVkRequester\VkRequesterServiceProvider::class,
+
 
     ],
 

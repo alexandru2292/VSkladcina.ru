@@ -1,4 +1,8 @@
-@extends('layouts.app')
+@extends('vskladcine.layouts.site')
+
+@section('header')
+    {{$header}}
+@endsection
 
 @section('content')
 <div class="container">

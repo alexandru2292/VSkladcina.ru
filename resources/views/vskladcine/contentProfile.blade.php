@@ -12,10 +12,10 @@
                                 <img src="img/content/avatar-photo.png" alt="">
                             </div>
                             <div class="user__title">
-                                Konstantinopolskiy
+                                {{ Auth::user()->name }}
                             </div>
                             <div class="user__status">
-                                складчик
+                                {{ $user->role_user->load('role')->role->name }}
                             </div>
                             <a href="javascript:void(0);" class="btn btn--block user__btn-message">
                                 <svg class="icon icon-comment-sm"><use xlink:href="img/icons.svg#icon-comment-sm"></use></svg>
@@ -28,8 +28,7 @@
                     <span>
                       Участие
                     </span>
-                        {{-- cu acest query vedem Rolulul Userului logat --}}
-                        {{ dump($user->role_user->load('role')->role->name) }}
+
                     <span>
                       24
                     </span>

@@ -1,3 +1,4 @@
+
 <header class="header">
     <div class="container">
         <div class="header__row">
@@ -9,13 +10,13 @@
                     <span>Меню</span>
                 </button>
                 <div class="header__logo">
-                    <a href="/" class="logo"><img class="logo__img" src="img/logo.png" width="149" height="47" alt=""></a>
+                    <a href="/" class="logo"><img class="logo__img" src="{{ url('img/logo.png') }}" width="149" height="47" alt=""></a>
                 </div>
                 <div class="header__menu">
                     <ul class="menu">
                         <li>
                             <a href="#" class="menu__dropdown-link">
-                                <svg class="icon icon-arrow"><use xlink:href="img/icons.svg#icon-arrow"/></svg>
+                                <svg class="icon icon-arrow"><use xlink:href="{{ url('img/icons.svg#icon-arrow') }}"/></svg>
                                 Информация
                             </a>
                             <ul class="menu__submenu">
@@ -34,32 +35,48 @@
                 </div>
             </div>
             <div class="header__right">
-                @if(session('loggedInUser'))
-                    <a href="#" class="btn btn-stock">
+                @if(Auth::check())
+                    <a href="{{  route('stockEdit')}}" class="btn btn-stock addStock">
                         <i class="icon icon-plus"></i>
                         <span>Добавить складчину</span>
                     </a>
                 @endif
                 <a href="#" class="btn btn-stock">
-                    <svg class="icon icon-star"><use xlink:href="img/icons.svg#icon-star"/></svg>
+                    <svg class="icon icon-star"><use xlink:href="{{ url('img/icons.svg#icon-star') }}"/></svg>
                     <span>Мои складчины</span>
                 </a>
                 <div class="header__buttons">
                     <div class="buttons-items">
                         <div class="dropdown dropdown--comments">
                             <a href="#" class="btn-toggle btn-toggle--reminder btn-toggle--active">
-                                <span><svg class="icon icon-comment"><use xlink:href="img/icons.svg#icon-comment"/></svg></span>
+                                <span><svg class="icon icon-comment"><use xlink:href="{{ url('img/icons.svg#icon-comment') }}"/></svg></span>
                             </a>
                         </div>
                         <div class="dropdown dropdown--reminder">
                             <a href="#" class="btn-toggle btn-toggle--reminder btn-toggle--active">
-                                <span><svg class="icon icon-bell"><use xlink:href="img/icons.svg#icon-bell"/></svg></span>
+                                <span><svg class="icon icon-bell"><use xlink:href="{{ url('img/icons.svg#icon-bell') }}"/></svg></span>
                             </a>
                         </div>
-                        @if(!session('loggedInUser'))
-                            <div class="dropdown dropdown-auth">
+
+
+
+                         @if(Auth::check())
+                            <div class="dropdown">
                                 <button class="dropdown-toggle btn-toggle btn-toggle--user" type="button" data-toggle="dropdown">
-                                    <span><svg class="icon icon-user"><use xlink:href="img/icons.svg#icon-user"/></svg></span>
+                                    <span><svg class="icon icon-user"><use xlink:href="{{ url('img/icons.svg#icon-user') }}"/></svg></span>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <ul class="dropdown-menu inner">
+                                        <li><a href="#">Мои складчины</a></li>
+                                        <li><a href="{{ route('profileIndex') }}">Настройки</a></li>
+                                        <li><a href="{{ route('logout') }}">Выход</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                             @else
+                            <div class="dropdown dropdown-auth btnOpenAuth">
+                                <button class="dropdown-toggle btn-toggle btn-toggle--user" id="btnCloseOpen"  type="button" data-toggle="dropdown">
+                                    <span><svg class="icon icon-user"><use xlink:href="{{ url('img/icons.svg#icon-user') }}"/></svg></span>
                                 </button>
                                 <div class="dropdown-menu openAuth">
                                     <div class="authorization">
@@ -68,11 +85,11 @@
                                         </div>
                                         <div class="authorization__social">
                                             <ul class="social">
-                                                <li class="social__item"><a class="social__link" href="#"><svg class="icon icon-fb"><use xlink:href="img/icons.svg#icon-fb"/></svg></a></li>
-                                                <li class="social__item"><a class="social__link" href="#"><svg class="icon icon-vk"><use xlink:href="img/icons.svg#icon-vk"/></svg></a></li>
-                                                <li class="social__item"><a class="social__link" href="#"><svg class="icon icon-twitter"><use xlink:href="img/icons.svg#icon-twitter"/></svg></a></li>
-                                                <li class="social__item"><a class="social__link" href="#"><svg class="icon icon-google"><use xlink:href="img/icons.svg#icon-google"/></svg></a></li>
-                                                <li class="social__item"><a class="social__link" href="#"><svg class="icon icon-ok"><use xlink:href="img/icons.svg#icon-ok"/></svg></a></li>
+                                                <li class="social__item"><a class="social__link" href="{{url('/redirect')}}"><svg class="icon icon-fb"><use xlink:href="{{ url('img/icons.svg#icon-fb') }}"/></svg></a></li>
+                                                <li class="social__item"><a class="social__link" href="{{ url('/vkauth') }}"><svg class="icon icon-vk"><use xlink:href="{{ url('img/icons.svg#icon-vk') }}"/></svg></a></li>
+                                                <li class="social__item"><a class="social__link" href="#"><svg class="icon icon-twitter"><use xlink:href="{{ url('img/icons.svg#icon-twitter') }}"/></svg></a></li>
+                                                <li class="social__item"><a class="social__link" href="#"><svg class="icon icon-google"><use xlink:href="{{ url('img/icons.svg#icon-google') }}"/></svg></a></li>
+                                                <li class="social__item"><a class="social__link" href="#"><svg class="icon icon-ok"><use xlink:href="{{ url('img/icons.svg#icon-ok') }}"/></svg></a></li>
                                             </ul>
                                         </div>
                                         <div class="authorization__title">
@@ -80,26 +97,23 @@
                                         </div>
                                         <form  action="{{ route('login') }}" method="POST" class="form-validate">
                                             @csrf
-
-                                            <div class="form-group">
-                                                <input type="text" name="name" value="{!! old('name') !!}" required class="form-control" placeholder="Ваше имя">
-                                                @if(session('status.name'))
-                                                    <input type="hidden" value="{{ session('status.name')}}" id="statusName">
-                                                    <span style="color: #de4444; font-weight: 300">{{ session('status.name')}}</span>
-                                                @endif
-                                            </div>
                                             <div class="form-group">
                                                 <input type="email" name="email" value="{{ old('email') }}" required class="form-control" placeholder="Электронная почта">
-                                                @if(session('status.email'))
-                                                    <input  type="hidden" value="{{ session('status.email')}}" id="statusEmail">
-                                                    <span style="color: #de4444; font-weight: 300">{{ session('status.email')}}</span>
+                                                @if(session('loginError') && !$errors->isEmpty())
+                                                    <input type="hidden" id="loginError" value="{{session('loginError')}}">
+                                                @endif
+                                                @if ($errors->has('email'))
+                                                    <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
+                                                       {{ $errors->first('email') }}
+                                                    </span>
                                                 @endif
                                             </div>
                                             <div class="form-group">
                                                 <input type="password" name="password"  required class="form-control" placeholder="Пароль">
-                                                @if(session('status.password'))
-                                                    <input type="hidden" value="{{ session('status.password')}}" id="statusPassword">
-                                                    <span style="color: #de4444; font-weight: 300">{{ session('status.password')}}</span>
+                                                @if ($errors->has('password'))
+                                                    <span id="errorPassword" role="alert" style="color: #de4444; font-weight: 300">
+                                                       {{ $errors->first('password') }}
+                                                    </span>
                                                 @endif
                                             </div>
                                             <div class="form-group form-buttons">
@@ -114,21 +128,9 @@
                                     </div>
                                 </div>
                             </div>
-                            @else
-                            <div class="dropdown">
-                                <button class="dropdown-toggle btn-toggle btn-toggle--user" type="button" data-toggle="dropdown">
-                                    <span><svg class="icon icon-user"><use xlink:href="img/icons.svg#icon-user"/></svg></span>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <ul class="dropdown-menu inner">
-                                        <li><a href="#">Мои складчины</a></li>
-                                        <li><a href="#">Настройки</a></li>
-                                        <li><a href="{{ route('profileExit') }}">Выход</a></li>
-                                    </ul>
-                                </div>
-                            </div>
+                         @endif
 
-                        @endif
+
                     </div>
 
                 </div>

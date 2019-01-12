@@ -16,21 +16,25 @@ class ProfileController extends SiteController
     }
 
     public function index(Request $request){
-        /**
-         * @if the user is logged in we, get from session the dates
-         * @else the user dates is null!
-         */
-        $logginedUser = null;
-        if(session('loggedInUser')){
-            $logginedUser = session('loggedInUser');
-            $logginedUser = User::find($logginedUser);
-            $logginedUser->load('role_user');
-        }
-        /**
-         * if the user is logged in, it allows entry on the profile page
-         */
-        if($logginedUser){
-            $this->content = view(config('settings.theme').'.contentProfile')->with(['user' => $logginedUser])->render();
+
+//        /**
+//         * @if the user is logged in we, get from session the dates
+//         * @else the user dates is null!
+//         */
+//        $logginedUser = null;
+//        if(session('loggedInUser')){
+//            $logginedUser = session('loggedInUser');
+//            $logginedUser = User::find($logginedUser);
+//            $logginedUser->load('role_user');
+//        }
+//        /**
+//         * if the user is logged in, it allows entry on the profile page
+//         */
+        $user = Auth::user();
+
+        $user->load('role_user');
+        if($user){
+            $this->content = view(config('settings.theme').'.contentProfile')->with(['user' => $user])->render();
             return $this->renderOutput();
         }else{
             return redirect('/');
@@ -42,7 +46,7 @@ class ProfileController extends SiteController
      */
     public function exitFromProfile(){
         if(session('loggedInUser')){
-            \Session::forget('loggedInUser');
+            \Session::forget('loggedInUser'); // uita sessiune
             return redirect('/');
         }
     }

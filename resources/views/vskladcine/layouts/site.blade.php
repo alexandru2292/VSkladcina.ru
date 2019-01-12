@@ -4,15 +4,17 @@
     <meta charset="utf-8">
     <title>Вскладчине</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="{{ url('/css/main.css')}}">
+    <script src="https://vk.com/js/api/openapi.js?160" type="text/javascript"></script>
 </head>
 @php
     $router = app()->make('router');
     $uri = $router->getCurrentRoute()->uri;
+
 @endphp
 <body class="{{ $uri == "404" && $uri == "profile" ? 'page-404' : '' }}" >
 
-@if($uri != "404" && $uri !== "profile")
+@if($uri != "404" && $uri !== "profile" && $uri !== "profile/stock/add")
 <div class="bg-stars">
     <div class="bg-stars__star-1"></div>
     <div class="bg-stars__star-2"></div>
@@ -57,14 +59,16 @@
 
 <div id="popup-registration" class="popup popup-registration">
     <div class="popup-title">Регистрация</div>
-    <form action="{{ route('registerUser') }}"  method="POST" class="form-validate">
+    <form action="{{ route('register') }}"  method="POST" class="form-validate">
         @csrf
+        @if(session('registerError') && !$errors->isEmpty())
+            <input type="hidden" id="registerError" value="{{ session('registerError') }}">
+        @endif
         <div class="form-inline">
             <div class="form-group">
                 <input type="text" name="name"  class="form-control" value="{{ old('name') }}" placeholder="Имя" required>
                 @if ($errors->has('name'))
-                    <span class="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
-                         <input type="hidden" id="errName" value="{{  $errors->first('name') }}">
+                    <span class="errorRegName" role="alert" style="color: #de4444; font-weight: 300">
                        {{ $errors->first('name') }}
                     </span>
                 @endif
@@ -72,8 +76,7 @@
             <div class="form-group">
                 <input type="email" name="email"  class="form-control" value="{{ old('email') }}" placeholder="panyakin@mail.com" required>
                 @if ($errors->has('email'))
-                    <span class="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
-                         <input type="hidden" id="errEmail" name="errorEmail" value="{{  $errors->first('email') }}">
+                    <span class="errorRegEmail" role="alert" style="color: #de4444; font-weight: 300">
                        {{ $errors->first('email') }}
                     </span>
                 @endif
@@ -82,8 +85,7 @@
                 <input type="password" name="password"  class="form-control"  value="{{ old('password') }}" placeholder="Пароль" required>
 
                 @if ($errors->has('password'))
-                    <span class="errorPassword" role="alert" style="color: #de4444; font-weight: 300">
-                        <input type="hidden" id="errPassword" name="errorPassword" value="{{  $errors->first('password') }}">
+                    <span class="errorRegPassword" role="alert" style="color: #de4444; font-weight: 300">
                         {{ $errors->first('password') }}
                     </span>
                 @endif
@@ -483,10 +485,21 @@
     </div>
 </div>
 
+<div id="vk_auth"></div>
+<script type="text/javascript">
+    VK.Widgets.Auth('vk_auth', {width:200, authUrl:'www.vskladcine.ru/profile'});
+</script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<script src="js/libs.min.js"></script>
-<script src="js/scripts.js"></script>
-<script src="js/MyScript.js"></script>
+<script src="{{ url('js/libs.min.js') }}"></script>
+<script src="{{ url('js/scripts.js') }}"></script>
+<script src="{{ url('js/MyScript.js') }}"></script>
+
+
+<script type="text/javascript">
+    VK.init({
+        apiId: 6816595
+    });
+</script>
 </body>
 </html>

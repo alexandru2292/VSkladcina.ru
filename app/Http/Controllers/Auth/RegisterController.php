@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Role_user;
 use App\User;
 use App\Http\Controllers\Controller;
 //use http\Env\Request;
@@ -47,10 +48,26 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator(array  $data)
+    protected function validator(array $data)
     {
+        $validator  = Validator::make($data, [
+            'name' => 'required|string|max:255',
+//            'username' => 'required|string|max:20|unique:users',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+        if($validator->fails()){
+            session(['registerError' => 1] );
+            /**
+             * Delete login session
+             */
+            if(session('loginError')){
+                \Session::forget('loginError'); // uita sessiunea
+            }
 
+        }
 
+        return $validator;
     }
 
     /**
@@ -59,44 +76,30 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\User
      */
-    protected function create(Request $request)
+    protected function create(array $data)
     {
-        $data = $request->all();
-        if($data){
-            $rules = [
-                'name' => ['required', 'string', 'max:255', 'min:2'],
-                'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-                'password' => ['required', 'string', 'min:6', 'confirmed'],
-            ];
-            $messages = [
-                'password.required'       => 'Пароль является обязательным для заполнения',
-                'email.required'       => 'E-mail является обязательным для заполнения',
-                'max'      => 'Поле  :attribute  должно содержать максимум :max  символов',
-                'email.unique' => 'Адрес '. $data['email'] .' уже зарегистрирован',
-                'password.confirmed' => 'Подтверждение пароля не совпадает',
-                'password.min' => 'Пароль должен содержать не менее :min символов',
-                'email.email' => 'Адрес должен быть действительным адресом электронной почты',
-                'name.min' => 'Имя должно содержать не менее :min символов'
-            ];
-            $validator = Validator::make($data,$rules , $messages);
 
-            if($validator->fails()){
-
-                return redirect()->route('index')->withErrors($validator)->withInput();
-            }
+        /**
+         * Delete login session
+         */
+        if(session('loginError')){
+            \Session::forget('loginError'); // uita sessiunea
         }
-        /* End VALIDATE platform */
-        $result =  User::create([
+
+        /**
+         * Register new user
+         */
+        $newUser = User::create([
             'name' => $data['name'],
+//            'username' => $data['username'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'password' => bcrypt($data['password']),
         ]);
 
-
-        if(is_array($result) && !empty($result['error'])){
-            return back()->with(['status' => 'Пользватель не зарегистрирован!']);
-        }
-        return redirect()->route('profileIndex')->with(['status' => 'Пользватель зарегистрирован!']);
-
+        $role_user = new Role_user();
+        $role_user->user_id = $newUser->id;
+        $role_user->role_id = 3;
+        $role_user->save();
+        return $newUser;
     }
 }

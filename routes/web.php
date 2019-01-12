@@ -11,12 +11,27 @@
 |
 */
 Route::get('/', ['uses'=> 'StockController@index'])->name('index');
+Route::get('/login', ['uses' => 'LoginController@login']);
+Route::group(['prefix' => 'profile', 'middleware' => 'auth'], function (){
+    Route::get('/', 'ProfileController@index')->name('profileIndex');
+    Route::get('/stock/add', ['uses'=> 'StockController@StockEdit'])->name('stockEdit');
+});
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/registerUser', 'Auth\RegisterController@create')->name('registerUser');
-Route::get('/profile', 'ProfileController@index')->name('profileIndex');
 Route::get('/exit_from_profile', 'ProfileController@exitFromProfile')->name('profileExit');
 Route::post('/loginUser', 'Auth\LoginController@login')->name('loginUser');
 Route::get('404', ['as' => '404', 'uses' => 'ErrorController@notfound']);
 
 
+Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout');
+
+/**
+ * Socialite
+ *
+ */
+Route::get('/redirect', 'SocialAuthFacebookController@redirect');
+Route::get('/callback', 'SocialAuthFacebookController@callback');
+
+Route::get('vkauth', 'SocialAuthVkController@login');
+Route::get('vkredirect', 'SocialAuthVkController@redirect');

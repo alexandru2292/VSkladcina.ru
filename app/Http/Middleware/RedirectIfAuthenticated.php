@@ -17,10 +17,29 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (Auth::guard($guard)->check()) {
-            return redirect('/');
+        $email = $request->email;
+        $password = $request->password;
+
+        if (Auth::attempt(['email' => $email, 'password' => $password])) {
+            /**
+             * Delete session register
+             */
+            if(session('registerError')){
+                \Session::forget('registerError'); // uita sessiunea
+             }
+            return redirect('/profile');
         }
 
+        /**
+         * Set a variable in a session to open the LOGIN div.
+         */
+        session(['loginError' => 1] );
+        /**
+         * Delete session register
+         */
+        if(session('registerError')){
+            \Session::forget('registerError'); // uita sessiunea
+        }
         return $next($request);
     }
 }
