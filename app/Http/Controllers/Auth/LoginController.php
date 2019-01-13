@@ -58,8 +58,6 @@ class LoginController extends SiteController
     {
         $this->middleware('guest')->except('logout');
         $this->template = config('settings.theme').'.index';
-
-
     }
     public function showLoginForm(StockRepository $stockRep)
     {

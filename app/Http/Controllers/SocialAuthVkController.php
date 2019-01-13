@@ -1,30 +1,40 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Repositories\SocialVkRepository;
 
-use ATehnix\LaravelVkRequester\Contracts\Subscriber;
-use ATehnix\LaravelVkRequester\Models\VkRequest;
-
-use Request;
-use ATehnix\VkClient\Client;
 class SocialAuthVkController extends Controller
 {
+    protected $vkRepository;
+    public function __construct(SocialVkRepository $vkRepository)
+    {
+        $this->vkRepository = $vkRepository;
+    }
+
     public function login(\ATehnix\VkClient\Auth $auth)
     {
-        return redirect($auth->getUrl());
+        /**
+         * this $URL makes connecting to the vkontakte API
+         *
+         * scope=offline,email  -  allows to receive the email address from the API
+         */
+
+        $client_id =  $this->vkRepository->getClientIdFromVkApi($auth);
+
+        $URL = "https://oauth.vk.com/authorize?client_id=".$client_id."&scope=offline,email&redirect_uri=http://vskladcine.ru/vkredirect&response_type=code&display=page";
+        return redirect($URL);
     }
+    /**
+     * @param \ATehnix\VkClient\Auth $auth
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function redirect(\ATehnix\VkClient\Auth $auth){
-
-        if (Request::exists('code')) {
-
-            $userData = $auth->getUserData(Request::get('code'));
-            $token = $userData['access_token'];
-            $userId = $userData['user_id'];
-
-            $dataUser = json_decode(file_get_contents("https://api.vk.com/method/users.get?user_id=".$userId."&access_token=".$token."&fields=uid,photo_id,photo_max,verified,sex,bdate,city,country,home_town,has_photo,photo_50,photo_100,music&v=5.52"),true);
-            dd($dataUser);
-
-        }
+        /**
+         * If there is no user vk then we register it
+         * ELSE Login in system
+         *
+         * Note: If redirected URL of the above method login then we getting the ability to receive user data of the method below
+         */
+      return $this->vkRepository->registerNewUserIFNotExistAndLoginIn($auth);
     }
-
 }
