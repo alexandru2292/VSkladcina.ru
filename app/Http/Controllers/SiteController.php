@@ -9,7 +9,7 @@ use \ATehnix\VkClient\Auth;
 class SiteController extends Controller
 {
 
-    protected $stockRep;
+    protected $stockRepository;
     protected $pl_room_rep;
     protected $keywords;
     protected $meta_desc;

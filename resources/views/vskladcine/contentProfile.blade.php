@@ -9,7 +9,7 @@
                     <div class="user">
                         <div class="user__content">
                             <div class="user__img">
-                                <img src="img/content/avatar-photo.png" alt="">
+                                <img src=" {{ isset(Auth::user()->HasLinkAvatar) ? Auth::user()->avatar : 'img/content/'.Auth::user()->avatar }} " alt="">
                             </div>
                             <div class="user__title">
                                 {{ Auth::user()->name }}
@@ -45,8 +45,8 @@
                     <span>
                       Зарегистрирован
                     </span>
-                                    <span>
-                      27.03.2016
+                    <span>
+                       {{ date('d.m.Y', strtotime(Auth::user()->created_at)) }}
                     </span>
                                 </div>
                             </div>

@@ -7,6 +7,7 @@
  */
 
 namespace App\Repositories;
+use App\Stock;
 use DB;
 class StockRepository
 {
@@ -96,5 +97,18 @@ class StockRepository
 
     }
 
+
+    public function create($request){
+        session(['textarea_title' => $request->titleVal]);
+        return $data['title'] = $request->titleVal;
+    }
+
+    public function createParagraph($request){
+        session(['text_paragraph' => $request->paragraph]);
+        return $data['paragraph'] = $request->paragraph;
+    }
+    public function update($request){
+
+    }
 }
 

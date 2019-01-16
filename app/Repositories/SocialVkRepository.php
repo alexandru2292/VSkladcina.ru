@@ -15,6 +15,10 @@ use Auth;
 
 class SocialVkRepository
 {
+    /**
+     * @param $auth - The object of \ATehnix\VkClient\Auth Class
+     * @return New registered User OR login in system
+     */
     public function registerNewUserIFNotExistAndLoginIn($auth){
         if (Request::exists('code')) {
 
@@ -22,8 +26,10 @@ class SocialVkRepository
             $token = $userData['access_token'];
             $userId = $userData['user_id'];
             $userEmail = isset($userData['email']) ? $userData['email'] : '';
-
-            $dataUser = json_decode(file_get_contents("https://api.vk.com/method/users.get?user_id=".$userId."&access_token=".$token."&fields=uid,email,photo_id,photo_max,verified,sex,bdate,city,country,home_town,has_photo&scope=email&v=5.52"),true);
+            /**
+             * In "fields" we indicate the properties of the user that we need to obtain
+             */
+            $dataUser = json_decode(file_get_contents("https://api.vk.com/method/users.get?user_id=".$userId."&access_token=".$token."&fields=uid,email,photo_id,photo_max,verified,sex,bdate,city,country,home_town,has_photo&v=5.52"),true);
             $dataUser = $dataUser['response'][0];
             $dataUser['email'] = $userEmail;
 
@@ -32,7 +38,7 @@ class SocialVkRepository
              */
             if(!User::find($dataUser['id'])){
 
-                $newPass = $dataUser['first_name'].'.'.$dataUser['last_name'];
+                $newPass = $dataUser['first_name'].'.'.$dataUser['last_name'].'.ruso';
                 User::create([
                     'id' => $dataUser['id'],
                     'name' => isset($dataUser['first_name']) || isset($dataUser['last_name']) ? $dataUser['first_name'].' '.$dataUser['last_name'] : '',
@@ -57,10 +63,9 @@ class SocialVkRepository
                 /**
                  * If User exist - login in
                  */
-                $newPass = $dataUser['first_name'].'.'.$dataUser['last_name'];
+                $newPass = $dataUser['first_name'].'.'.$dataUser['last_name'].'.ruso';
 
                 if (Auth::attempt(['id' => $dataUser['id'], 'password' => $newPass])) {
-
                     return redirect('/profile');
                 }else{
                     return redirect('/');

@@ -15,6 +15,9 @@ Route::get('/login', ['uses' => 'LoginController@login']);
 Route::group(['prefix' => 'profile', 'middleware' => 'auth'], function (){
     Route::get('/', 'ProfileController@index')->name('profileIndex');
     Route::get('/stock/add', ['uses'=> 'StockController@StockEdit'])->name('stockEdit');
+    Route::post('/stock/add', ['uses'=> 'StockController@stockAdd'])->name('stockAdd');
+    Route::put('/stock/update', ['uses'=> 'StockController@stockUpdate'])->name('stockUpdate');
+    Route::post('/stock/add/paragraph', ['uses'=> 'StockController@addParagraph']);
 });
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');

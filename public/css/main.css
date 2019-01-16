@@ -2101,9 +2101,9 @@ img {
   overflow: hidden;
 }
 .content-text {
+  margin-top: -28px;
   position: relative;
   padding: 20px 20px 50px;
-  margin: 0 auto;
   max-width: 660px;
   background: #ffffff;
   -webkit-box-shadow: 0 20px 15px rgba(0, 0, 0, 0.05);

@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Вскладчине</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url('/css/main.css')}}">
     <script src="https://vk.com/js/api/openapi.js?160" type="text/javascript"></script>
@@ -22,13 +23,12 @@
 </div>
 @endif
 
-
 {{--{{ dd(session('loggedInUser')) }}--}}
 @yield('header')
 @yield('content')
 
 <button type="button" data-src="#popup-feedback" data-fancybox="" class="connection-btn">
-    <svg class="icon icon-feedback"><use xlink:href="img/icons.svg#icon-feedback"/></svg>
+    <svg class="icon icon-feedback"><use xlink:href="{{ url("img/icons.svg#icon-feedback") }}"/></svg>
 </button>
 
 <div id="popup-feedback" class="popup popup-feedback">
@@ -46,7 +46,7 @@
         </div>
         <div class="form-group form-buttons">
             <button type="submit" class="btn btn-send">
-                <svg class="icon icon-comment-sm"><use xlink:href="img/icons.svg#icon-comment-sm"/></svg>
+                <svg class="icon icon-comment-sm"><use xlink:href="{{ url("img/icons.svg#icon-comment-sm") }}"/></svg>
                 <span>Отправить</span>
             </button>
             <button type="submit" class="btn btn--border" data-fancybox-close>
@@ -116,7 +116,7 @@
             <li class="active">
                 <a href="#">
                     Информационные товары и услуги
-                    <svg class="icon icon-arrow"><use xlink:href="img/icons.svg#icon-arrow"/></svg>
+                    <svg class="icon icon-arrow"><use xlink:href="{{ url("img/icons.svg#icon-arrow") }}"/></svg>
                 </a>
                 <div class="categories__subcategories">
                     <div class="categories__column">
@@ -184,7 +184,7 @@
             <li>
                 <a href="#">
                     Физические товары
-                    <svg class="icon icon-arrow"><use xlink:href="img/icons.svg#icon-arrow"/></svg>
+                    <svg class="icon icon-arrow"><use xlink:href="{{ url("img/icons.svg#icon-arrow") }}"/></svg>
                 </a>
                 <div class="categories__subcategories">
                     <div class="categories__column">
@@ -256,7 +256,7 @@
             <li>
                 <a href="#">
                     Тренинги
-                    <svg class="icon icon-arrow"><use xlink:href="img/icons.svg#icon-arrow"/></svg>
+                    <svg class="icon icon-arrow"><use xlink:href="{{ url("img/icons.svg#icon-arrow") }}"/></svg>
                 </a>
                 <div class="categories__subcategories">
                     <div class="categories__column">
@@ -312,7 +312,7 @@
             <li>
                 <a href="#">
                     Информационные товары и услуги
-                    <svg class="icon icon-arrow"><use xlink:href="img/icons.svg#icon-arrow"/></svg>
+                    <svg class="icon icon-arrow"><use xlink:href="{{ url("img/icons.svg#icon-arrow") }}"/></svg>
                 </a>
                 <div class="categories__subcategories">
                     <div class="categories__column">
@@ -412,7 +412,7 @@
             <li>
                 <a href="#">
                     Тренинги
-                    <svg class="icon icon-arrow"><use xlink:href="img/icons.svg#icon-arrow"/></svg>
+                    <svg class="icon icon-arrow"><use xlink:href="{{ url("img/icons.svg#icon-arrow") }}"/></svg>
                 </a>
                 <div class="categories__subcategories">
                     <div class="categories__column">
@@ -485,21 +485,11 @@
     </div>
 </div>
 
-<div id="vk_auth"></div>
-<script type="text/javascript">
-    VK.Widgets.Auth('vk_auth', {width:200, authUrl:'www.vskladcine.ru/profile'});
-</script>
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 <script src="{{ url('js/libs.min.js') }}"></script>
 <script src="{{ url('js/scripts.js') }}"></script>
 <script src="{{ url('js/MyScript.js') }}"></script>
-
-
-<script type="text/javascript">
-    VK.init({
-        apiId: 6816595
-    });
-</script>
 </body>
 </html>

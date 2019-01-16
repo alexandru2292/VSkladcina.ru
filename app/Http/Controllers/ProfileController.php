@@ -17,22 +17,12 @@ class ProfileController extends SiteController
 
     public function index(Request $request){
 
-//        /**
-//         * @if the user is logged in we, get from session the dates
-//         * @else the user dates is null!
-//         */
-//        $logginedUser = null;
-//        if(session('loggedInUser')){
-//            $logginedUser = session('loggedInUser');
-//            $logginedUser = User::find($logginedUser);
-//            $logginedUser->load('role_user');
-//        }
-//        /**
-//         * if the user is logged in, it allows entry on the profile page
-//         */
         $user = Auth::user();
-
         $user->load('role_user');
+
+        if (strpos($user->avatar, 'link=1') !== false) {
+            $user->HasLinkAvatar = 1;
+        }
         if($user){
             $this->content = view(config('settings.theme').'.contentProfile')->with(['user' => $user])->render();
             return $this->renderOutput();
@@ -41,13 +31,5 @@ class ProfileController extends SiteController
         }
     }
 
-    /**
-     * Delete user from session  and Exit from Profile
-     */
-    public function exitFromProfile(){
-        if(session('loggedInUser')){
-            \Session::forget('loggedInUser'); // uita sessiune
-            return redirect('/');
-        }
-    }
+
 }
