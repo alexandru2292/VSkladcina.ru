@@ -167,6 +167,11 @@ return [
          */
         Laravel\Socialite\SocialiteServiceProvider::class,
 
+        /**
+         * Intervention Image
+         */
+        Intervention\Image\ImageServiceProvider::class,
+
 
         /*
          * Package Service Providers...
@@ -240,6 +245,11 @@ return [
          * atehnix/vk-client
          */
         ATehnix\LaravelVkRequester\VkRequesterServiceProvider::class,
+
+        /**
+         * Intervention Image
+         */
+        'Image' => Intervention\Image\Facades\Image::class,
 
 
     ],

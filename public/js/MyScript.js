@@ -78,19 +78,42 @@ $(document).ready(function () {
         $(".addStock").hide();
     }
 
+
+    /**
+     *                                                              ADD STOCK
+     */
+
+    /**
+     * Auto save stock Name
+     */
+
+    $("#stockName").keyup(function () {
+        var val = $(this).val();
+        $.ajax({
+            url: "/profile/stock/add",
+            method: "POST",
+            data: {name: val},
+            success: function (data) {
+                if(data['name']){
+                    $("#stockName").text(data['name']);
+                }
+            }
+        });
+    });
+
     /**
      * Auto Save TITLE Stock
      */
     $("#textarea_title").keyup(function () {
-        event.preventDefault();
         var val = $(this).val();
-         attr = $(this).attr("name");
         $.ajax({
             url: "/profile/stock/add",
             method: "POST",
-            data: {title: attr, titleVal: val},
+            data: {titleVal: val},
             success: function (data) {
-                $(".title__js").text(data);
+                if(data['title']){
+                    $(".title__js").text(data['title']);
+                }
             }
         });
     });
@@ -103,15 +126,72 @@ $(document).ready(function () {
         var val = $(this).val();
         console.log(val);
         $.ajax({
-            url: "/profile/stock/add/paragraph",
+            url: "/profile/stock/add",
             method: "POST",
             data: {paragraph: val},
             success: function (data) {
-                $(".show_paragraph").text(data);
+                if(data['paragraph']){
+                    $(".show_paragraph").text(data['paragraph']);
+                }
             }
         });
     });
+    /**
+     * Auto Save Image
+     */
 
+    $("#img__js").change(function (objEvent) {
+
+        var objFormData = new FormData();
+        // GET FILE OBJECT
+        var objFile = $(this)[0].files[0];
+        // APPEND FILE TO POST DATA
+        objFormData.append('img', objFile);
+
+        $.ajax({
+            url: "/profile/stock/add",
+            method: 'POST',
+            contentType: false,
+            data: objFormData,
+            //JQUERY CONVERT THE FILES ARRAYS INTO STRINGS.SO processData:false
+            processData: false,
+            success: function (data) {
+                if(data['img']['error']){
+                    $("#errorImg").empty().append("<br>"+data['img']['error']);
+                }else{
+                    var url = window.location.href;
+                    var arr = url.split(":");
+                    var protocol = arr[0];
+                    var imageUrl = protocol + "://"+document.domain+"/img/content/"+data['img'];
+                    $('#showImg').css('background-image', 'url(' + imageUrl + ')');
+                    $("#errorImg").empty();
+                }
+
+            }
+        });
+    });
+    /**
+     * Auto save youtube_link
+     */
+    $("#yt_link").keyup(function () {
+        var val = $(this).val();
+        console.log(val);
+        $.ajax({
+            url: "/profile/stock/add",
+            method: "POST",
+            data: {link: val},
+        });
+    });
+    
+    $("#stockTags").keyup(function () {
+        var val = $(this).val();
+        console.log(val);
+        $.ajax({
+            url: "/profile/stock/add",
+            method: "POST",
+            data: {tags: val},
+        });
+    });
 
     /**
      *  Add paragraph -  Open the input paragraph and hide other input with event ON
@@ -123,7 +203,6 @@ $(document).ready(function () {
         $(".show_img").hide();
         $(".add_image__js").hide();
         $(".add_video__js").hide();
-
         $(".title__js").show();
         $(".add_paragraph__js").show();
 
@@ -172,7 +251,7 @@ $(document).ready(function () {
         $("#add_title__js").removeClass("active").addClass("btn--border");
         $(".add_paragraph").removeClass("active").addClass("btn--border");
         $(".add_video").removeClass("active").addClass("btn--border");
-    })
+    });
 
     /**
      * Add Video - hide other input 
@@ -190,7 +269,10 @@ $(document).ready(function () {
         $("#add_title__js").removeClass("active").addClass("btn--border");
         $(".add_paragraph").removeClass("active").addClass("btn--border");
         $(".add_video").removeClass("btn--border").addClass("active");
-    })
+    });
+
+
+
 });
 
 

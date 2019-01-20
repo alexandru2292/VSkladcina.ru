@@ -10,24 +10,25 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', ['uses'=> 'StockController@index'])->name('index');
+Route::get('/', ['uses'=> 'StockController@index', 'as' => 'index']);
 Route::get('/login', ['uses' => 'LoginController@login']);
+
 Route::group(['prefix' => 'profile', 'middleware' => 'auth'], function (){
     Route::get('/', 'ProfileController@index')->name('profileIndex');
-    Route::get('/stock/add', ['uses'=> 'StockController@StockEdit'])->name('stockEdit');
-    Route::post('/stock/add', ['uses'=> 'StockController@stockAdd'])->name('stockAdd');
-    Route::put('/stock/update', ['uses'=> 'StockController@stockUpdate'])->name('stockUpdate');
-    Route::post('/stock/add/paragraph', ['uses'=> 'StockController@addParagraph']);
+    Route::get('/stock/add', ['uses'=> 'StockController@StockEdit', 'as' => 'stockEdit']);
+    Route::post('/stock/add', ['uses'=> 'StockController@stockAdd', 'as' => 'stockAdd']);
+    Route::post('/stock/store', ['uses'=> 'StockController@store', 'as' => 'stockStore']);
 });
+
 Auth::routes();
-Route::get('/home', 'HomeController@index')->name('home');
-Route::post('/registerUser', 'Auth\RegisterController@create')->name('registerUser');
-Route::get('/exit_from_profile', 'ProfileController@exitFromProfile')->name('profileExit');
-Route::post('/loginUser', 'Auth\LoginController@login')->name('loginUser');
+Route::get('/home', ['uses'=> 'HomeController@index', 'as' => 'home']);
+Route::post('/registerUser', ['uses'=>'Auth\RegisterController@create', 'as' => 'registerUser']);
+Route::get('/exit_from_profile', ['uses' => 'ProfileController@exitFromProfile', 'as' => 'profileExit']);
+Route::post('/loginUser', ['uses' => 'Auth\LoginController@login', 'as'=> 'loginUser']);
 Route::get('404', ['as' => '404', 'uses' => 'ErrorController@notfound']);
 
 
-Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout');
+Route::get('logout', ['uses' => '\App\Http\Controllers\Auth\LoginController@logout', 'as'=> 'logout']);
 
 /**
  * Socialite

@@ -160,9 +160,10 @@
         <div class="cards-items">
             @if(isset($stocks))
                 @foreach($stocks as $stock)
+
                     <div class="card-item">
                         <div class="card-item__in">
-                            <div class="card-item__bg-image" style="background-image: url('img/content/cards/{{ $stock->img }}')">
+                            <div class="card-item__bg-image" style="background-image: url('img/content/cards/{{ isset($stock->min_img) ? $stock->min_img : '' }}')">
                                 <div class="card-item__title">
                                     {{ $stock->title }}
                                 </div>

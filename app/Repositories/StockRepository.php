@@ -9,6 +9,8 @@
 namespace App\Repositories;
 use App\Stock;
 use DB;
+use Auth;
+use Image;
 class StockRepository
 {
     public function getStocks(){
@@ -98,17 +100,96 @@ class StockRepository
     }
 
 
+    /**
+     * @param $request
+     */
+    public function addStockName($request){
+        if($request->name){
+            session(['stockName' => $request->name]);
+            return  $request->name;
+        }
+    }
+
     public function create($request){
-        session(['textarea_title' => $request->titleVal]);
-        return $data['title'] = $request->titleVal;
+        if($request->titleVal){
+            session(['textarea_title' => $request->titleVal]);
+            return  $request->titleVal;
+        }
     }
 
     public function createParagraph($request){
-        session(['text_paragraph' => $request->paragraph]);
-        return $data['paragraph'] = $request->paragraph;
+        if($request->paragraph){
+            session(['text_paragraph' => $request->paragraph]);
+            return  $request->paragraph;
+        }
     }
-    public function update($request){
+    public function addImg($request){
+        if($request->hasFile('img') ){ // if exist img file
+            $image = $request->file('img'); // file - image
+            if($image->isValid() ){
 
+                if(filesize($image) <= 5242880){ // 5 MB (converted in Bytes)
+
+                    $str = Auth::user()->id . time();
+                    $obj = new \stdClass;   // $obj - empty object
+                    /**
+                     * Stock img
+                     */
+                    $ext = $image->getClientOriginalExtension();
+
+                    $obj->mini = $str.'_img.jpg';
+                    // Library Image
+
+                    $img = Image::make($image); // obj Image
+                    /**
+                     * If change new image delete old img
+                     */
+
+                    session()->push('images.name', $str."_img.jpg");
+                    $oldStr =  session('images.name');
+                    $lastKey = count($oldStr) -2;
+                    $lastStr = $oldStr[$lastKey];
+                    if (file_exists(public_path()."/img/content/". $lastStr)){
+                        unlink(public_path()."/img/content/". $lastStr);
+                    }
+                    /**
+                     * Move img to folder
+                     */
+                    $img->fit(config('settings.stockImg')['width'],       //folder public                                       name img mini
+                        config('settings.stockImg')['height'])->save('img/content/'.$obj->mini);
+                    $imgName = $obj->mini;
+                    /**
+                     * Save in session img
+                     */
+                    session(['showImg'=> $imgName]);
+                    return $imgName;
+                }else{
+                    return ['error' => "Максимальный размер файла не должен превышать 5 МБ"];
+                }
+
+            }
+        }
+    }
+
+
+    /**
+     *  $request - from textarea youtube link
+     */
+    public function addYtLink($request){
+        if($request->link){
+            session(['textareaYtLink' => $request->link]);
+            return  $request->link;
+        }
+    }
+
+    /**
+     * add tags for stock
+     */
+    public function tags($request){
+       if($request->tags){
+           session(['stockTags' => $request->tags]);
+           return  $request->tags;
+       }
     }
 }
 

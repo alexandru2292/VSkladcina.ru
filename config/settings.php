@@ -1,4 +1,5 @@
 <?php
 return [
-    'theme' => env('THEME', 'default'),
+    'theme' => env('THEME'),
+    'stockImg' => ['width' => 620, 'height' => 538]
 ];

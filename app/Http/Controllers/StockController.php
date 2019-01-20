@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 use App\Repositories\StockRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use function MongoDB\BSON\toJSON;
 
 class StockController extends SiteController
 {
@@ -33,23 +31,23 @@ class StockController extends SiteController
     }
 
     /**
-     *  Add Title Stock
+     * @param Request $request - All dates from Stocks
+     *    Add Title, Paragraph, img, youtubeLink and Tags for Stock with AJAX
+     * @return \Illuminate\Http\JsonResponse
      */
     public function stockAdd(Request $request){
-        $result = $this->stockRepository->create($request);
+
+        $this->stockRepository->addStockName($request) ? $result['name'] = $this->stockRepository->addStockName($request) : '';
+        $this->stockRepository->create($request) ? $result['title'] = $this->stockRepository->create($request) : '';
+        $this->stockRepository->createParagraph($request) ?  $result['paragraph'] = $this->stockRepository->createParagraph($request) : '';
+        $this->stockRepository->addImg($request) ? $result['img'] = $this->stockRepository->addImg($request) : '';
+        $this->stockRepository->addYtLink($request) ? $result['ytLink'] = $this->stockRepository->addYtLink($request) : '';
+        $this->stockRepository->tags($request) ? $result['tags'] = $this->stockRepository->tags($request) : '';
+
         return response()->json($result);
     }
-
-    public function stockUpdate(Request $request){
-//        return $this->stockRepository->update($request);
-    }
-
-    /**
-     * Add Paragraph Stock
-     */
-    public function addParagraph(Request $request){
-        $result = $this->stockRepository->createParagraph($request);
-        return response()->json($result);
+    public function store(Request $request){
+        dd($request->all());
     }
 }
 
