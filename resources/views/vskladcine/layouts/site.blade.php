@@ -492,5 +492,6 @@
 <script src="{{ url('js/libs.min.js') }}"></script>
 <script src="{{ url('js/scripts.js') }}"></script>
 <script src="{{ url('js/MyScript.js') }}"></script>
+<script src="{{ url('js/YoutubeApi.js') }}"></script>
 </body>
 </html>

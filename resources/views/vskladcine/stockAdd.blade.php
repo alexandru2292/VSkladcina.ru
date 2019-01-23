@@ -1,7 +1,9 @@
 <div class="wrapper">
     <div class="container">
-        <div class="content-title">
+        <div class="content-title" style="text-align: center">
             <input type="text" class="content-title__input" name="name"  id="stockName" value="{{ session('stockName') ? session('stockName') : "Название складчины" }}">
+            <span id="errorName" style="color: #de4444; font-weight: 300; margin-top: -50px">
+            </span>
         </div>
         <div class="content-wrapper">
             <div class="sidebar">
@@ -21,8 +23,8 @@
                                     <div class="cover-image__subtitle">
                                         Минимальный размер 320 X 240 PX
                                     </div>
-                                    <label class="btn btn--block form-file">
-                                        <input type="file" name="min_img">
+                                    <label class="btn btn--block form-file" >
+                                        <input type="file" name="min_img" id="min_img">
                                         <span>Загрузить изображение</span>
                                         <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
                                            {{ $errors->first('min_img') }}
@@ -239,10 +241,9 @@
                                     @php
                                         $imgName = session('showImg');
                                     @endphp
+                                    <input type="hidden" id="nameImg" value="<?=$imgName?>">
                                     <span id="showImg" style="background-image: url('/img/content/<?=$imgName?>') ">
-                                        {{--@if(session('showImg'))--}}
-                                            {{--<img  id="sessImg" src="{{ url("img/content/".session("showImg")) }}" alt="">--}}
-                                        {{--@endif--}}
+
                                     </span>
                                 </div>
                                 <div class="editor__buttons add_buttons ">
@@ -256,16 +257,22 @@
                                         <button type="button" class="btn btn--block btn--border add_img" id="">Изображение</button>
                                     </div>
                                     <div>
-                                        <button type="button" class="btn btn--block btn--border add_video" id="">Видео</button>
+                                        <button type="button" class="btn btn--block btn--border add_video" id="addYuLinkBtn">Видео</button>
                                     </div>
                                 </div>
                             {{-- ADD TITLE  --}}
                                 <div class="editor__block add_title__js" >
                                     <textarea rows="10" class="form-control editor__input-title" id="textarea_title" name="title"  placeholder="Введите имя заголовка">{{ session('textarea_title') ? session('textarea_title') : '' }}</textarea>
+                                    <span id="errorTitle" style="color: #de4444; font-weight: 300">
+                                        <br>
+                                    </span>
                                 </div>
                             {{-- ADD PARAGRAPH--}}
                                 <div class="editor__block add_paragraph__js" style="display: none">
                                     <textarea rows="15" class="form-control editor__input-text " id="textarea_paragraph" placeholder="Напишите что-нибудь">{{ session("text_paragraph") ? session("text_paragraph") : ''}}</textarea>
+                                    <span id="errorParagraph" style="color: #de4444; font-weight: 300">
+                                        <br>
+                                    </span>
                                 </div>
                             {{-- ADD IMAGE --}}
                                 <div class="editor__block add_image__js" style="display: none">
@@ -291,7 +298,13 @@
                                 </div>
                             {{-- ADD VIDEO --}}
                                 <div class="editor__block add_video__js" style="display: none">
-                                    <textarea rows="15" class="form-control editor__input-text" id="yt_link" placeholder="Вставьте ссылку на ролик Youtube и нажмите Enter">{{ session('textareaYtLink') ? session('textareaYtLink') : '' }}</textarea>
+                                    <textarea rows="15" class="form-control editor__input-text" id="yt_link" placeholder="Вставьте ссылку на ролик Youtube">{{ session('textareaYtLink') ? session('textareaYtLink') : '' }}</textarea>
+                                    <div id="videoContainer" style="margin-top: -180px; display: none">
+                                        {{--Here is open the iframe yotube--}}
+                                    </div>
+                                    <span id="errorYtLink" style="color: #de4444; font-weight: 300">
+                                        <br>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -304,6 +317,8 @@
                             Теги
                         </div>
                         <input type="text" id="stockTags" placeholder="Укажите теги складчины" value="{{ session('stockTags') ? session('stockTags') : ''}}" class="tags__input">
+                        <span id="errorTags">
+                        </span>
                     </div>
                 </div>
             </div>

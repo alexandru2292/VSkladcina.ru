@@ -99,7 +99,6 @@ class StockRepository
 
     }
 
-
     /**
      * @param $request
      */
@@ -144,7 +143,6 @@ class StockRepository
                     /**
                      * If change new image delete old img
                      */
-
                     session()->push('images.name', $str."_img.jpg");
                     $oldStr =  session('images.name');
                     $lastKey = count($oldStr) -2;

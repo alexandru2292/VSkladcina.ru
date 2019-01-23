@@ -18,6 +18,11 @@ Route::group(['prefix' => 'profile', 'middleware' => 'auth'], function (){
     Route::get('/stock/add', ['uses'=> 'StockController@StockEdit', 'as' => 'stockEdit']);
     Route::post('/stock/add', ['uses'=> 'StockController@stockAdd', 'as' => 'stockAdd']);
     Route::post('/stock/store', ['uses'=> 'StockController@store', 'as' => 'stockStore']);
+    Route::post('/stock/rmSessName', ['uses'=> 'StockController@rmSessName']);
+    Route::post('/stock/rmSessTitle', ['uses'=> 'StockController@rmSessTitle']);
+    Route::post('/stock/rmSessParagraph', ['uses'=> 'StockController@rmSessParagraph']);
+    Route::post('/stock/rmSessYtLink', ['uses'=> 'StockController@rmSessYtLink']);
+    Route::post('/stock/rmSessTags', ['uses'=> 'StockController@rmSessTags']);
 });
 
 Auth::routes();

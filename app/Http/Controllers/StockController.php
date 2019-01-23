@@ -46,6 +46,55 @@ class StockController extends SiteController
 
         return response()->json($result);
     }
+
+    /**
+     * @param Request $request - stock Name with null value from deleted session
+     */
+    public function rmSessName(Request $request){
+        if(!$request->stockName){
+            \Session::forget('stockName');
+        }
+
+        return response()->json(['success'=> 1]);
+    }
+    /**
+     * @param Request $request - stock Title with null value from deleted session
+     */
+    public function rmSessTitle(Request $request){
+        if(!$request->stockTitle){
+            \Session::forget('textarea_title');
+        }
+        return response()->json(['success'=> 1]);
+    }
+    /**
+     * @param Request $request - stock Paragraph with null value from deleted session
+     */
+    public function rmSessParagraph(Request $request){
+        if(!$request->stockParagraph){
+            \Session::forget('text_paragraph');
+        }
+        return response()->json(['success'=> 1]);
+    }
+    /**
+     * @param Request $request - stock Paragraph with null value from deleted session
+     */
+    public function rmSessYtLink(Request $request){
+        if(!$request->link){
+            \Session::forget('textareaYtLink');
+        }
+        return response()->json(['success'=> 1]);
+    }
+   /**
+     * @param Request $request - stock Tags with null value from deleted session
+     */
+    public function rmSessTags(Request $request){
+        if(!$request->stockTags){
+            \Session::forget('stockTags');
+        }
+        return response()->json(['success'=> 1]);
+    }
+
+
     public function store(Request $request){
         dd($request->all());
     }
