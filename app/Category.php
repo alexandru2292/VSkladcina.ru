@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Stock extends Model
+class Category extends Model
 {
-    protected $fillable = ['*'];
+    //
 }

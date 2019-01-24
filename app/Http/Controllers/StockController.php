@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 use App\Repositories\StockRepository;
+use App\Subcategory;
+use App\Type;
 use Illuminate\Http\Request;
-
+use App\Category;
 class StockController extends SiteController
 {
     public function __construct(StockRepository $stockRepository)
@@ -25,8 +27,12 @@ class StockController extends SiteController
     /**
      * Show template for added stock
      */
-    public function StockEdit(){
-        $this->content = view(config('settings.theme').'.stockAdd')->with('contentBox')->render();
+    public function StockEdit(Category $categorys, Subcategory $subcategorys, Type $types){
+        /**
+         * Get all categories, subcategories and types stocks
+         */
+        $CatSubTypes =  $this->stockRepository->getCategorySubCatTypes($categorys, $subcategorys, $types);
+        $this->content = view(config('settings.theme').'.stockAdd')->with('catSubTypes', $CatSubTypes)->render();
         return $this->renderOutput();
     }
 
@@ -41,8 +47,13 @@ class StockController extends SiteController
         $this->stockRepository->create($request) ? $result['title'] = $this->stockRepository->create($request) : '';
         $this->stockRepository->createParagraph($request) ?  $result['paragraph'] = $this->stockRepository->createParagraph($request) : '';
         $this->stockRepository->addImg($request) ? $result['img'] = $this->stockRepository->addImg($request) : '';
+        $this->stockRepository->addImgMin($request) ? $result['img_min'] = $this->stockRepository->addImgMin($request) : '';
         $this->stockRepository->addYtLink($request) ? $result['ytLink'] = $this->stockRepository->addYtLink($request) : '';
         $this->stockRepository->tags($request) ? $result['tags'] = $this->stockRepository->tags($request) : '';
+        /**
+         * all data from stockForm
+         */
+        $this->stockRepository->allFormData($request) ? $result = $this->stockRepository->allFormData($request) : '';
 
         return response()->json($result);
     }
@@ -93,10 +104,8 @@ class StockController extends SiteController
         }
         return response()->json(['success'=> 1]);
     }
-
-
     public function store(Request $request){
-        dd($request->all());
+//        dd($request->all());
     }
 }
 

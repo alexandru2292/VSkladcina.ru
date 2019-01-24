@@ -88,6 +88,7 @@ $(document).ready(function () {
 
     $("#stockName").keyup(function () {
         var val = $(this).val();
+        $(this).removeClass("errorName");
         if(val.length == 0){
 
             $.ajax({
@@ -97,6 +98,8 @@ $(document).ready(function () {
 
             });
         }
+        $("#errorTitle").hide();
+
         $.ajax({
             url: "/profile/stock/add",
             method: "POST",
@@ -134,6 +137,8 @@ $(document).ready(function () {
             success: function (data) {
                 if(data['title']){
                     $(".title__js").text(data['title']);
+                    $("#errorTitle").hide();
+
                 }
             }
         });
@@ -159,6 +164,7 @@ $(document).ready(function () {
                 }
             });
         }
+        $("#errorParagraph").hide();
         $.ajax({
             url: "/profile/stock/add",
             method: "POST",
@@ -166,6 +172,7 @@ $(document).ready(function () {
             success: function (data) {
                 if(data['paragraph']){
                     $(".show_paragraph").text(data['paragraph']);
+                    $("#errorParagraph").hide();
                 }
             }
         });
@@ -198,7 +205,7 @@ $(document).ready(function () {
                     var protocol = arr[0];
                     var imageUrl = protocol + "://"+document.domain+"/img/content/"+data['img'];
                     $('#showImg').css('background-image', 'url(' + imageUrl + ')');
-                    $("#nameImg").val(imageUrl);
+                    $("#BigImgHidden").val(data['img']);
                     $("#errorImg").empty();
                 }
 
@@ -225,6 +232,7 @@ $(document).ready(function () {
                 }
             });
         }
+        $("#errorYtLink").hide();
         var yt_link = $("#yt_link").val();
         var split1 =  yt_link.split('?');
         var split2 = split1[1].split("&");
@@ -253,7 +261,7 @@ $(document).ready(function () {
      */
     function autoPlayVideo(videoId, width, height){
         "use strict";
-        $("#videoContainer").html('<iframe id="videoFrameYt" width="'+width+'" height="'+height+'" src="https://www.youtube.com/embed/'+videoId+'?autoplay=1&loop=1&rel=0&wmode=transparent" frameborder="0" allowfullscreen wmode="Opaque"></iframe>');
+        $("#videoContainer").html('<iframe id="videoFrameYt" width="'+width+'" height="'+height+'" src="https://www.youtube.com/embed/'+videoId+'?autoplay=0&loop=1&rel=0&wmode=transparent" frameborder="0" allowfullscreen wmode="Opaque"></iframe>');
     }
 
     /**
@@ -273,6 +281,7 @@ $(document).ready(function () {
                 // }
             });
         }
+        $("#errorTags").hide();
         console.log(val);
         $.ajax({
             url: "/profile/stock/add",
@@ -346,7 +355,7 @@ $(document).ready(function () {
         $(".add_title__js").hide();
         $(".add_image__js").hide();
         $(".show_img").hide();
-        $(".show_paragraph").hide();
+        $(".show_paragraph").show();
         $(".title__js").show();
         $(".add_video__js").show();
         $(".add_img").removeClass("active").addClass("btn--border");
@@ -486,11 +495,167 @@ $(document).ready(function () {
         var stockTags = $("#stockTags").val();
         if (stockTags.length < 1){
             showVideLink();
-            $("#errorYtLink").empty().text("Поле \"Теги\" обязательно для заполнения").show();
+
+            var yt_link = $("#yt_link").val();
+            var split1 =  yt_link.split('?');
+            var split2 = split1[1].split("&");
+            var split3 = split2[0].split("=");
+            var videoId = split3[1];
+
+            autoPlayVideo(videoId,'615','360');
+            if (yt_link.length > 23) {
+                $("#videoContainer").show();
+            }
+            $("#stockTags").css("margin-bottom", "10px");
+            $("#errorTags").empty().text("Поле \"Теги\" обязательно для заполнения").show();
             return false;
         }
+
         // $("#errorTags").hide();
     });
+
+
+    /**
+     *                                                                              ADD STOCK - Left Form
+     */
+
+    /**
+     * Auto Save min_img
+     */
+
+    $("#min_img").change(function (objEvent) {
+
+        var objFormData = new FormData();
+        // GET FILE OBJECT
+        var objFile = $(this)[0].files[0];
+
+        objFormData.append('img_min', objFile);
+
+        $.ajax({
+            url: "/profile/stock/add",
+            method: 'POST',
+            contentType: false,
+            data: objFormData,
+            //JQUERY CONVERT THE FILES ARRAYS INTO STRINGS.SO processData:false
+            processData: false,
+            success: function (data) {
+                if(data['img_min']['error']){
+                    $("#ImgMinError").empty().append("<br>"+data['img_min']['error']).show();
+                }else{
+                    var url = window.location.href;
+                    var arr = url.split(":");
+                    var protocol = arr[0];
+                    var imageUrl = protocol + "://"+document.domain+"/img/content/"+data['img_min'];
+                    $("#min_img_hidden").attr('value', data['img_min']);
+                    $('#showImgMin').attr('src', imageUrl);
+                    $(".cover-image__img").removeClass("cover-image__img--blur");
+                    $(".cover-image__title").hide();
+                    $(".cover-image__subtitle").hide();
+                    $("#errorImg").empty();
+                    $("#ImgMinError").hide();
+                }
+            }
+        });
+    });
+
+    /**
+     * Save all data from stock form
+     */
+    $("#createStock").on("click", function () {
+        var fd = new FormData(document.querySelector("form"));
+        // If isset img_min
+        var min_img_hidd = $("#min_img_hidden").val().length;
+
+        if(min_img_hidd > 0){
+            var min_img = $("#min_img_hidden").val();
+        }else{
+            var min_img = 0;
+        }
+        fd.append("min_imghidden", min_img);
+        /**
+         * prepares the right form data
+         */
+          //name
+            if($("#stockName").val() != "Название складчины" || $("#stockName").val().length > 0){
+                var name = $("#stockName").val();
+            }else{
+                var name = '';
+            }
+            fd.append("name", name);
+
+            // title
+            if($("#textarea_title").val().length > 0){
+                var title = $("#textarea_title").val();
+            }else{
+                var title = '';
+            }
+            fd.append("title", title);
+
+              // subtitle
+            if($("#textarea_paragraph").val().length > 0){
+                var subtitle = $("#textarea_paragraph").val();
+            }else{
+                var subtitle = '';
+            }
+            fd.append("subtitle", subtitle);
+
+            // Big img
+
+            if($("#BigImgHidden").val().length > 0){
+                var big_img = $("#BigImgHidden").val();
+            }else{
+                var big_img = '';
+            }
+            fd.append("big_img", big_img);
+
+            // youtube_link
+            if($("#yt_link").val().length > 0){
+                var youtube_link = $("#yt_link").val();
+            }else{
+                var youtube_link = '';
+            }
+            fd.append("youtube_link", youtube_link);
+
+             if($("#stockTags").val().length > 0){
+                 var tags = $("#stockTags").val();
+             }else{
+                 var tags = '';
+             }
+             fd.append("tags", tags);
+
+        $.ajax({
+            url: "/profile/stock/add",
+            method: 'POST',
+            contentType: false,
+            data: fd,
+            processData: false,
+            success: function (data) {
+                if(data['errors']){
+                    if(data['errors']['name']){
+                        $("#stockName").val(data['errors']['name'][0]).addClass("errorName").scrollView();
+0
+                    }
+                    console.log(data['errors']);
+                }
+            }
+        });
+    });
+
+    $.fn.scrollView = function () {
+        return this.each(function () {
+            $('html, body').animate({
+                scrollTop: $(this).offset().top
+            });
+        });
+    }
+    /**
+     * Check if valid right form
+     */
+
+    // $("#category").on("click", function () {
+    //
+    //    alert("Da");
+    // });
 });
 
 

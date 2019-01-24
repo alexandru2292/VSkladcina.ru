@@ -7,10 +7,12 @@
  */
 
 namespace App\Repositories;
+use App\Category;
 use App\Stock;
 use DB;
 use Auth;
 use Image;
+use Validator;
 class StockRepository
 {
     public function getStocks(){
@@ -51,6 +53,21 @@ class StockRepository
             $stocksArr[$key]->starsView = $starsView;
         }
         return $stocksArr;
+    }
+
+    /**
+     * Get all categories, subcategories and types stocks
+     */
+    public function getCategorySubCatTypes($categorys, $subcategorys, $types){
+        $categories = $categorys->all();
+        $subcategories = $subcategorys->all();
+        $types = $types->all();
+
+        $data['categories'] = $categories;
+        $data['subcategories'] = $subcategories;
+        $data['types'] = $types;
+        return $data;
+
     }
 
     public function getNameMonth($date){
@@ -145,8 +162,12 @@ class StockRepository
                      */
                     session()->push('images.name', $str."_img.jpg");
                     $oldStr =  session('images.name');
+
                     $lastKey = count($oldStr) -2;
-                    $lastStr = $oldStr[$lastKey];
+                    $lastKey  == -1 ? $lastKey = 0 : ''; // if we change photo first time we assign last key first element from session array
+//                    dd($oldStr);
+                    $lastStr = $oldStr[$lastKey]; // select first elemtn from session array
+
                     if (file_exists(public_path()."/img/content/". $lastStr)){
                         unlink(public_path()."/img/content/". $lastStr);
                     }
@@ -168,6 +189,58 @@ class StockRepository
             }
         }
     }
+    public function addImgMin($request){
+
+//        dd($request->all());
+
+        if($request->hasFile('img_min') ){ // if exist img file
+            $image = $request->file('img_min'); // file - image
+            if($image->isValid() ){
+
+                if(filesize($image) <= 5242880){ // 5 MB (converted in Bytes)
+                    $str = Auth::user()->id . time();
+                    $obj = new \stdClass;   // $obj - empty object
+                    /**
+                     * Stock img
+                     */
+                    $obj->mini = $str.'_img_min.jpg';
+                    // Library Image
+
+                    $img = Image::make($image); // obj Image
+                    /**
+                     * If change new image delete old img
+                     */
+                    session()->push('images.name_min', $str."_img_min.jpg");
+                    $oldStr =  session('images.name_min');
+
+                    $lastKey = count($oldStr) -2;
+                    $lastKey  == -1 ? $lastKey = 0 : ''; // if we change photo first time we assign last key first element from session array
+
+                    $lastStr = $oldStr[$lastKey]; // select first elemtn from session array
+
+                    if (file_exists(public_path()."/img/content/". $lastStr)){
+                        unlink(public_path()."/img/content/". $lastStr);
+                    }
+                    /**
+                     * Move img to folder
+                     */
+                    $img->fit(config('settings.stockImgMin')['width'],       //folder public                                       name img mini
+                        config('settings.stockImgMin')['height'])->save('img/content/'.$obj->mini);
+                    $imgName = $obj->mini;
+                    /**
+                     * Save in session img
+                     */
+                    session(['showImg'=> $imgName]);
+                    return $imgName;
+                }else{
+                    return ['error' => "Максимальный размер файла не должен превышать 5 МБ"];
+                }
+
+            }
+        }
+    }
+
+
 
 
     /**
@@ -188,6 +261,77 @@ class StockRepository
            session(['stockTags' => $request->tags]);
            return  $request->tags;
        }
+    }
+
+    /**
+     * @param $request -> all data Stocks for add in BD
+     * @return mixed
+     */
+    public function allFormData($request){
+        /**
+         * if the request does not contain all fields of the form return false;
+         */
+        if(count($request->all()) < 5){
+            return false;
+        }
+
+        /**
+         * Get all data the form
+         */
+        $data = $request->all();
+//        dd($data);
+        /**
+         * set column name for add values in BD
+         */
+        isset($data['min_imghidden']) ? $min_img = $data['min_imghidden'] : $min_img = '';
+        $data['min_img'] = $min_img;
+        if(isset($data['min_imghidden'])) unset($data['min_imghidden']);
+        /**
+         * Set error messages
+         */
+        $messages = [
+            'delivery.required' => 'Выберите службы доставки',
+            'date_collection.required' => 'Выберите дата сбора',
+            'big_img.required' => 'Выберите изображение',
+            'min_img.required' => 'Выберите изображение',
+            'tags.required' => 'Поле теги обязательно для заполнения',
+            'category_id.required' => 'Выберите категорию',
+            'type_id.required' => 'Выберите тип',
+            'price_contribution.required' => 'Выберите взнос(цена)',
+            'commission_contribution.required' => 'Выберите взнос(комиссия)',
+            'subtitle.required' => 'Поле абзац обязательно для заполнения',
+
+        ];
+        /**
+         * Set validation rules
+         */
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'subtitle' => 'required',
+            'big_img' => 'required',
+            'min_img' => 'required',
+            'tags' => 'required',
+            'category_id' => 'required|integer',
+            'type_id' => 'required|integer',
+            'price_contribution' => 'required',
+            'commission_contribution' => 'required',
+            'delivery' => 'required'
+        ], $messages);
+
+        if ($validator->fails()) {
+
+            $result['errors'] = $validator->errors();
+            return $result;
+        }
+
+
+        /** ------------------
+         * SAVE IN DATABASE
+         * -------------------
+         */
+        $result['success'] = 1;
+
+        return $result;
     }
 }
 

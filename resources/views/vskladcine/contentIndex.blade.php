@@ -224,15 +224,15 @@
                                     <table>
                                         <tr>
                                             <td>Тип складчины</td>
-                                            <td>{{ $stock->type }}</td>
+                                            <td>{{ isset($stock->type) ? $stock->type : '' }}</td>
                                         </tr>
                                         <tr>
                                             <td>Цена</td>
-                                            <td>{{ $stock->price }} Р</td>
+                                            <td>{{ isset($stock->price) ? $stock->price : '' }} Р</td>
                                         </tr>
                                         <tr>
                                             <td>Взнос</td>
-                                            <td>{{ $stock->contribution }} Р</td>
+                                            <td>{{ isset($stock->contribution) ? $stock->contribution : '' }} Р</td>
                                         </tr>
                                         <tr>
                                             <td>Дата сбора</td>
@@ -244,7 +244,7 @@
                             <div class="card-item__rating">
                                     <div class="stars">
                                         {{-- the star display logic is in the StockRepository    --}}
-                                        {!! $stock->starsView !!}
+                                        {!! isset($stock->starsView) ? $stock->starsView : '' !!}
                                     </div>
                             </div>
                         </div>

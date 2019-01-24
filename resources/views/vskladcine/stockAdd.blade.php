@@ -1,18 +1,20 @@
 <div class="wrapper">
     <div class="container">
         <div class="content-title" style="text-align: center">
-            <input type="text" class="content-title__input" name="name"  id="stockName" value="{{ session('stockName') ? session('stockName') : "Название складчины" }}">
+            <input type="text" class="content-title__input " name="name"  id="stockName"  value="{{ session('stockName') ? session('stockName') : "Название складчины" }}">
             <span id="errorName" style="color: #de4444; font-weight: 300; margin-top: -50px">
             </span>
         </div>
         <div class="content-wrapper">
             <div class="sidebar">
-                <form action="{{ route("stockStore") }}"  method="POST" enctype="multipart/form-data">
+                <form action="javascript:;"  method="POST" id="stockForm" enctype="multipart/form-data">
                     @csrf
+                    <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
                     <div class="sidebar__box">
                         <div class="cover-image">
                             <div class="cover-image__img cover-image__img--blur">
-                                <img src="{{ url('img/content/img-cover.png') }}" alt="">
+                                <img id="showImgMin" src="{{ url('img/content/2763998541548217236_img.jpg') }}" alt="">
+                                <input type="hidden" id="min_img_hidden" nameimg="" value="{{ session('showImg') ? session('showImg') : '' }}">
                             </div>
                             <div class="cover-image__content">
 
@@ -23,13 +25,16 @@
                                     <div class="cover-image__subtitle">
                                         Минимальный размер 320 X 240 PX
                                     </div>
+                                    <span id="ImgMinError" role="alert" style="color: #de4444; font-weight: 300">
+                                    </span>
+
                                     <label class="btn btn--block form-file" >
                                         <input type="file" name="min_img" id="min_img">
                                         <span>Загрузить изображение</span>
-                                        <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
-                                           {{ $errors->first('min_img') }}
-                                        </span>
+                                        <br>
+
                                     </label>
+
                                 </div>
                             </div>
 
@@ -45,10 +50,12 @@
                                             Категория
                                         </div>
                                         <div class="form-item__content">
-                                            <select class="selectpicker selectpicker-check" name="category_id" title="Выберите категорию">
-                                                <option>Товары и услуги</option>
-                                                <option>Физические товары</option>
-                                                <option>Тренинги</option>
+                                            <select class="selectpicker selectpicker-check" name="category_id" id="category" title="Выберите категорию">
+                                               @if(isset($catSubTypes['categories']))
+                                                    @foreach($catSubTypes['categories'] as $item)
+                                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                    @endforeach
+                                               @endif
                                             </select>
                                             <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
                                                {{ $errors->first('category_id') }}
@@ -61,9 +68,11 @@
                                         </div>
                                         <div class="form-item__content">
                                             <select class="selectpicker selectpicker-check" name="subcategory_id" title="Выберите подкатегорию">
-                                                <option>Здоровье</option>
-                                                <option>Дизайн</option>
-                                                <option>Бизнес</option>
+                                                @if(isset($catSubTypes['subcategories']))
+                                                    @foreach($catSubTypes['subcategories'] as $item)
+                                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                    @endforeach
+                                                @endif
                                             </select>
                                             <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
                                                {{ $errors->first('subcategory_id') }}
@@ -76,10 +85,15 @@
                                         </div>
                                         <div class="form-item__content">
                                             <select class="selectpicker" name="type_id">
-                                                <option data-description="Данный тип предполагает, что создатель сам является автором предлагаемого в складчине контента">Авторская</option>
-                                                <option>Стандартная</option>
-                                                <option>Оптовая</option>
-                                                <option>На заказ</option>
+                                                @if(isset($catSubTypes['types']))
+                                                    @foreach($catSubTypes['types'] as $item)
+                                                        @if($item->desc)
+                                                            <option value="{{ $item->id }}" data-description="{!! $item->desc !!}">{{ $item->name }}</option>
+                                                            @else
+                                                            <option value="{{ $item->id }}" >{{ $item->name }}</option>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
                                             </select>
                                             <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
                                                {{ $errors->first('type_id') }}
@@ -179,6 +193,7 @@
                                             </span>
                                         </div>
                                     </div>
+
                                     <div class="form-item">
                                         <div class="form-item__title">
                                             Службы доставки
@@ -213,7 +228,7 @@
                                     </div>
                                     <div class="form-item">
                                         <div class="form-item__content">
-                                            <button type="submit" class="btn btn--block">Создать складчину</button>
+                                            <button type="submit" class="btn btn--block" role="{{ Auth::user()->role_user->load('role')->role->name }}" id="createStock">{{ Auth::user()->role_user->load('role')->role->name  == "Admin" ? "Опубликовать" : "Создать складчину"  }}</button>
                                         </div>
                                     </div>
                                 </div>
@@ -243,7 +258,7 @@
                                     @endphp
                                     <input type="hidden" id="nameImg" value="<?=$imgName?>">
                                     <span id="showImg" style="background-image: url('/img/content/<?=$imgName?>') ">
-
+                                        <input type="hidden" id="BigImgHidden" value="<?=$imgName?>">
                                     </span>
                                 </div>
                                 <div class="editor__buttons add_buttons ">
@@ -318,6 +333,7 @@
                         </div>
                         <input type="text" id="stockTags" placeholder="Укажите теги складчины" value="{{ session('stockTags') ? session('stockTags') : ''}}" class="tags__input">
                         <span id="errorTags">
+
                         </span>
                     </div>
                 </div>
