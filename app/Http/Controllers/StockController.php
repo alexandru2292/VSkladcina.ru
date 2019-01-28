@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Repositories\StockRepository;
+use App\Stock;
 use App\Subcategory;
 use App\Type;
 use Illuminate\Http\Request;
@@ -17,9 +18,9 @@ class StockController extends SiteController
     /**
      * Return all stocks with main page
      */
-    public function index()
+    public function index(Stock $stock)
     {
-        $stocks = $this->stockRepository->getStocks();
+        $stocks = $this->stockRepository->getStocks($stock);
         $this->content = view(config('settings.theme').'.contentIndex')->with(['stocks' =>  $stocks])->render();
         return $this->renderOutput();
     }
@@ -41,7 +42,7 @@ class StockController extends SiteController
      *    Add Title, Paragraph, img, youtubeLink and Tags for Stock with AJAX
      * @return \Illuminate\Http\JsonResponse
      */
-    public function stockAdd(Request $request){
+    public function stockAdd(Request $request, Stock $stock){
 
         $this->stockRepository->addStockName($request) ? $result['name'] = $this->stockRepository->addStockName($request) : '';
         $this->stockRepository->create($request) ? $result['title'] = $this->stockRepository->create($request) : '';
@@ -53,7 +54,7 @@ class StockController extends SiteController
         /**
          * all data from stockForm
          */
-        $this->stockRepository->allFormData($request) ? $result = $this->stockRepository->allFormData($request) : '';
+        $this->stockRepository->allFormData($request, $stock) ? $result = $this->stockRepository->allFormData($request, $stock) : '';
 
         return response()->json($result);
     }

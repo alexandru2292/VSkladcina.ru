@@ -38,7 +38,7 @@
                 @if(Auth::check())
                     <a href="{{  route('stockEdit')}}" class="btn btn-stock addStock">
                         <i class="icon icon-plus"></i>
-                        <span>Добавить складчину</span>
+                        <span>Создать складчину</span>
                     </a>
                 @endif
                 <a href="#" class="btn btn-stock">

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\StockController;
 use App\Repositories\StockRepository;
+use App\Stock;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -59,9 +60,9 @@ class LoginController extends SiteController
         $this->middleware('guest')->except('logout');
         $this->template = config('settings.theme').'.index';
     }
-    public function showLoginForm(StockRepository $stockRep)
+    public function showLoginForm(StockRepository $stockRep, Stock $stock)
     {
-        $stocks = $stockRep->getStocks();
+        $stocks = $stockRep->getStocks($stock);
         $this->content = view(config('settings.theme').'.contentIndex')->with(['stocks' =>  $stocks])->render();
         return $this->renderOutput();
     }

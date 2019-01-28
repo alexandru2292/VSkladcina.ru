@@ -1,7 +1,7 @@
 <div class="wrapper">
     <div class="container">
         <div class="content-title" style="text-align: center">
-            <input type="text" class="content-title__input " name="name"  id="stockName"  value="{{ session('stockName') ? session('stockName') : "Название складчины" }}">
+            <input type="text" class="content-title__input" name="name"  id="stockName"  placeholder="Название складчины" value="{{ session('stockName') ? session('stockName') : "" }}">
             <span id="errorName" style="color: #de4444; font-weight: 300; margin-top: -50px">
             </span>
         </div>
@@ -12,7 +12,7 @@
                     <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
                     <div class="sidebar__box">
                         <div class="cover-image">
-                            <div class="cover-image__img cover-image__img--blur">
+                            <div class="cover-image__img cover-image__img--blur" id="ShowBlurClass">
                                 <img id="showImgMin" src="{{ url('img/content/2763998541548217236_img.jpg') }}" alt="">
                                 <input type="hidden" id="min_img_hidden" nameimg="" value="{{ session('showImg') ? session('showImg') : '' }}">
                             </div>
@@ -49,11 +49,15 @@
                                         <div class="form-item__title">
                                             Категория
                                         </div>
-                                        <div class="form-item__content">
-                                            <select class="selectpicker selectpicker-check" name="category_id" id="category" title="Выберите категорию">
+                                        <div class="form-item__content form_item_category">
+                                            <select class="selectpicker  selectpicker-check" name="category_id" id="category" title="Выберите категорию">
                                                @if(isset($catSubTypes['categories']))
                                                     @foreach($catSubTypes['categories'] as $item)
-                                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                        @if($item->desc)
+                                                            <option value="{{ $item->id }}" data-description="{{ $item->desc }}">{{ $item->name }}</option>
+                                                        @else
+                                                            <option  value="{{ $item->id }}" >{{ $item->name }}</option>
+                                                        @endif
                                                     @endforeach
                                                @endif
                                             </select>
@@ -84,14 +88,10 @@
                                             Тип складчины
                                         </div>
                                         <div class="form-item__content">
-                                            <select class="selectpicker" name="type_id">
+                                            <select class="selectpicker" id="type_id" name="type_id">
                                                 @if(isset($catSubTypes['types']))
                                                     @foreach($catSubTypes['types'] as $item)
-                                                        @if($item->desc)
-                                                            <option value="{{ $item->id }}" data-description="{!! $item->desc !!}">{{ $item->name }}</option>
-                                                            @else
-                                                            <option value="{{ $item->id }}" >{{ $item->name }}</option>
-                                                        @endif
+                                                       <option value="{{ $item->id }}" >{{ $item->name }}</option>
                                                     @endforeach
                                                 @endif
                                             </select>
@@ -103,7 +103,7 @@
                                 </div>
                                 <div class="form-hidden">
                                     <div class="form-item">
-                                        <div class="form-item__title">
+                                        <div class="form-item__title" id="min_count">
                                             Минимальное количество
                                         </div>
                                         <div class="form-item__content">
@@ -111,6 +111,7 @@
                                             <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
                                                {{ $errors->first('min_count') }}
                                             </span>
+                                            <span id="errorMinCount" role="alert" style="color: #de4444; font-weight: 300"></span>
                                         </div>
                                     </div>
                                     <div class="form-item">
@@ -124,8 +125,8 @@
                                                 <option>20 500</option>
                                                 <option>30 500</option>
                                             </select>
-                                            <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
-                                               {{ $errors->first('price_contribution') }}
+                                            <span id="errorContrPrice" role="alert" style="color: #de4444; font-weight: 300">
+
                                             </span>
                                         </div>
                                     </div>
@@ -135,9 +136,7 @@
                                         </div>
                                         <div class="form-item__content">
                                             <input type="text" class="form-control" name="commission_contribution" value="500">
-                                            <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
-                                               {{ $errors->first('commission_contribution') }}
-                                            </span>
+                                            <span id="errorContrComiss" role="alert" style="color: #de4444; font-weight: 300"></span>
                                         </div>
                                     </div>
                                     <div class="form-item">
@@ -145,23 +144,19 @@
                                             <div class="form-checkbox">
                                                 <input type="checkbox" name="sended_protection" id="form-security" class="checkbox checkbox--toggle" checked>
                                                 <label for="form-security">Защита отправлений</label>
-                                                <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
-                                                   {{ $errors->first('email') }}
-                                                </span>
+
                                                 <input type="checkbox" name="purchase_after" id="form-buy" class="checkbox checkbox--toggle" checked>
                                                 <label for="form-buy">Покупка после завершения</label>
-                                                <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
-                                                   {{ $errors->first('email') }}
-                                                </span>
+
                                                 <div class="form-item__text">
                                                     Разрешить доступ к контенту складчины после её завершения по последней сумме взноса
                                                 </div>
                                                 <input type="checkbox" name="full_form" id="form-data-full" class="checkbox checkbox--toggle" checked>
                                                 <label for="form-data-full">Полная форма данных при заказе</label>
-                                                <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
-                                                   {{ $errors->first('sended_protection') }}
-                                                </span>
+
                                             </div>
+                                            <span id="errorDelivery" role="alert" style="color: #de4444; font-weight: 300"></span>
+
                                         </div>
                                     </div>
                                     <div class="form-item">
@@ -171,9 +166,7 @@
                                         <div class="form-item__content">
                                             <div class="form-date">
                                                 <input type="text" name="date_collection" class="form-control datepicker" readonly placeholder="Выберите дату">
-                                                <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
-                                                   {{ $errors->first('date_collection') }}
-                                                </span>
+                                                <span id="errorDateColl" role="alert" style="color: #de4444; font-weight: 300"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -188,9 +181,6 @@
                                                 <option>31-40 дней</option>
                                                 <option>40-50 дней</option>
                                             </select>
-                                            <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
-                                               {{ $errors->first('delivery_term') }}
-                                            </span>
                                         </div>
                                     </div>
 
@@ -220,20 +210,31 @@
                                                         <label for="delivery-4">Доставка 4</label>
                                                     </div>
                                                 </div>
-                                                <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
-                                                   {{ $errors->first('delivery') }}
-                                                </span>
+                                                <span id="errorDelivery2" style="color: #de4444; font-weight: 300"></span>
+
                                             </div>
                                         </div>
+                                        <span id="success" style="color: #008e05; font-weight: 300; text-align: center; display: none">
+                                                <br>
+
+                                        </span>
                                     </div>
+
                                     <div class="form-item">
                                         <div class="form-item__content">
-                                            <button type="submit" class="btn btn--block" role="{{ Auth::user()->role_user->load('role')->role->name }}" id="createStock">{{ Auth::user()->role_user->load('role')->role->name  == "Admin" ? "Опубликовать" : "Создать складчину"  }}</button>
+                                            <button type="submit" class="btn btn--block" role="{{ Auth::user()->role_user->load('role')->role->name }}" id="createStock">
+                                                @if( Auth::user()->role_user->load('role')->role->name  == "Admin")
+                                                    Опубликовать
+                                                    @elseif(Auth::user()->role_user->load('role')->role->name  == "Moderator")
+                                                    Отправить на проверку
+                                                @endif
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                         <button class="btn btn--block sidebar-toggle__btn-toggle active">
                             <svg class="icon icon-arrow"><use xlink:href="{{ url('img/icons.svg#icon-arrow') }}"/></svg>
                         </button>
@@ -333,7 +334,6 @@
                         </div>
                         <input type="text" id="stockTags" placeholder="Укажите теги складчины" value="{{ session('stockTags') ? session('stockTags') : ''}}" class="tags__input">
                         <span id="errorTags">
-
                         </span>
                     </div>
                 </div>

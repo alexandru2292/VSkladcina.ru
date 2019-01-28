@@ -421,25 +421,7 @@ $(document).ready(function() {
 		checkSelect();
 	});
 	
-	// select description 
-	function showSelectDesc(){
-		$(".form-item .selectpicker").each(function(){
-			
-			 if($(this).find('option[data-description]').length){
-				 $(this).closest(".bootstrap-select").next().remove();
-			 }
-			 
-			 if($(this).find('option[data-description]:selected').length){
-				 $(this).closest(".bootstrap-select").after('<div class="form-item__text">' + $(this).find('option').attr("data-description") + '</div>');
-			 }
-		});
-	}
-	
-	showSelectDesc();
-	
-	$(".selectpicker").on("change", function(){
-		showSelectDesc();
-	});
+
 	
 	
 	

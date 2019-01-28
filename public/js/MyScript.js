@@ -1,6 +1,7 @@
 $(document).ready(function () {
 
 
+
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -81,6 +82,37 @@ $(document).ready(function () {
     /**
      *                                                              ADD STOCK
      */
+
+
+    /**
+     * if exist description in category or subcategory or types create div with description data
+      */
+    // select description
+    function showSelectDesc(){
+        $(".form-item .selectpicker").each(function(){
+            /**
+             *
+             */
+            if($(this).find('option[data-description]').length){
+                $(this).closest(".bootstrap-select").next().remove();
+            }
+
+            var description  =	$(this).find("option:selected").data("description");
+
+            if($(this).find('option[data-description]:selected').length){
+                $(this).closest(".bootstrap-select").after('<div class="form-item__text">' + description + '</div>');
+            }
+        });
+    }
+
+    showSelectDesc();
+
+    $(".selectpicker").on("change", function(){
+        showSelectDesc();
+    });
+
+
+
 
     /**
      * Auto save stock Name
@@ -203,11 +235,13 @@ $(document).ready(function () {
                     var url = window.location.href;
                     var arr = url.split(":");
                     var protocol = arr[0];
-                    var imageUrl = protocol + "://"+document.domain+"/img/content/"+data['img'];
+                    var imageUrl = protocol + "://"+document.domain+"/img/content/cards/"+data['img'];
                     $('#showImg').css('background-image', 'url(' + imageUrl + ')');
                     $("#BigImgHidden").val(data['img']);
+                    $("#nameImg").val(data['img']);
                     $("#errorImg").empty();
                 }
+
 
             }
         });
@@ -485,14 +519,15 @@ $(document).ready(function () {
 
         $("#errorImg").hide();
 
-        if($("#yt_link").val().length < 1){
-
-            showVideLink();
-            $("#errorYtLink").text("Поле \"видео\" обязательно для заполнения");
-            return false;
-        }
+        // if($("#yt_link").val().length < 1){
+        //
+        //     showVideLink();
+        //     $("#errorYtLink").text("Поле \"видео\" обязательно для заполнения");
+        //     return false;
+        // }
 
         var stockTags = $("#stockTags").val();
+
         if (stockTags.length < 1){
             showVideLink();
 
@@ -545,7 +580,7 @@ $(document).ready(function () {
                     var url = window.location.href;
                     var arr = url.split(":");
                     var protocol = arr[0];
-                    var imageUrl = protocol + "://"+document.domain+"/img/content/"+data['img_min'];
+                    var imageUrl = protocol + "://"+document.domain+"/img/content/cards/"+data['img_min'];
                     $("#min_img_hidden").attr('value', data['img_min']);
                     $('#showImgMin').attr('src', imageUrl);
                     $(".cover-image__img").removeClass("cover-image__img--blur");
@@ -633,9 +668,115 @@ $(document).ready(function () {
                 if(data['errors']){
                     if(data['errors']['name']){
                         $("#stockName").val(data['errors']['name'][0]).addClass("errorName").scrollView();
-0
+                           return false;
                     }
-                    console.log(data['errors']);
+                    if(data['errors']['title']){
+                            showTitle();
+                            $("#errorTitle").show().text(data['errors']['title']);
+                                $("#add_title__js").scrollView();
+                            return false;
+                    }
+                    $("#errorTitle").hide();
+
+                    if(data['errors']['subtitle']){
+                            showParagraph();
+                            $("#errorParagraph").show().text(data['errors']['subtitle']);
+                            $(".add_paragraph").scrollView();
+                            return false;
+                    }
+
+                    $("#errorParagraph").hide();
+
+                    if(data['errors']['big_img']){
+                        showImg();
+                        $("#errorImg").show().text(data['errors']['big_img']).scrollView();
+                        return false;
+                    }
+                    $("#errorImg").hide();
+                    if(data['errors']['youtube_link']){
+                        showVideLink();
+                        $("#errorYtLink").show().text(data['errors']['youtube_link']);
+                        $(".add_img").scrollView();
+                        return false;
+                    }
+                    $("#errorYtLink").hide();
+
+                    if(data['errors']['tags']){
+                        showVideLink();
+                        $("#stockTags").show().attr('placeholder',data['errors']['tags']).addClass('errorTags').scrollView();
+                        return false;
+                    }
+                    $("#stockTags").removeClass("errorTags");
+
+
+                    $("#ImgMinError").hide();
+                    if(data['errors']['min_img']){
+                        $("#ImgMinError").show().text(data['errors']['min_img']).scrollView();
+                        // return false;
+                    }
+
+                    $("#errorMinCount").hide();
+                    if(data['errors']['min_count']){
+                        $("#errorMinCount").show().text(data['errors']['min_count']);
+                        // $("#min_count").scrollView();
+                    }
+
+                    $("#errorContrComiss").hide();
+                    if(data['errors']['commission_contribution']){
+                        $("#errorContrComiss").show().text(data['errors']['commission_contribution']);
+                        // return false;
+                    }
+
+                    $("#errorContrPrice").hide();
+                    if(data['errors']['price_contribution']){
+                        $("#errorContrPrice").show().text(data['errors']['price_contribution']);
+                        // return false;
+                    }
+
+                    $("#errorDateColl").hide();
+                    if(data['errors']['date_collection']){
+                        $("#errorDateColl").show().text(data['errors']['date_collection']);
+                        // return false;
+                    }
+
+                    $("#errorDelivery2").hide();
+                    if(data['errors']['delivery']){
+                        $("#errorDelivery2").show().text(data['errors']['delivery']);
+                        // return false;
+                    }
+                    // $("#errorMinCount").hide();
+
+                }else{
+                    $("#errorMinCount").hide();
+                    $("#errorDateColl").hide();
+                    $("#errorContrComiss").hide();
+                    $("#errorDelivery2").hide();
+                }
+
+
+
+                if(data['successAdmin']){
+                    clearFormData();
+
+                    $("#stockName").attr("placeholder", 'Складчина была успешно опубликована').scrollView();
+                    $("#stockName").addClass("successStock");
+                    // $("#success").show().text('Складчина была успешно опубликована');
+                    return false;
+                }
+                if(data['successModerator']){
+                    clearFormData();
+
+                    // $("#success").show().text('Складчина отправлено администратору для проверки');
+                    $("#stockName").attr("placeholder", 'Складчина отправлено администратору для проверки').scrollView();
+                    // $("#stockName").addClass("successStock");
+                    return false;
+                }
+                if(data['success']){
+                    clearFormData();
+                    // $("#success").show().text('Складчина успешно добавлена');
+                    $("#stockName").attr("placeholder", 'Складчина успешно добавлена').scrollView();
+                    // $("#stockName").addClass("successStock");
+
                 }
             }
         });
@@ -647,6 +788,32 @@ $(document).ready(function () {
                 scrollTop: $(this).offset().top
             });
         });
+    }
+
+    /**
+     * This function clear all data from left form and right stock form
+     */
+    function clearFormData() {
+        $("#min_img_hidden").val("");
+        $("#ShowBlurClass").addClass("cover-image__img--blur");
+        $(".cover-image__title").show();
+        $(".cover-image__subtitle").show();
+        $("#videoContainer").hide();
+        $("#stockName").val("");
+        $(".title__js").text("");
+        $(".show_paragraph").text("");
+        $('#showImg').css('background-image', 'url()');
+
+        $("#textarea_title").val("");
+
+        $("#textarea_paragraph").val("");
+
+        $("#BigImgHidden").val("");
+
+        $("#yt_link").text("");
+
+        $("#stockTags").val();
+        showTitle();
     }
     /**
      * Check if valid right form

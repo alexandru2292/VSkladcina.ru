@@ -15,8 +15,9 @@ use Image;
 use Validator;
 class StockRepository
 {
-    public function getStocks(){
-        $stocks = DB::table("stocks")->orderBy('id', 'DESC')->get();
+    public function getStocks($stock){
+        $stocks = $stock->select('*')->orderBy('id', "DESC")->get();
+        $stocks->load('hasType');
 
         /**
          * Get day,  name month and year created stocks.  EXAMPLE : 02 января 2019
@@ -168,14 +169,14 @@ class StockRepository
 //                    dd($oldStr);
                     $lastStr = $oldStr[$lastKey]; // select first elemtn from session array
 
-                    if (file_exists(public_path()."/img/content/". $lastStr)){
-                        unlink(public_path()."/img/content/". $lastStr);
-                    }
+//                    if (file_exists(public_path()."/img/content/cards/". $lastStr)){
+//                        unlink(public_path()."/img/content/cards/". $lastStr);
+//                    }
                     /**
                      * Move img to folder
                      */
                     $img->fit(config('settings.stockImg')['width'],       //folder public                                       name img mini
-                        config('settings.stockImg')['height'])->save('img/content/'.$obj->mini);
+                        config('settings.stockImg')['height'])->save('img/content/cards/'.$obj->mini);
                     $imgName = $obj->mini;
                     /**
                      * Save in session img
@@ -218,14 +219,14 @@ class StockRepository
 
                     $lastStr = $oldStr[$lastKey]; // select first elemtn from session array
 
-                    if (file_exists(public_path()."/img/content/". $lastStr)){
-                        unlink(public_path()."/img/content/". $lastStr);
-                    }
+//                    if (file_exists(public_path()."/img/content/cards/". $lastStr)){
+//                        unlink(public_path()."/img/content/cards/". $lastStr);
+//                    }
                     /**
                      * Move img to folder
                      */
                     $img->fit(config('settings.stockImgMin')['width'],       //folder public                                       name img mini
-                        config('settings.stockImgMin')['height'])->save('img/content/'.$obj->mini);
+                        config('settings.stockImgMin')['height'])->save('img/content/cards/'.$obj->mini);
                     $imgName = $obj->mini;
                     /**
                      * Save in session img
@@ -267,18 +268,23 @@ class StockRepository
      * @param $request -> all data Stocks for add in BD
      * @return mixed
      */
-    public function allFormData($request){
+    public function allFormData($request, $stock){
         /**
          * if the request does not contain all fields of the form return false;
          */
+
         if(count($request->all()) < 5){
             return false;
         }
-
+        /**
+         * Get user role
+         */
+        $userRole = Auth::user()->role_user->load('role')->role->name;
         /**
          * Get all data the form
          */
-        $data = $request->all();
+        $data = $request->except('_token');
+
 //        dd($data);
         /**
          * set column name for add values in BD
@@ -289,6 +295,7 @@ class StockRepository
         /**
          * Set error messages
          */
+
         $messages = [
             'delivery.required' => 'Выберите службы доставки',
             'date_collection.required' => 'Выберите дата сбора',
@@ -298,8 +305,11 @@ class StockRepository
             'category_id.required' => 'Выберите категорию',
             'type_id.required' => 'Выберите тип',
             'price_contribution.required' => 'Выберите взнос(цена)',
-            'commission_contribution.required' => 'Выберите взнос(комиссия)',
-            'subtitle.required' => 'Поле абзац обязательно для заполнения',
+            'subtitle.required' => 'Поле "абзац" обязательно для заполнения',
+            'youtube_link.required' => 'Поле "видео" обязательно для заполнения',
+            'min_count.required' => 'Поле "минимальное количество" обязательно для заполнения',
+            'commission_contribution.required' => 'Поле "Взнос (комиссия)" обязательно для заполнения',
+            "min_count.integer" => "Поле \"Минимальное количество\" должно быть целым числом."
 
         ];
         /**
@@ -308,18 +318,21 @@ class StockRepository
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'subtitle' => 'required',
+            'title' => 'required',
             'big_img' => 'required',
             'min_img' => 'required',
             'tags' => 'required',
             'category_id' => 'required|integer',
             'type_id' => 'required|integer',
             'price_contribution' => 'required',
-            'commission_contribution' => 'required',
-            'delivery' => 'required'
+            'commission_contribution' => 'required|integer',
+            'delivery' => 'required',
+            'youtube_link' =>  $data['type_id'] == 2 ? 'required' : '',
+            'min_count' => 'required|integer',
+            'date_collection' => 'required'
         ], $messages);
 
         if ($validator->fails()) {
-
             $result['errors'] = $validator->errors();
             return $result;
         }
@@ -329,7 +342,34 @@ class StockRepository
          * SAVE IN DATABASE
          * -------------------
          */
-        $result['success'] = 1;
+
+        $data['delivery'] = implode(', ', $data['delivery']);
+
+
+        isset($userRole) && $userRole === "Admin" ? $data['published'] = 1 : $data['published'] = 0;
+        isset($userRole) && $userRole === "Admin" ? $data['star'] = 5 : $data['published'] = 0;
+
+        $stock->fill($data);
+        $stockAdded = $stock->save($data);
+
+        if($stockAdded){
+            /**
+             * Delete data from right form
+             */
+            \Session::forget('stockName');
+            \Session::forget('textarea_title');
+            \Session::forget('text_paragraph');
+            \Session::forget('showImg');
+            \Session::forget('showImgMin');
+
+            /**
+             * change the successful message depending on which user has added a stock ( the logical code is in the file MyScript.js)
+             */
+            isset($userRole) && $userRole === "Admin" ? $result['successAdmin'] = 1 : '';
+            isset($userRole) && $userRole === "Moderator" ? $result['successModerator'] = 1 : '';
+            $result['success'] = 1;
+
+        }
 
         return $result;
     }

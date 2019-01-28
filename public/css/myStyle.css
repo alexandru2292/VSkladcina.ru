@@ -21,3 +21,49 @@
 .errorName {
 color: #de4444; font-weight: 300; font-size : 18px;
 }
+
+.errorTags::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color:    #de4444;
+}
+.errorTags:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:    #de4444;
+    opacity:  1;
+}
+.errorTags::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    #de4444;
+    opacity:  1;
+}
+.errorTags:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color:    #de4444;
+}
+.errorTags::-ms-input-placeholder { /* Microsoft Edge */
+    color:    #de4444;
+}
+
+.errorTags::placeholder { /* Most modern browsers support this now. */
+    color:    #de4444;
+}
+
+
+
+.successStock::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: #92de60;
+}
+.successStock:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:    #92de60;
+    opacity:  1;
+}
+.successStock::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    #92de60;
+    opacity:  1;
+}
+.successStock:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color:    #92de60;
+}
+.successStock::-ms-input-placeholder { /* Microsoft Edge */
+    color:    #92de60;
+}
+
+.successStock::placeholder { /* Most modern browsers support this now. */
+    color:    #92de60;
+}
