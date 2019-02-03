@@ -22,6 +22,7 @@ class SocialAuthVkController extends Controller
         $client_id =  $this->vkRepository->getClientIdFromVkApi($auth);
 
         $URL = "https://oauth.vk.com/authorize?client_id=".$client_id."&scope=offline,email&redirect_uri=http://vskladcine.ru/vkredirect&response_type=code&display=page";
+
         return redirect($URL);
     }
     /**
@@ -29,6 +30,7 @@ class SocialAuthVkController extends Controller
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function redirect(\ATehnix\VkClient\Auth $auth){
+
         /**
          * If there is no user vk then we register it
          * ELSE Login in system

@@ -12,11 +12,10 @@
 @php
     $router = app()->make('router');
     $uri = $router->getCurrentRoute()->uri;
-
 @endphp
 <body class="{{ $uri == "404" && $uri == "profile" ? 'page-404' : '' }}" >
-
-@if($uri != "404" && $uri !== "profile" && $uri !== "profile/stock/add")
+            {{-- Check if current uri don't exist hide the div bg_stars --}}
+@if($uri != "404" && $uri !== "profile" && $uri !== "profile/stock/add" && \strpos($uri, 'card') === false)
 <div class="bg-stars">
     <div class="bg-stars__star-1"></div>
     <div class="bg-stars__star-2"></div>
@@ -489,8 +488,9 @@
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<script src="{{ url('js/libs.min.js') }}"></script>
+            <script src="{{ url("/vendor/unisharp/laravel-ckeditor/ckeditor.js") }}"></script><script src="{{ url('js/libs.min.js') }}"></script>
 <script src="{{ url('js/scripts.js') }}"></script>
+
 <script src="{{ url('js/MyScript.js') }}"></script>
 <script src="{{ url('js/YoutubeApi.js') }}"></script>
 </body>

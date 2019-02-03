@@ -11,12 +11,17 @@
 |
 */
 Route::get('/', ['uses'=> 'StockController@index', 'as' => 'index']);
+Route::get('/card/{id}', ['uses'=> 'StockController@showCard', 'as' => 'showCard']);
+Route::get('/moderation', ['uses'=> 'StockController@showModerationStocks']);
+Route::post('/edit_status', ['uses'=> 'StockController@editStatus']);
+
 Route::get('/login', ['uses' => 'LoginController@login']);
 
 Route::group(['prefix' => 'profile', 'middleware' => 'auth'], function (){
     Route::get('/', 'ProfileController@index')->name('profileIndex');
     Route::get('/stock/add', ['uses'=> 'StockController@StockEdit', 'as' => 'stockEdit']);
     Route::post('/stock/add', ['uses'=> 'StockController@stockAdd', 'as' => 'stockAdd']);
+    Route::post('/stock/add_img_with_ckeditor', ['uses'=> 'StockController@addImgWithCkeditor']);
     Route::post('/stock/store', ['uses'=> 'StockController@store', 'as' => 'stockStore']);
     Route::post('/stock/rmSessName', ['uses'=> 'StockController@rmSessName']);
     Route::post('/stock/rmSessTitle', ['uses'=> 'StockController@rmSessTitle']);
@@ -24,6 +29,7 @@ Route::group(['prefix' => 'profile', 'middleware' => 'auth'], function (){
     Route::post('/stock/rmSessYtLink', ['uses'=> 'StockController@rmSessYtLink']);
     Route::post('/stock/rmSessTags', ['uses'=> 'StockController@rmSessTags']);
 });
+
 
 Auth::routes();
 Route::get('/home', ['uses'=> 'HomeController@index', 'as' => 'home']);
@@ -39,6 +45,7 @@ Route::get('logout', ['uses' => '\App\Http\Controllers\Auth\LoginController@logo
  * Socialite
  *
  */
+
 Route::get('/redirect', 'SocialAuthFacebookController@redirect');
 Route::get('/callback', 'SocialAuthFacebookController@callback');
 

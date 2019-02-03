@@ -154,103 +154,189 @@
                             <option>Москва</option>
                         </select>
                     </div>
+                    @auth
+                        @php
+                          $userRole =  Auth::user()->load('role_user')->role_user->load('role')->role->alias;
+                        @endphp
+                        @if($userRole  == "Admin"|| $userRole == "Moderator" )
+                            <div class="filter-item">
+                                <a href="{{ url('/moderation') }}" class="moderation" >На модерации </a>
+                            </div>
+                            <div class="filter-item">
+                                <a href="{{ url('/on_editing') }}" class="moderation" >На переделку </a>
+                            </div>
+                        @endif
+                    @endauth
                 </div>
             </div>
         </div>
         <div class="cards-items">
+
             @if(isset($stocks))
                 @foreach($stocks as $stock)
+                    {{--
+                        IF the stocks have status == moderation show theire for Admin and Moderator  --}}
 
-                   @if($stock->published)
-                        <div class="card-item">
-                            <div class="card-item__in">
-                                <div class="card-item__bg-image" style="background-image: url('img/content/cards/{{ isset($stock->min_img) ? $stock->min_img : '' }}')">
-                                    <div class="card-item__title">
-                                        {{ $stock->title }}
+                    @if(isset($viewStatus) && $viewStatus == 'moderation')
+                        @if($stock->status= "moderation")
+                            <div class="card-item">
+                                <div class="card-item__in">
+                                    <a  href="{{  route("showCard", ['id' => $stock->id]) }}" style="text-decoration: none">
+                                        <div class="card-item__bg-image" style="background-image: url('img/content/cards/{{ isset($stock->min_img) ? $stock->min_img : '' }}')">
+                                            <div class="card-item__title">
+                                                {{ $stock->name }}
+                                            </div>
+                                            <div class="card-item__date">
+                                                {{ $stock->day }} {{ $stock->month }} {{ $stock->year }}
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <div class="card-item__info">
+                                        @if($stock->status == "moderation")
+                                            <div class="status status--collection">
+                                                <div class="status__title">
+                                                    Статус
+                                                </div>
+                                                <div class="status__row">
+                                                     На модерации
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        <div class="card-item__table">
+                                            <table>
+                                                <tr>
+                                                    <td>Тип складчины</td>
+                                                    <td>{{ isset($stock->hasType->name) ? $stock->hasType->name : '' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        Минимальное количество
+                                                    </td>
+                                                    <td>{{ isset($stock->min_count) ? $stock->min_count : '' }} </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Взнос</td>
+                                                    <td>{{ isset($stock->price_contribution) ? $stock->price_contribution : '' }} Р</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Дата сбора</td>
+                                                    <td>21 января 2017 г.</td>
+                                                </tr>
+                                            </table>
+                                        </div>
                                     </div>
-                                    <div class="card-item__date">
-                                        {{ $stock->day }} {{ $stock->month }} {{ $stock->year }}
-                                    </div>
-                                </div>
-                                <div class="card-item__info">
-                                    @if($stock->status == "finished")
-                                        <div class="status status--finished">
-                                            <div class="status__row">
-                                                <div>
-                                                    Завершена
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                    @if($stock->status == "collection")
-                                        <div class="status status--collection">
-                                            <div class="status__row">
-                                                <div>
-                                                    Идёт сбор
-                                                </div>
-                                                <div>
-                                                    67%
-                                                </div>
-                                            </div>
-                                            <div class="status__line">
-                                                <div style="width: 67%"></div>
-                                            </div>
-                                        </div>
-                                    @endif
+                                    <div class="card-item__rating">
+                                        <div class="stars">
 
-                                    @if($stock->status == "is_open")
-                                        <div class="status">
-                                            <div class="status__row">
-                                                <div>
-                                                    Открыта
-                                                </div>
-                                            </div>
+                                            {!! isset($stock->starsView) ? $stock->starsView : '' !!}
                                         </div>
-                                    @endif
-
-                                    @if($stock->status == "completed")
-                                        <div class="status status--completed">
-                                            <div class="status__row">
-                                                <div>
-                                                    Сбор завершен
-                                                </div>
-                                            </div>
-                                            <div class="status__line">
-                                                <div></div>
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    <div class="card-item__table">
-                                        <table>
-                                            <tr>
-                                                <td>Тип складчины</td>
-                                                <td>{{ isset($stock->hasType->name) ? $stock->hasType->name : '' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Цена</td>
-                                                <td>{{ isset($stock->price_contribution) ? $stock->price_contribution : '' }} Р</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Взнос</td>
-                                                <td>{{ isset($stock->price_contribution) ? $stock->price_contribution : '' }} Р</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Дата сбора</td>
-                                                <td>21 января 2017 г.</td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="card-item__rating">
-                                    <div class="stars">
-                                        {{-- the star display logic is in the StockRepository    --}}
-                                        {!! isset($stock->starsView) ? $stock->starsView : '' !!}
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                   @endif
+                        @endif
+
+                    @else
+
+                        {{-- If the stocks don't have status moderation --}}
+
+                        @if($stock->status != "moderation" && $stock->status != "on_editing")
+                            <div class="card-item">
+                                <div class="card-item__in">
+                                    <a href="{{ route("showCard", ['id' => $stock->id])  }}" style="text-decoration: none">
+                                        <div class="card-item__bg-image" style="background-image: url('img/content/cards/{{ isset($stock->min_img) ? $stock->min_img : '' }}')">
+                                            <div class="card-item__title">
+                                                {{ $stock->name }}
+                                            </div>
+                                            <div class="card-item__date">
+                                                {{ $stock->day }} {{ $stock->month }} {{ $stock->year }}
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <div class="card-item__info">
+                                        @if($stock->status == "finished")
+                                            <div class="status status--finished">
+                                                <div class="status__row">
+                                                    <div>
+                                                        Завершена
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if($stock->status == "collection")
+                                            <div class="status status--collection">
+                                                <div class="status__row">
+                                                    <div>
+                                                        Идёт сбор
+                                                    </div>
+                                                    <div>
+                                                        67%
+                                                    </div>
+                                                </div>
+                                                <div class="status__line">
+                                                    <div style="width: 67%"></div>
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        @if($stock->status == "is_open")
+                                            <div class="status">
+                                                <div class="status__row">
+                                                    <div>
+                                                        Открыта
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        @if($stock->status == "completed")
+                                            <div class="status status--completed">
+                                                <div class="status__row">
+                                                    <div>
+                                                        Сбор завершен
+                                                    </div>
+                                                </div>
+                                                <div class="status__line">
+                                                    <div></div>
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        <div class="card-item__table">
+                                            <table>
+                                                <tr>
+                                                    <td>Тип складчины</td>
+                                                    <td>{{ isset($stock->hasType->name) ? $stock->hasType->name : '' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        Мин. количество
+                                                    </td>
+                                                    <td>{{ isset($stock->min_count) ? $stock->min_count : '' }} </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Взнос</td>
+                                                    <td>{{ isset($stock->price_contribution) ? $stock->price_contribution : '' }} Р</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Дата сбора</td>
+                                                    <td>21 января 2017 г.</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="card-item__rating">
+                                        <div class="stars">
+
+                                            {!! isset($stock->starsView) ? $stock->starsView : '' !!}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endif
+
+
                 @endforeach
             @endif
         </div>

@@ -19,6 +19,6 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        //
+        '/profile/stock/add_img_with_ckeditor'
     ];
 }

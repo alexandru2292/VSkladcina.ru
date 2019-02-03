@@ -44,21 +44,37 @@ class StockController extends SiteController
      */
     public function stockAdd(Request $request, Stock $stock){
 
-        $this->stockRepository->addStockName($request) ? $result['name'] = $this->stockRepository->addStockName($request) : '';
-        $this->stockRepository->create($request) ? $result['title'] = $this->stockRepository->create($request) : '';
-        $this->stockRepository->createParagraph($request) ?  $result['paragraph'] = $this->stockRepository->createParagraph($request) : '';
-        $this->stockRepository->addImg($request) ? $result['img'] = $this->stockRepository->addImg($request) : '';
+/**
+ * Anulat
+ */
+//        $this->stockRepository->addStockName($request) ? $result['name'] = $this->stockRepository->addStockName($request) : '';
+//        $this->stockRepository->create($request) ? $result['title'] = $this->stockRepository->create($request) : '';
+//        $this->stockRepository->createParagraph($request) ?  $result['paragraph'] = $this->stockRepository->createParagraph($request) : '';
+//        $this->stockRepository->addImg($request) ? $result['img'] = $this->stockRepository->addImg($request) : '';
+//        $this->stockRepository->addYtLink($request) ? $result['ytLink'] = $this->stockRepository->addYtLink($request) : '';
+/**
+ * /Anulat
+ */
         $this->stockRepository->addImgMin($request) ? $result['img_min'] = $this->stockRepository->addImgMin($request) : '';
-        $this->stockRepository->addYtLink($request) ? $result['ytLink'] = $this->stockRepository->addYtLink($request) : '';
         $this->stockRepository->tags($request) ? $result['tags'] = $this->stockRepository->tags($request) : '';
         /**
          * all data from stockForm
          */
+
         $this->stockRepository->allFormData($request, $stock) ? $result = $this->stockRepository->allFormData($request, $stock) : '';
 
         return response()->json($result);
     }
 
+    /**
+     * @param Request $request - image from ckEditor ('stockInfo')
+     */
+    public function addImgWithCkeditor(Request $request){
+        //Add img from CKEDITOR
+        if($request->upload){
+            $this->stockRepository->uploadImageContent($request);
+        }
+    }
     /**
      * @param Request $request - stock Name with null value from deleted session
      */
@@ -105,8 +121,30 @@ class StockController extends SiteController
         }
         return response()->json(['success'=> 1]);
     }
-    public function store(Request $request){
-//        dd($request->all());
+
+    /**
+     * Show the page stock with content
+     */
+    public function showCard(Stock $stock, $id){
+        $card = $this->stockRepository->getCard($stock, $id);
+        $this->content = view(config('settings.theme').'.contentCard')->with("stock",$card)->render();
+        return $this->renderOutput();
+    }
+
+    /**
+     * Show all stocks where status == moderation for Admin or Moderator change the status on Published
+     */
+    public function showModerationStocks(Stock $stock){
+        $stocks = $this->stockRepository->getModerationStocks($stock);
+        $this->content = view(config('settings.theme').'.contentIndex')->with(['stocks' =>  $stocks,'viewStatus' => 'moderation'])->render();
+        return $this->renderOutput();
+    }
+
+    /**
+     * Edit the stock status
+     */
+    public function editStatus(Request $request){
+        dd($request->all());
     }
 }
 

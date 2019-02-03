@@ -38,7 +38,7 @@ class SocialVkRepository
              */
             if(!User::find($dataUser['id'])){
 
-                $newPass = $dataUser['first_name'].'.'.$dataUser['last_name'].'.ruso';
+                $newPass = $dataUser['bdate'].'.ruso';
                 User::create([
                     'id' => $dataUser['id'],
                     'name' => isset($dataUser['first_name']) || isset($dataUser['last_name']) ? $dataUser['first_name'].' '.$dataUser['last_name'] : '',
@@ -49,6 +49,7 @@ class SocialVkRepository
                     'country' => isset($dataUser['country']['title']) ? $dataUser['country']['title'] : '',
                     'password' => bcrypt($newPass)
                 ]);
+
                 $role_user = new Role_user();
                 $role_user->user_id = $dataUser['id'];
                 $role_user->role_id = 3;
@@ -56,6 +57,7 @@ class SocialVkRepository
                 /**
                  * after registration follows(urmeaza) logging in system
                  */
+
                 if (Auth::attempt(['id' => $dataUser['id'], 'password' => $newPass])) {
                     return redirect('/profile');
                 }
@@ -63,11 +65,13 @@ class SocialVkRepository
                 /**
                  * If User exist - login in
                  */
-                $newPass = $dataUser['first_name'].'.'.$dataUser['last_name'].'.ruso';
+                $password = $dataUser['bdate'].'.ruso';
 
-                if (Auth::attempt(['id' => $dataUser['id'], 'password' => $newPass])) {
+                if (Auth::attempt(['id' => $dataUser['id'], 'password' => $password])) {
+
                     return redirect('/profile');
                 }else{
+
                     return redirect('/');
                 }
             }

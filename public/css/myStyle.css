@@ -67,3 +67,55 @@ color: #de4444; font-weight: 300; font-size : 18px;
 .successStock::placeholder { /* Most modern browsers support this now. */
     color:    #92de60;
 }
+
+.moderation{
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bolder;
+    height: 40px;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.subtitleStock {
+    font-size: 15px; border-bottom: 0; padding: 0; margin-top: -2px;
+}
+
+
+/**
+Button upload image from page stock add
+ */
+.upload-img-btn {
+    position: absolute;
+    z-index: 7;
+    top: 40px;
+    right: 10px;
+    font-size: 13px;
+}
+#uploadImgCK{
+
+    /*border: 1px solid silver;*/
+    padding: 1px;
+    text-decoration: none;
+}
+#uploadImgCK span{
+    vertical-align: 5px
+}
+
+kbd {
+    color: rgba(5,4,4,0.93)
+}
+
+iframe{
+    width: 100%;
+}
+.content-text p{
+    color: black;
+}
+.content-text h1,h2,h3,h4,h5,h6{
+    color: black;
+}
+
+.settings{
+    margin: 15px;
+}

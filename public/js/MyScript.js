@@ -130,7 +130,7 @@ $(document).ready(function () {
 
             });
         }
-        $("#errorTitle").hide();
+        $("#errorName").hide();
 
         $.ajax({
             url: "/profile/stock/add",
@@ -182,7 +182,7 @@ $(document).ready(function () {
      */
     $("#textarea_paragraph").keyup(function () {
         var val = $(this).val();
-        console.log(val);
+
         if(val.length == 0){
 
             $.ajax({
@@ -492,32 +492,41 @@ $(document).ready(function () {
 
     $("#min_img").on("click", function () {
         if($("#stockName").val() == "Название складчины" || $("#stockName").val() == 0){
-            $("#errorTitle").show().text('Поле "название " обязательно для заполнения');
+            $("#errorName").show().text('Поле "название " обязательно для заполнения').css("padding-bottom", "10px");
             return false;
         }
-        $("#errorTitle").hide();
-
-        if($("#textarea_title").val().length < 1){
-            showTitle();
-            $("#errorTitle").show().text('Поле "имя заголовка" обязательно для заполнения');
-            return false;
-        }
-        $("#errorTitle").hide();
-
+        $("#errorName").hide();
+/**
+ * ANULAT
+ */
+        //
+        // if($("#textarea_title").val().length < 1){
+        //     showTitle();
+        //     $("#errorTitle").show().text('Поле "имя заголовка" обязательно для заполнения');
+        //     return false;
+        // }
+        // $("#errorTitle").hide();
+/**
+ * /ANULAT
+ */
         if ($("#textarea_paragraph").val().length < 1){
             showParagraph();
-            $("#errorParagraph").show().text('Поле "абзац" обязательно для заполнения');
+            $("#errorParagraph").show().text('Поле "дополнение" обязательно для заполнения').css("");
+            // $("#textarea_paragraph").show().attr('placeholder',"Поле \"Теги\" обязательно для заполнения").addClass('errorTags');
             return false;
         }
-        $("#errorParagraph").hide();
+/**
+ * ANULAT
+ */
+        // $("#errorParagraph").hide();
 
-        if($("#nameImg").val().length == 0){
-            showImg();
-            $("#errorImg").show().text('Выберите изображение ');
-            return false;
-        }
+        // if($("#nameImg").val().length == 0){
+        //     showImg();
+        //     $("#errorImg").show().text('Выберите изображение ');
+        //     return false;
+        // }
 
-        $("#errorImg").hide();
+        // $("#errorImg").hide();
 
         // if($("#yt_link").val().length < 1){
         //
@@ -525,24 +534,32 @@ $(document).ready(function () {
         //     $("#errorYtLink").text("Поле \"видео\" обязательно для заполнения");
         //     return false;
         // }
-
+/**
+ *  /ANULAT
+ */
         var stockTags = $("#stockTags").val();
 
         if (stockTags.length < 1){
-            showVideLink();
+/**
+ * Anulat
+ */
+            // showVideLink();
+            //
+            // var yt_link = $("#yt_link").val();
+            // var split1 =  yt_link.split('?');
+            // var split2 = split1[1].split("&");
+            // var split3 = split2[0].split("=");
+            // var videoId = split3[1];
+            // autoPlayVideo(videoId,'615','360');
+            // if (yt_link.length > 23) {
+            //     $("#videoContainer").show();
+            // }
+/**
+ * /Anulat
+ */
+            // $("#stockTags").css("margin-bottom", "10px");
 
-            var yt_link = $("#yt_link").val();
-            var split1 =  yt_link.split('?');
-            var split2 = split1[1].split("&");
-            var split3 = split2[0].split("=");
-            var videoId = split3[1];
-
-            autoPlayVideo(videoId,'615','360');
-            if (yt_link.length > 23) {
-                $("#videoContainer").show();
-            }
-            $("#stockTags").css("margin-bottom", "10px");
-            $("#errorTags").empty().text("Поле \"Теги\" обязательно для заполнения").show();
+            $("#stockTags").show().attr('placeholder',"Поле \"Теги\" обязательно для заполнения").addClass('errorTags');
             return false;
         }
 
@@ -618,14 +635,26 @@ $(document).ready(function () {
             }
             fd.append("name", name);
 
-            // title
-            if($("#textarea_title").val().length > 0){
-                var title = $("#textarea_title").val();
-            }else{
-                var title = '';
-            }
-            fd.append("title", title);
+        //     if($("#stockInfo").val().length > 0){
+        //         var description = $("#stockInfo").val();
+        //     }else{
+        //         var description = '';
+        //     }
+        //
+        // fd.append("description", description);
 
+/**
+ * Anulat
+ */
+        //
+            // // title
+            // if($("#textarea_title").val().length > 0){
+            //     var title = $("#textarea_title").val();
+            // }else{
+            //     var title = '';
+            // }
+            // fd.append("title", title);
+            //
               // subtitle
             if($("#textarea_paragraph").val().length > 0){
                 var subtitle = $("#textarea_paragraph").val();
@@ -633,31 +662,44 @@ $(document).ready(function () {
                 var subtitle = '';
             }
             fd.append("subtitle", subtitle);
+            //
+            // // Big img
+            //
+            // if($("#BigImgHidden").val().length > 0){
+            //     var big_img = $("#BigImgHidden").val();
+            // }else{
+            //     var big_img = '';
+            // }
+            // fd.append("big_img", big_img);
+            //
+            // // youtube_link
+            // if($("#yt_link").val().length > 0){
+            //     var youtube_link = $("#yt_link").val();
+            // }else{
+            //     var youtube_link = '';
+            // }
+            // fd.append("youtube_link", youtube_link);
+/**
+ *  /Anulat
+ */
 
-            // Big img
 
-            if($("#BigImgHidden").val().length > 0){
-                var big_img = $("#BigImgHidden").val();
-            }else{
-                var big_img = '';
-            }
-            fd.append("big_img", big_img);
-
-            // youtube_link
-            if($("#yt_link").val().length > 0){
-                var youtube_link = $("#yt_link").val();
-            }else{
-                var youtube_link = '';
-            }
-            fd.append("youtube_link", youtube_link);
-
-             if($("#stockTags").val().length > 0){
+        /**
+         * get value from input tags
+          */
+        if($("#stockTags").val().length > 0){
                  var tags = $("#stockTags").val();
              }else{
                  var tags = '';
              }
-             fd.append("tags", tags);
+         fd.append("tags", tags);
 
+        /**
+         * get data from textarea stockInfo
+         * @type {*|String|string|*}
+         */
+        var editor_data = CKEDITOR.instances.stockInfo.getData();
+        fd.append("description", editor_data);
         $.ajax({
             url: "/profile/stock/add",
             method: 'POST',
@@ -681,7 +723,7 @@ $(document).ready(function () {
                     if(data['errors']['subtitle']){
                             showParagraph();
                             $("#errorParagraph").show().text(data['errors']['subtitle']);
-                            $(".add_paragraph").scrollView();
+                            $(".subtitleStock").scrollView();
                             return false;
                     }
 
@@ -753,11 +795,8 @@ $(document).ready(function () {
                     $("#errorDelivery2").hide();
                 }
 
-
-
                 if(data['successAdmin']){
                     clearFormData();
-
                     $("#stockName").attr("placeholder", 'Складчина была успешно опубликована').scrollView();
                     $("#stockName").addClass("successStock");
                     // $("#success").show().text('Складчина была успешно опубликована');
@@ -765,18 +804,16 @@ $(document).ready(function () {
                 }
                 if(data['successModerator']){
                     clearFormData();
-
                     // $("#success").show().text('Складчина отправлено администратору для проверки');
-                    $("#stockName").attr("placeholder", 'Складчина отправлено администратору для проверки').scrollView();
+                    $("#stockName").attr("placeholder", 'Складчина была успешно опубликована').scrollView();
                     // $("#stockName").addClass("successStock");
                     return false;
                 }
                 if(data['success']){
                     clearFormData();
                     // $("#success").show().text('Складчина успешно добавлена');
-                    $("#stockName").attr("placeholder", 'Складчина успешно добавлена').scrollView();
+                    $("#stockName").attr("placeholder", 'Складчина отправлено администратору для проверки').scrollView();
                     // $("#stockName").addClass("successStock");
-
                 }
             }
         });
@@ -793,6 +830,7 @@ $(document).ready(function () {
     /**
      * This function clear all data from left form and right stock form
      */
+
     function clearFormData() {
         $("#min_img_hidden").val("");
         $("#ShowBlurClass").addClass("cover-image__img--blur");
@@ -816,13 +854,90 @@ $(document).ready(function () {
         showTitle();
     }
     /**
-     * Check if valid right form
+     * Save the change stock status
      */
 
-    // $("#category").on("click", function () {
-    //
-    //    alert("Da");
-    // });
+    $("#confirm").on("click", function () {
+
+        /**
+         * get status value
+         */
+        var value = $("#stockStatus").val();
+
+        $.ajax({
+            url: "/edit_status",
+            method: 'POST',
+            contentType: false,
+            data: value,
+            //JQUERY CONVERT THE FILES ARRAYS INTO STRINGS.SO processData:false
+            processData: false,
+            success: function (data) {
+                if(data['success']) {
+
+                }
+            }
+        });
+
+    });
+
+    /**
+     *  Replace stock textarea with CKEDITOR
+     */
+
+    CKEDITOR.replace( 'stockInfo' , {
+
+        filebrowserUploadUrl:'/profile/stock/add_img_with_ckeditor',
+        filebrowserImageUploadUrl:'/profile/stock/add_img_with_ckeditor'
+
+    });
+
+    // When user clicks the 'upload image' button
+    $('.upload-img-btn').on('click', function(){
+        createStock
+        // Add click event on the image upload input
+        // field when button is clicked
+        $('#image-input').click();
+
+        $(document).on('change', '#image-input', function(e){
+            $("#successCopied").hide();
+            // Get the selected image and all its properties
+            var image_file = document.getElementById('image-input').files[0];
+            if(image_file){
+                var path = URL.createObjectURL(image_file);
+                $("#url_field").val(path);
+                $.fancybox.open({
+                    src  : '#popup-link-image',
+                    type : 'inline',
+                    opts : {
+                        animationEffect: "fade",
+                    }
+                });
+            }
+
+
+
+            $('#copyLinnk').on('click', function () {
+                var urlField = document.querySelector('#url_field');
+                // select the contents
+                urlField.select();
+                var copied = document.execCommand('copy'); // or 'cut'
+
+                if(copied){
+                    $("#copyLinnk").attr("value", 'Скопированный\n');
+                    $("#successCopied").show();
+                    setTimeout(function () {
+                        $.fancybox.close({
+                            src  : '#popup-link-image',
+                            type : 'inline',
+                            opts : {
+                                animationEffect: "fade",
+                            }
+                        });
+                    }, 1500)
+                }
+            });
+        });
+    });
 });
 
 

@@ -1,8 +1,14 @@
 <div class="wrapper">
     <div class="container">
         <div class="content-title" style="text-align: center">
-            <input type="text" class="content-title__input" name="name"  id="stockName"  placeholder="Название складчины" value="{{ session('stockName') ? session('stockName') : "" }}">
-            <span id="errorName" style="color: #de4444; font-weight: 300; margin-top: -50px">
+            <input type="text"  autocomplete="off" class="content-title__input" name="name"  id="stockName"  placeholder="Название складчины" value="{{ session('stockName') ? session('stockName') : "" }}">
+            <span id="errorName" style="color: #de4444; font-weight: 300; margin-top: -8px; display: none">
+                <br>
+            </span>
+            <input type="text" autocomplete="off"  class="content-title__input subtitleStock" name="subtitle"   id="textarea_paragraph"  placeholder="Краткое дополнение" value="{{ session('text_paragraph') ? session('text_paragraph') : "" }}">
+            {{--<input  class="content-title__input" style="font-size: 25px; color: white" id="textarea_paragraph" placeholder="Напишите что-нибудь" value="{{ session("text_paragraph") ? session("text_paragraph") : ''}}">--}}
+            <span id="errorParagraph" style="color: #de4444; font-weight: 300; margin-bottom: 10px; display: none">
+                <br>
             </span>
         </div>
         <div class="content-wrapper">
@@ -13,11 +19,10 @@
                     <div class="sidebar__box">
                         <div class="cover-image">
                             <div class="cover-image__img cover-image__img--blur" id="ShowBlurClass">
-                                <img id="showImgMin" src="{{ url('img/content/2763998541548217236_img.jpg') }}" alt="">
-                                <input type="hidden" id="min_img_hidden" nameimg="" value="{{ session('showImg') ? session('showImg') : '' }}">
+                                <img id="showImgMin" src="{{ url('img/content/card-photo-2.png') }}" alt="">
+                                <input type="hidden" id="min_img_hidden" {{--nameimg=""--}} value="{{ session('showImg') ? session('showImg') : '' }}">
                             </div>
                             <div class="cover-image__content">
-
                                 <div>
                                     <div class="cover-image__title">
                                         Обложка складчины
@@ -226,6 +231,8 @@
                                                 @if( Auth::user()->role_user->load('role')->role->name  == "Admin")
                                                     Опубликовать
                                                     @elseif(Auth::user()->role_user->load('role')->role->name  == "Moderator")
+                                                    Опубликовать
+                                                    @else
                                                     Отправить на проверку
                                                 @endif
                                             </button>
@@ -234,7 +241,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <button class="btn btn--block sidebar-toggle__btn-toggle active">
                             <svg class="icon icon-arrow"><use xlink:href="{{ url('img/icons.svg#icon-arrow') }}"/></svg>
                         </button>
@@ -247,13 +253,15 @@
                         <div class="editor">
                             {{-- Add Title stock  --}}
                             <div class="editor__content  edit_content__js">
-                                <div class="editor__title title__js" style="display: none">
-                                    {{ session('textarea_title')}}
-                                </div>
-                                <div class="editor__text show_paragraph" style="display: none">
-                                        {{ session("text_paragraph") }}
-                                </div>
-                                <div class="editor__image show_img" style="display: none">
+
+            {{--Anulat--}}
+                                {{--<div class="editor__title title__js" style="display: none">--}}
+                                    {{--{{ session('textarea_title')}}--}}
+                                {{--</div>--}}
+                                {{--<div class="editor__text show_paragraph" style="display: none">--}}
+                                        {{--{{ session("text_paragraph") }}--}}
+                                {{--</div>--}}
+                                {{--<div class="editor__image show_img" style="display: none">--}}
                                     @php
                                         $imgName = session('showImg');
                                     @endphp
@@ -261,83 +269,110 @@
                                     <span id="showImg" style="background-image: url('/img/content/<?=$imgName?>') ">
                                         <input type="hidden" id="BigImgHidden" value="<?=$imgName?>">
                                     </span>
-                                </div>
-                                <div class="editor__buttons add_buttons ">
-                                    <div>
-                                        <button type="button" class="btn btn--block active add_title" id="add_title__js">Добавить заголовок</button>
-                                    </div>
-                                    <div>
-                                        <button type="button" class="btn btn--block btn--border add_paragraph" id="">Абзац</button>
-                                    </div>
-                                    <div>
-                                        <button type="button" class="btn btn--block btn--border add_img" id="">Изображение</button>
-                                    </div>
-                                    <div>
-                                        <button type="button" class="btn btn--block btn--border add_video" id="addYuLinkBtn">Видео</button>
-                                    </div>
-                                </div>
+                                {{--</div>--}}
+                                {{--<div class="editor__buttons add_buttons ">--}}
+                                    {{--<div>--}}
+                                        {{--<button type="button" class="btn btn--block active add_title" id="add_title__js">Добавить заголовок</button>--}}
+                                    {{--</div>--}}
+                                    {{--<div>--}}
+                                        {{--<button type="button" class="btn btn--block btn--border add_paragraph" id="">Абзац</button>--}}
+                                    {{--</div>--}}
+                                    {{--<div>--}}
+                                        {{--<button type="button" class="btn btn--block btn--border add_img" id="">Изображение</button>--}}
+                                    {{--</div>--}}
+                                    {{--<div>--}}
+                                        {{--<button type="button" class="btn btn--block btn--border add_video" id="addYuLinkBtn">Видео</button>--}}
+                                    {{--</div>--}}
+                                {{--</div>--}}
                             {{-- ADD TITLE  --}}
-                                <div class="editor__block add_title__js" >
-                                    <textarea rows="10" class="form-control editor__input-title" id="textarea_title" name="title"  placeholder="Введите имя заголовка">{{ session('textarea_title') ? session('textarea_title') : '' }}</textarea>
-                                    <span id="errorTitle" style="color: #de4444; font-weight: 300">
-                                        <br>
-                                    </span>
-                                </div>
+                                {{--<div class="editor__block add_title__js" >--}}
+                                    {{--<textarea rows="10" class="form-control editor__input-title" id="textarea_title" name="title"  placeholder="Введите имя заголовка">{{ session('textarea_title') ? session('textarea_title') : '' }}</textarea>--}}
+                                    {{--<span id="errorTitle" style="color: #de4444; font-weight: 300">--}}
+                                        {{--<br>--}}
+                                    {{--</span>--}}
+                                {{--</div>--}}
                             {{-- ADD PARAGRAPH--}}
-                                <div class="editor__block add_paragraph__js" style="display: none">
-                                    <textarea rows="15" class="form-control editor__input-text " id="textarea_paragraph" placeholder="Напишите что-нибудь">{{ session("text_paragraph") ? session("text_paragraph") : ''}}</textarea>
-                                    <span id="errorParagraph" style="color: #de4444; font-weight: 300">
-                                        <br>
-                                    </span>
-                                </div>
+                                {{--<div class="editor__block add_paragraph__js" style="display: none">--}}
+                                    {{--<textarea rows="15" class="form-control editor__input-text " id="textarea_paragraph" placeholder="Напишите что-нибудь">{{ session("text_paragraph") ? session("text_paragraph") : ''}}</textarea>--}}
+                                    {{--<span id="errorParagraph" style="color: #de4444; font-weight: 300">--}}
+                                        {{--<br>--}}
+                                    {{--</span>--}}
+                                {{--</div>--}}
                             {{-- ADD IMAGE --}}
-                                <div class="editor__block add_image__js" style="display: none">
-                                    <div class="editor__block-img">
-                                        <div>
-                                            <div class="editor__drag-and-drop">
-                                                Перетащите изображения сюда
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label class="btn form-file editor__attach">
-                                                <input type="file" name="img" class="add_image__js" id="img__js">
-                                                <span>Прикрепить  с диска</span>
-                                            </label>
-                                        </div>
+                                {{--<div class="editor__block add_image__js" style="display: none">--}}
+                                    {{--<div class="editor__block-img">--}}
+                                        {{--<div>--}}
+                                            {{--<div class="editor__drag-and-drop">--}}
+                                                {{--Перетащите изображения сюда--}}
+                                            {{--</div>--}}
+                                        {{--</div>--}}
+                                        {{--<div>--}}
+                                            {{--<label class="btn form-file editor__attach">--}}
+                                                {{--<input type="file" name="img" class="add_image__js" id="img__js">--}}
+                                                {{--<span>Прикрепить  с диска</span>--}}
+                                            {{--</label>--}}
+                                        {{--</div>--}}
 
-                                    </div>
+                                    {{--</div>--}}
 
-                                    <span id="errorImg" style="color: #de4444; font-weight: 300">
-                                        <br>
-                                    </span>
+                                    {{--<span id="errorImg" style="color: #de4444; font-weight: 300">--}}
+                                        {{--<br>--}}
+                                    {{--</span>--}}
 
-                                </div>
+                                {{--</div>--}}
                             {{-- ADD VIDEO --}}
-                                <div class="editor__block add_video__js" style="display: none">
-                                    <textarea rows="15" class="form-control editor__input-text" id="yt_link" placeholder="Вставьте ссылку на ролик Youtube">{{ session('textareaYtLink') ? session('textareaYtLink') : '' }}</textarea>
-                                    <div id="videoContainer" style="margin-top: -180px; display: none">
+                                {{--<div class="editor__block add_video__js" style="display: none">--}}
+                                    {{--<textarea rows="15" class="form-control editor__input-text" id="yt_link" placeholder="Вставьте ссылку на ролик Youtube">{{ session('textareaYtLink') ? session('textareaYtLink') : '' }}</textarea>--}}
+                                    {{--<div id="videoContainer" style="margin-top: -180px; display: none">--}}
                                         {{--Here is open the iframe yotube--}}
-                                    </div>
-                                    <span id="errorYtLink" style="color: #de4444; font-weight: 300">
+                                    {{--</div>--}}
+                                    {{--<span id="errorYtLink" style="color: #de4444; font-weight: 300">--}}
+                                        {{--<br>--}}
+                                    {{--</span>--}}
+                                {{--</div>--}}
+            {{-- /Anulat --}}
+
+                                {{--<a href="#" class="btn-sm upload-img-btn" id="uploadImgCK" data-toggle="modal" data-target="#myModal">--}}
+                                    {{--<img src="{{ url("css/images/upload.png") }}" width="20" height="20" alt=""><span> Загружать</span></a>--}}
+                                {{--<input type="file" id="image-input" style="display: none;">--}}
+
+                                <div class="editor__block " >
+                                    <textarea rows="15" class="form-control " id="stockInfo" name="description" placeholder="Напишите что-нибудь">{{ session("stockInfo") ? session("stockInfo") : 'Напишите что-нибудь'}}</textarea>
+                                    <span id="infoStockError" style="color: #de4444; font-weight: 300">
                                         <br>
                                     </span>
                                 </div>
+
                             </div>
                         </div>
                     </div>
 
                 </div>
+
+
                 <div class="content__box content__box--bg-dark">
                     <div class="tags">
                         <div class="tags__title">
                             Теги
                         </div>
-                        <input type="text" id="stockTags" placeholder="Укажите теги складчины" value="{{ session('stockTags') ? session('stockTags') : ''}}" class="tags__input">
+                        <input type="text" autocomplete="off" id="stockTags" placeholder="Укажите теги складчины" value="{{ session('stockTags') ? session('stockTags') : ''}}" class="tags__input">
                         <span id="errorTags">
                         </span>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="popup-link-image" class="popup popup-feedback">
+    <div class="popup-title">Скопируйте линк, нажмите на "Изображение" и вставьте его в поле "Сcылка"</div>
+
+    <input id="url_field" style="width: 100%; outline: none; padding: 5px; border-radius: 3px;" type="url" value="">
+    <div id="successCopied" style="color: #3accc6; font-size: 20px; text-align: center; display: none;">
+        Вы успешно скопировали путь к изображение
+    </div>
+    <div style="width: 100%; text-align: center; padding-top: 10px">
+        <input id="copyLinnk" style="margin: auto;text-align: center" class="btn btn-group-sm" value="Копировать">
     </div>
 </div>

@@ -171,7 +171,10 @@ return [
          * Intervention Image
          */
         Intervention\Image\ImageServiceProvider::class,
-
+        /**
+         * laravel CkEditor
+         */
+        Unisharp\Ckeditor\ServiceProvider::class,
 
         /*
          * Package Service Providers...
