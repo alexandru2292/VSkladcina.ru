@@ -885,10 +885,8 @@ $(document).ready(function () {
      */
 
     CKEDITOR.replace( 'stockInfo' , {
-
         filebrowserUploadUrl:'/profile/stock/add_img_with_ckeditor',
         filebrowserImageUploadUrl:'/profile/stock/add_img_with_ckeditor'
-
     });
 
     // When user clicks the 'upload image' button
@@ -938,6 +936,49 @@ $(document).ready(function () {
             });
         });
     });
+
+
 });
+
+/**
+ * Follows on stock
+ */
+
+$("#follows").on('click', function () {
+    var stock_id = $(this).data('stock-id');
+    $.ajax({
+        url: "/follows/"+stock_id,
+        method: 'GET',
+        contentType: false,
+        //JQUERY CONVERT THE FILES ARRAYS INTO STRINGS.SO processData:false
+        processData: false,
+        success: function (data) {
+            if(data['success']) {
+                $("#follows").hide();
+                $(".unfollowed").show();
+            }
+        }
+    });
+});
+
+/**
+ * UnFollows on stock
+ */
+
+ function unfollowed(stock_id) {
+    $.ajax({
+        url: "/un_follows/"+stock_id,
+        method: 'GET',
+        contentType: false,
+        //JQUERY CONVERT THE FILES ARRAYS INTO STRINGS.SO processData:false
+        processData: false,
+        success: function (data) {
+            if(data['success']) {
+                $(".unfollowed").hide();
+                $("#follows").show();
+            }
+        }
+    });
+};
 
 

@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Follower;
 use App\Repositories\StockRepository;
 use App\Stock;
 use App\Subcategory;
 use App\Type;
 use Illuminate\Http\Request;
 use App\Category;
+use Auth;
 class StockController extends SiteController
 {
     public function __construct(StockRepository $stockRepository)
@@ -127,7 +129,9 @@ class StockController extends SiteController
      */
     public function showCard(Stock $stock, $id){
         $card = $this->stockRepository->getCard($stock, $id);
-        $this->content = view(config('settings.theme').'.contentCard')->with("stock",$card)->render();
+        $follower = $this->stockRepository->hasFollower($id);
+
+        $this->content = view(config('settings.theme').'.contentCard')->with(["stock" => $card, 'hasFollower' => $follower ])->render();
         return $this->renderOutput();
     }
 

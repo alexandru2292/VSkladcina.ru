@@ -45,7 +45,8 @@ Route::get('logout', ['uses' => '\App\Http\Controllers\Auth\LoginController@logo
  * Socialite
  *
  */
-
+Route::get('/follows/{stock_id}', ['uses' => "FollowerController@follows", 'as' => 'follows']);
+Route::get('/un_follows/{stock_id}', ['uses' => "FollowerController@unFollows"]);
 Route::get('/redirect', 'SocialAuthFacebookController@redirect');
 Route::get('/callback', 'SocialAuthFacebookController@callback');
 

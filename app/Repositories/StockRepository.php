@@ -17,6 +17,7 @@ use Validator;
 use Illuminate\Support\Facades\Input;
 use Carbon\Carbon;
 use Session;
+use App\Follower;
 class StockRepository
 {
     public function getStocks($stock){
@@ -466,8 +467,9 @@ class StockRepository
         foreach ($stock->hasManyFollowers as $follower){
             $follower->load("hasUser");
         }
+
         $stock->countFollowers =  count($stock->hasManyFollowers);
-        dd($stock);
+
         return $stock;
     }
 
@@ -564,6 +566,21 @@ class StockRepository
         $url = url($url);
         $funcNum = Input::get('CKEditorFuncNum');
         echo '<script>window.parent.CKEDITOR.tools.callFunction('.$funcNum.', "'.$url.'", "")</script>';
+    }
+
+    /** Check if logged user is following this stock
+     * @param $stock_id - this is id stock which user is following
+     * @return mixed
+     */
+    public function hasFollower($stock_id){
+        $hasFollower =  Follower::where([['stock_id', $stock_id], ['user_id', '=', Auth::user()->id]])->first();
+
+        if($hasFollower === null){
+            return $hasFollower;
+        }else{
+            $hasFollower->hasFollower =1;
+            return $hasFollower;
+        }
     }
 }
 

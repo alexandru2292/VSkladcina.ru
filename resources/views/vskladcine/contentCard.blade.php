@@ -129,7 +129,7 @@
                 {{-- TREBUIE DE FINISAT AFISAREA --}}
                                 <div class="card-info__item">
                                     Складчики
-                                    <span>46</span>
+                                    <span>{{ $stock->countFollowers }}</span>
                                 </div>
                                 <div class="card-info__item">
                                     Создатель
@@ -312,15 +312,26 @@
                                 </div>
                             </div>
                             <div class="card-buttons">
-                                <a href="#" class="btn btn--block btn-entry">
-                                    <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
-                                    <span>Записаться в складчину</span>
-                                </a>
+                                @if(Auth::user()->id != $stock->hasUser->id)
+                                    @if(isset($hasFollower) && $hasFollower->hasFollower)
+                                        <a href="javascript:;" class="btn btn--red btn--block btn-entry unfollowed" onclick="unfollowed({{$stock->id}});" id="unfollowed">
+                                            <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
+                                            <span>Выписаться из складчины</span>
+                                        </a>
+                                        @else
+                                        <a href="javascript:;" class="btn btn--block btn-entry" data-stock-id="{{$stock->id}}" id="follows">
+                                            <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
+                                            <span>Записаться в складчину</span>
+                                        </a>
+                                    @endif
+                                        <a href="javascript:;" class="btn btn--red btn--block btn-entry unfollowed"  onclick="unfollowed({{$stock->id}});"  style="display: none;">
+                                            <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
+                                            <span>Выписаться из складчины</span>
+                                        </a>
 
-                                <a href="#" class="btn btn--red btn--block btn-entry">
-                                    <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
-                                    <span>Выписаться из складчины</span>
-                                </a>
+
+                                @endif
+
                                 <a href="#" class="btn btn--block">
                                     <span>Сохранить оценку</span>
                                 </a>
