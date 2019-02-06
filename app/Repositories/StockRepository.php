@@ -236,23 +236,20 @@ class StockRepository
                     /**
                      * If change new image delete old img
                      */
-                    session()->push('images.name_min', $str."_img_min.jpg");
-                    $oldStr =  session('images.name_min');
+                    if($request->old_img){
+                      if (file_exists(public_path()."/img/content/cards/". $request->old_img)){
+                            unlink(public_path()."/img/content/cards/". $request->old_img);
+                        }
+                    }
 
-                    $lastKey = count($oldStr) -2;
-                    $lastKey  == -1 ? $lastKey = 0 : ''; // if we change photo first time we assign last key first element from session array
-
-                    $lastStr = $oldStr[$lastKey]; // select first elemtn from session array
-
-//                    if (file_exists(public_path()."/img/content/cards/". $lastStr)){
-//                        unlink(public_path()."/img/content/cards/". $lastStr);
-//                    }
                     /**
                      * Move img to folder
                      */
                     $img->fit(config('settings.stockImgMin')['width'],       //folder public                                       name img mini
                         config('settings.stockImgMin')['height'])->save('img/content/cards/'.$obj->mini);
                     $imgName = $obj->mini;
+
+
                     /**
                      * Save in session img
                      */
@@ -265,9 +262,6 @@ class StockRepository
             }
         }
     }
-
-
-
 
     /**
      *  $request - from textarea youtube link
@@ -306,114 +300,179 @@ class StockRepository
          * Get user role
          */
         $userRole = Auth::user()->role_user->load('role')->role->alias;
+        if($userRole == "Admin" || $userRole == "Moderator"){
 
-        /**
-         * Get all data the form
-         */
-        $data = $request->except('_token');
+            /**
+             * Get all data the form
+             */
+            $data = $request->except('_token');
 
 
-        /**
-         * Set integer number  for price_contribution
-         */
-        $data['price_contribution'] = (int)str_replace(' ', '', $data['price_contribution']);
+            /**
+             * Set integer number  for price_contribution
+             */
+            $data['price_contribution'] = (int)str_replace(' ', '', $data['price_contribution']);
 
-        /**
-         * set column name for add values in BD
-         */
-        isset($data['min_imghidden']) ? $min_img = $data['min_imghidden'] : $min_img = '';
-        $data['min_img'] = $min_img;
-        if(isset($data['min_imghidden'])) unset($data['min_imghidden']);
-        /**
-         * Set error messages
-         */
+            /**
+             * set column min_img for add values in BD and check if textarea #stockInfo isset
+             */
 
-        $messages = [
-            'delivery.required' => 'Выберите службы доставки',
-            'date_collection.required' => 'Выберите дата сбора',
-            'big_img.required' => 'Выберите изображение',
-            'min_img.required' => 'Выберите изображение',
-            'tags.required' => 'Поле теги обязательно для заполнения',
-            'category_id.required' => 'Выберите категорию',
-            'type_id.required' => 'Выберите тип',
-            'price_contribution.required' => 'Выберите взнос(цена)',
-            'price_contribution.integer' => 'Поле "взнос(цена)" должно быть целым числом.',
-            'subtitle.required' => 'Поле "абзац" обязательно для заполнения',
-            'youtube_link.required' => 'Поле "видео" обязательно для заполнения',
-            'min_count.required' => 'Поле "минимальное количество" обязательно для заполнения',
-            'commission_contribution.required' => 'Поле "Взнос (комиссия)" обязательно для заполнения',
-            'commission_contribution.integer' => 'Поле "Взнос (комиссия)"  должно быть целым числом.',
-            "min_count.integer" => "Поле \"Минимальное количество\" должно быть целым числом."
+            isset($data['min_imghidden']) ? $min_img = $data['min_imghidden'] : $min_img = '';
+            $data['min_img'] = $min_img;
+            if(isset($data['min_imghidden'])) unset($data['min_imghidden']);
 
-        ];
-        /**
-         * Set validation rules
-         */
-        $validator = Validator::make($data, [
-            'name' => 'required|max:255',
-            'subtitle' => 'required',
-           /* 'title' => 'required',
-            'big_img' => 'required',*/
-            'min_img' => 'required',
-            'tags' => 'required',
-            'category_id' => 'required|integer',
-            'type_id' => 'required|integer',
-            'price_contribution' => 'required|integer',
-            'commission_contribution' => 'required|integer',
-            'delivery' => 'required',
+            /**
+             * check if completed textarea #stockInfo
+             */
+
+            if($data['description'] == "<p>Напишите что-нибудь</p>"){
+                $data['description'] = '';
+            }
+            /**
+             * Set error messages
+             */
+            $messages = [
+                'delivery.required' => 'Выберите службы доставки',
+                'date_collection.required' => 'Выберите дата сбора',
+                'big_img.required' => 'Выберите изображение',
+                'min_img.required' => 'Выберите изображение',
+                'tags.required' => 'Поле теги обязательно для заполнения',
+                'category_id.required' => 'Выберите категорию',
+                'type_id.required' => 'Выберите тип',
+                'price_contribution.required' => 'Выберите взнос(цена)',
+                'price_contribution.integer' => 'Поле "взнос(цена)" должно быть целым числом.',
+                'subtitle.required' => 'Поле "абзац" обязательно для заполнения',
+                'youtube_link.required' => 'Поле "видео" обязательно для заполнения',
+                'min_count.required' => 'Поле "минимальное количество" обязательно для заполнения',
+                'commission_contribution.required' => 'Поле "Взнос (комиссия)" обязательно для заполнения',
+                'commission_contribution.integer' => 'Поле "Взнос (комиссия)"  должно быть целым числом.',
+                "min_count.integer" => "Поле \"Минимальное количество\" должно быть целым числом."
+
+            ];
+            /**
+             * Set validation rules
+             */
+            $validator = Validator::make($data, [
+                'name' => 'required|max:255',
+                /* 'title' => 'required',
+                 'big_img' => 'required',*/
+                'min_img' => 'required',
+                'tags' => 'required',
+                'category_id' => 'required|integer',
+                'type_id' => 'required|integer',
+                'price_contribution' => 'required|integer',
+                'commission_contribution' => 'required|integer',
+                'delivery' => 'required',
 //            'youtube_link' =>  $data['type_id'] == 2 ? 'required' : '',
-            'min_count' => 'required|integer',
-            'date_collection' => 'required'
-        ], $messages);
+                'min_count' => 'required|integer',
+                'date_collection' => 'required',
+                'description' => 'required'
+            ], $messages);
 
-        if ($validator->fails()) {
-            $result['errors'] = $validator->errors();
+            if ($validator->fails()) {
+                $result['errors'] = $validator->errors();
+                return $result;
+            }
+
+            // dd($data);
+
+            /** ------------------
+             * SAVE IN DATABASE
+             * -------------------
+             */
+
+            $data['delivery'] = implode(', ', $data['delivery']);
+
+
+            isset($userRole) && $userRole == "Admin" ? $data['status'] = "is_open":"";
+            isset($userRole) && $userRole == "Admin" ? $data['star'] = 5 : "";
+
+
+            if(  isset($userRole) &&  $userRole != "Admin"){
+                $data['status'] = 'moderation';
+                $data['star'] = 0;
+            }
+            /**
+             * Check count imgs who we  need to  save in DB , if we selected more imgs and after we is canceled them(pe ele), now(acum) we need  deleted their
+             */
+
+            $explodeImg =  explode('/content/', $data['description']);
+            /** set array with card img-s
+             *  dd($explodeImg); =  array{ 0 => cards/b_0c1ec9c9709948ca0d01b8262c52ab9d.jpg" style=..., 1 => cards/b_0c1ec9c9709948ca0d01b8262c52ab9d.jpg" style=...
+             */
+            $poz =   strpos($explodeImg[0], 'cards/');
+            if($poz === false){
+                unset($explodeImg[0]);
+            }
+
+            $explodeImg = implode(', ', $explodeImg);
+            $explodeImg = explode(' ', $explodeImg);
+            /**
+             * Select only images elements
+             */
+            foreach ($explodeImg as $key => $item){
+                if (strpos($explodeImg[$key], 'cards/') === false){
+                    unset($explodeImg[$key]);
+                }
+            }
+            /**
+             * delete  last space and " from name images)
+             */
+
+            $explodeImg = implode($explodeImg, ' ');
+            $imagesForStore = explode('cards/', $explodeImg);
+
+            foreach ($imagesForStore as $k =>  $item){
+                $imagesForStore[$k] = str_replace(' ', '', $imagesForStore[$k]);
+                $imagesForStore[$k] = str_replace('"', '', $imagesForStore[$k]);
+                if (!$imagesForStore[$k]){
+                    unset($imagesForStore[$k]);
+                }
+            }
+            /**
+             * we getting one array with the images name
+             * Next - we need delete all images which don't save in the added stock (excepted images from $imagesForStore)
+             */
+            $delImgFromFolder = TmpCkeditorImage::whereNotIn('name', $imagesForStore)->get();
+            /**
+             * Delete img-s from folder which we canceled in CKeditor
+             */
+
+            foreach ($delImgFromFolder as $item){
+                if (file_exists(public_path()."/img/content/cards/". $item->name)){
+                    unlink(public_path()."/img/content/cards/". $item->name);
+                }
+            }
+            TmpCkeditorImage::select("*")->delete();
+
+
+            /**
+             * Store the stock values
+             */
+            $stock->fill($data);
+            $stockAdded = $stock->save($data);
+
+            if($stockAdded){
+                /**
+                 * Delete data from right form
+                 */
+                \Session::forget('stockName');
+                \Session::forget('textarea_title');
+                \Session::forget('text_paragraph');
+                \Session::forget('showImg');
+                \Session::forget('showImgMin');
+
+                /**
+                 * change the successful message depending on which (care) user has added a stock ( the logical code is in the file MyScript.js)
+                 */
+                isset($userRole) && $userRole === "Admin" ? $result['successAdmin'] = 1 : '';
+                isset($userRole) && $userRole === "Moderator" ? $result['successModerator'] = 1 : '';
+                $result['success'] = 1;
+            }
             return $result;
+        } else{
+            return ['useRights' => 'У вас нет прав модератора или администратора'];
         }
-
-
-        /** ------------------
-         * SAVE IN DATABASE
-         * -------------------
-         */
-
-        $data['delivery'] = implode(', ', $data['delivery']);
-
-
-        isset($userRole) && $userRole == "Admin" ? $data['status'] = "is_open":"";
-        isset($userRole) && $userRole == "Moderator" ? $data['status'] = "is_open" : "";
-        isset($userRole) && $userRole == "Admin" ? $data['star'] = 5 : "";
-        isset($userRole) && $userRole == "Moderator" ? $data['star'] = 5 : "";
-
-        if(  isset($userRole) &&  $userRole != "Admin" && $userRole != "Moderator"){
-            $data['status'] = 'moderation';
-            $data['star'] = 0;
-        }
-
-
-
-
-        $stock->fill($data);
-        $stockAdded = $stock->save($data);
-
-        if($stockAdded){
-            /**
-             * Delete data from right form
-             */
-            \Session::forget('stockName');
-            \Session::forget('textarea_title');
-            \Session::forget('text_paragraph');
-            \Session::forget('showImg');
-            \Session::forget('showImgMin');
-
-            /**
-             * change the successful message depending on which (care) user has added a stock ( the logical code is in the file MyScript.js)
-             */
-            isset($userRole) && $userRole === "Admin" ? $result['successAdmin'] = 1 : '';
-            isset($userRole) && $userRole === "Moderator" ? $result['successModerator'] = 1 : '';
-            $result['success'] = 1;
-        }
-        return $result;
     }
 
     /**
@@ -484,7 +543,9 @@ class StockRepository
              */
             $file = $request->file('upload');
             $filename = $file->getClientOriginalName();
+            str_replace(' ', '', $filename);
             $extension = $file->getClientOriginalExtension();
+
 
             /**
              * If file type is Video

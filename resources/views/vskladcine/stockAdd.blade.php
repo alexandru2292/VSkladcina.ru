@@ -20,7 +20,7 @@
                         <div class="cover-image">
                             <div class="cover-image__img cover-image__img--blur" id="ShowBlurClass">
                                 <img id="showImgMin" src="{{ url('img/content/card-photo-2.png') }}" alt="">
-                                <input type="hidden" id="min_img_hidden" {{--nameimg=""--}} value="{{ session('showImg') ? session('showImg') : '' }}">
+                                <input type="hidden" id="old_img" value="">
                             </div>
                             <div class="cover-image__content">
                                 <div>
@@ -337,12 +337,11 @@
                                 {{--<input type="file" id="image-input" style="display: none;">--}}
 
                                 <div class="editor__block " >
-                                    <textarea rows="15" class="form-control " id="stockInfo" name="description" placeholder="Напишите что-нибудь">{{ session("stockInfo") ? session("stockInfo") : 'Напишите что-нибудь'}}</textarea>
+                                    <textarea rows="15" class="form-control " id="stockInfo" name="description" placeholder="Напишите что-нибудь">Напишите что-нибудь</textarea>
                                     <span id="infoStockError" style="color: #de4444; font-weight: 300">
                                         <br>
                                     </span>
                                 </div>
-
                             </div>
                         </div>
                     </div>

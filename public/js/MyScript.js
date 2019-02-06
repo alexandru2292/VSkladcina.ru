@@ -212,79 +212,81 @@ $(document).ready(function () {
     /**
      * Auto Save Image
      */
-
-    $("#img__js").change(function (objEvent) {
-
-        var objFormData = new FormData();
-        // GET FILE OBJECT
-        var objFile = $(this)[0].files[0];
-        // APPEND FILE TO POST DATA
-        objFormData.append('img', objFile);
-
-        $.ajax({
-            url: "/profile/stock/add",
-            method: 'POST',
-            contentType: false,
-            data: objFormData,
-            //JQUERY CONVERT THE FILES ARRAYS INTO STRINGS.SO processData:false
-            processData: false,
-            success: function (data) {
-                if(data['img']['error']){
-                    $("#errorImg").empty().append("<br>"+data['img']['error']).show();
-                }else{
-                    var url = window.location.href;
-                    var arr = url.split(":");
-                    var protocol = arr[0];
-                    var imageUrl = protocol + "://"+document.domain+"/img/content/cards/"+data['img'];
-                    $('#showImg').css('background-image', 'url(' + imageUrl + ')');
-                    $("#BigImgHidden").val(data['img']);
-                    $("#nameImg").val(data['img']);
-                    $("#errorImg").empty();
-                }
-
-
-            }
-        });
-    });
+/**
+ * Anulat
+ */
+    // $("#img__js").change(function (objEvent) {
+    //
+    //     var objFormData = new FormData();
+    //     // GET FILE OBJECT
+    //     var objFile = $(this)[0].files[0];
+    //     // APPEND FILE TO POST DATA
+    //     objFormData.append('img', objFile);
+    //
+    //     $.ajax({
+    //         url: "/profile/stock/add",
+    //         method: 'POST',
+    //         contentType: false,
+    //         data: objFormData,
+    //         //JQUERY CONVERT THE FILES ARRAYS INTO STRINGS.SO processData:false
+    //         processData: false,
+    //         success: function (data) {
+    //             if(data['img']['error']){
+    //                 $("#errorImg").empty().append("<br>"+data['img']['error']).show();
+    //             }else{
+    //                 var url = window.location.href;
+    //                 var arr = url.split(":");
+    //                 var protocol = arr[0];
+    //                 var imageUrl = protocol + "://"+document.domain+"/img/content/cards/"+data['img'];
+    //                 $('#showImg').css('background-image', 'url(' + imageUrl + ')');
+    //                 $("#BigImgHidden").val(data['img']);
+    //                 $("#nameImg").val(data['img']);
+    //                 $("#errorImg").empty();
+    //             }
+    //
+    //
+    //         }
+    //     });
+    // });
     /**
      * Auto save youtube_link
      */
 
 
-    $("#yt_link").keyup(function () {
-        var val = $(this).val();
-        if(val.length == 0){
-            $("#videoContainer").hide();
-            $.ajax({
-                url: "/profile/stock/rmSessYtLink",
-                method: "POST",
-                data: {link: val},
-                success:function(data){
-                    if(data['success']){
-                       $("#yt_link").text(data);
-                    }
-                }
-            });
-        }
-        $("#errorYtLink").hide();
-        var yt_link = $("#yt_link").val();
-        var split1 =  yt_link.split('?');
-        var split2 = split1[1].split("&");
-        var split3 = split2[0].split("=");
-        var videoId = split3[1];
-
-        autoPlayVideo(videoId,'615','360');
-        $("#videoContainer").show();
-
-        $.ajax({
-            url: "/profile/stock/add",
-            method: "POST",
-            data: {link: val},
-            success:function(data){
-                $("#yt_link").text(data);
-            }
-        });
-    });
+    // $("#yt_link").keyup(function () {
+    //     var val = $(this).val();
+    //     if(val.length == 0){
+    //         $("#videoContainer").hide();
+    //         $.ajax({
+    //             url: "/profile/stock/rmSessYtLink",
+    //             method: "POST",
+    //             data: {link: val},
+    //             success:function(data){
+    //                 if(data['success']){
+    //                    $("#yt_link").text(data);
+    //                 }
+    //             }
+    //         });
+    //     }
+    //     $("#errorYtLink").hide();
+    //     var yt_link = $("#yt_link").val();
+    //     var split1 =  yt_link.split('?');
+    //     var split2 = split1[1].split("&");
+    //     var split3 = split2[0].split("=");
+    //     var videoId = split3[1];
+    //
+    //     autoPlayVideo(videoId,'615','360');
+    //     $("#videoContainer").show();
+    //
+    //     $.ajax({
+    //         url: "/profile/stock/add",
+    //         method: "POST",
+    //         data: {link: val},
+    //         success:function(data){
+    //             $("#yt_link").text(data);
+    //         }
+    //     });
+    // });
 
     /**
      * Add IFRAME with video from youtube
@@ -293,10 +295,13 @@ $(document).ready(function () {
      * @param width
      * @param height
      */
-    function autoPlayVideo(videoId, width, height){
-        "use strict";
-        $("#videoContainer").html('<iframe id="videoFrameYt" width="'+width+'" height="'+height+'" src="https://www.youtube.com/embed/'+videoId+'?autoplay=0&loop=1&rel=0&wmode=transparent" frameborder="0" allowfullscreen wmode="Opaque"></iframe>');
-    }
+    // function autoPlayVideo(videoId, width, height){
+    //     "use strict";
+    //     $("#videoContainer").html('<iframe id="videoFrameYt" width="'+width+'" height="'+height+'" src="https://www.youtube.com/embed/'+videoId+'?autoplay=0&loop=1&rel=0&wmode=transparent" frameborder="0" allowfullscreen wmode="Opaque"></iframe>');
+    // }
+/**
+ *  /Anulat
+ */
 
     /**
      * AUTO Save the tags
@@ -487,7 +492,7 @@ $(document).ready(function () {
 
 
     /**
-     * Upload Min IMG AutoSave
+     * Upload Min IMG Validate previous input
      */
 
     $("#min_img").on("click", function () {
@@ -506,18 +511,13 @@ $(document).ready(function () {
         //     return false;
         // }
         // $("#errorTitle").hide();
-/**
- * /ANULAT
- */
-        if ($("#textarea_paragraph").val().length < 1){
-            showParagraph();
-            $("#errorParagraph").show().text('Поле "дополнение" обязательно для заполнения').css("");
-            // $("#textarea_paragraph").show().attr('placeholder',"Поле \"Теги\" обязательно для заполнения").addClass('errorTags');
-            return false;
-        }
-/**
- * ANULAT
- */
+
+        // if ($("#textarea_paragraph").val().length < 1){
+        //     showParagraph();
+        //     $("#errorParagraph").show().text('Поле "дополнение" обязательно для заполнения').css("");
+        //     // $("#textarea_paragraph").show().attr('placeholder',"Поле \"Теги\" обязательно для заполнения").addClass('errorTags');
+        //     return false;
+        // }
         // $("#errorParagraph").hide();
 
         // if($("#nameImg").val().length == 0){
@@ -580,8 +580,10 @@ $(document).ready(function () {
         var objFormData = new FormData();
         // GET FILE OBJECT
         var objFile = $(this)[0].files[0];
-
         objFormData.append('img_min', objFile);
+
+        var old_img = $("#old_img").val();
+        objFormData.append('old_img',old_img);
 
         $.ajax({
             url: "/profile/stock/add",
@@ -605,10 +607,13 @@ $(document).ready(function () {
                     $(".cover-image__subtitle").hide();
                     $("#errorImg").empty();
                     $("#ImgMinError").hide();
+
+                    $("#old_img").val(data['img_min']);
                 }
             }
         });
     });
+
 
     /**
      * Save all data from stock form
@@ -616,12 +621,12 @@ $(document).ready(function () {
     $("#createStock").on("click", function () {
         var fd = new FormData(document.querySelector("form"));
         // If isset img_min
-        var min_img_hidd = $("#min_img_hidden").val().length;
+        var min_img_hidd = $("#old_img").val().length;
 
         if(min_img_hidd > 0){
-            var min_img = $("#min_img_hidden").val();
+            var min_img = $("#old_img").val();
         }else{
-            var min_img = 0;
+            var min_img = '';
         }
         fd.append("min_imghidden", min_img);
         /**
@@ -720,6 +725,12 @@ $(document).ready(function () {
                     }
                     $("#errorTitle").hide();
 
+                    if(data['errors']['description']){
+                        $(".editor").scrollView();
+                        $("#infoStockError").show().text(data['errors']['description']);
+                        return false;
+                    }
+
                     if(data['errors']['subtitle']){
                             showParagraph();
                             $("#errorParagraph").show().text(data['errors']['subtitle']);
@@ -789,10 +800,17 @@ $(document).ready(function () {
                     // $("#errorMinCount").hide();
 
                 }else{
+                    CKEDITOR.instances.stockInfo.setData('Напишите что-нибудь'); // Clear textarea ckeditor
+                    /**
+                     * Clear value OLD min img
+                     */
+                    $("#old_img").val('');
+                    $(".cke_top").css("margin-top:", "30px");
                     $("#errorMinCount").hide();
                     $("#errorDateColl").hide();
                     $("#errorContrComiss").hide();
                     $("#errorDelivery2").hide();
+                    $("#infoStockError").hide();
                 }
 
                 if(data['successAdmin']){
@@ -805,7 +823,7 @@ $(document).ready(function () {
                 if(data['successModerator']){
                     clearFormData();
                     // $("#success").show().text('Складчина отправлено администратору для проверки');
-                    $("#stockName").attr("placeholder", 'Складчина была успешно опубликована').scrollView();
+                    $("#stockName").attr("placeholder", 'Складчина отправлено администратору для проверки').scrollView();
                     // $("#stockName").addClass("successStock");
                     return false;
                 }
@@ -815,6 +833,11 @@ $(document).ready(function () {
                     $("#stockName").attr("placeholder", 'Складчина отправлено администратору для проверки').scrollView();
                     // $("#stockName").addClass("successStock");
                 }
+                if(data['useRights']){
+                    alert(data['useRights']);
+
+                }
+
             }
         });
     });

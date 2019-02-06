@@ -64,7 +64,6 @@ class StockController extends SiteController
          */
 
         $this->stockRepository->allFormData($request, $stock) ? $result = $this->stockRepository->allFormData($request, $stock) : '';
-
         return response()->json($result);
     }
 
