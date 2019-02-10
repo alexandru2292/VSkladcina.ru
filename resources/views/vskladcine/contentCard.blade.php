@@ -22,24 +22,34 @@
 
                             {{-- All status  --}}
 
-                            @if($stock->status == "moderation")
+                                @php
+                                    if(Auth::check()){
+                                         $userRole = Auth::user()->load('role_user')->role_user->load('role')->role->alias;
+                                    }
+                                @endphp
+                            @if(Auth::check() &&  $userRole == "Admin")
                                 <div class="status status">
-                                    <div class="status__title">
-                                        Статус
-                                    </div>
-                                    <div class="statusCard" >
-                                        <select class="selectpicker" id="stockStatus" style="min-width: 250px " >
-                                            <option value="moderation">На модерации</option>
-                                            <option value="is_open">Опубликовано</option>
-                                            <option value="on_editing">На переделку</option>
-                                       </select>
-                                    </div>
-                                    <div class="card-buttons">
+                                    <form action="javascript:;">
+                                        <div class="status__title">
+                                            Изменить статус
+                                        </div>
 
-                                        <button type="submit" id="confirm" class="btn btn--block">Подтвердить</button>
-                                    </div>
-
-
+                                        <div class="statusCard" >
+                                            <select class="selectpicker" id="status" name="status" style="min-width: 250px " >
+                                                <option >Выберите статус</option>
+                                                <option value="moderation" {{ $stock->status == "moderation" ? "selected" : ''}}>На модерации</option>
+                                                <option value="is_open" {{ $stock->status == "is_open" ? "selected" : ''}}>Опубликовано</option>
+                                                <option value="on_editing" {{ $stock->status == "on_editing" ? "selected" : ''}}>На переделку</option>
+                                            </select>
+                                        </div>
+                                        <input type="hidden" name="stock_id" value="{{ $stock->id }}">
+                                        <div class="form-group" id="changedStatus" style="color: #3accc6; display: none">
+                                            Статуч изменён
+                                        </div>
+                                        <div class="card-buttons">
+                                            <button type="submit" id="confirm" class="btn btn--block">Подтвердить</button>
+                                        </div>
+                                    </form>
                                 </div>
                             @endif
                             @if($stock->status == "finished")
@@ -129,7 +139,7 @@
                 {{-- TREBUIE DE FINISAT AFISAREA --}}
                                 <div class="card-info__item">
                                     Складчики
-                                    <span>{{ $stock->countFollowers }}</span>
+                                    <span id="countFollowers">{{ isset($stock->countFollowers) ? $stock->countFollowers : 0 }}</span>
                                 </div>
                                 <div class="card-info__item">
                                     Создатель
@@ -312,25 +322,31 @@
                                 </div>
                             </div>
                             <div class="card-buttons">
-                                @if(Auth::user()->id != $stock->hasUser->id)
-                                    @if(isset($hasFollower) && $hasFollower->hasFollower)
-                                        <a href="javascript:;" class="btn btn--red btn--block btn-entry unfollowed" onclick="unfollowed({{$stock->id}});" id="unfollowed">
-                                            <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
-                                            <span>Выписаться из складчины</span>
-                                        </a>
+                               @if(Auth::check())
+                                    @if(isset($stock->hasUser->id))
+                                        @if(isset($hasFollower) && isset($hasFollower->hasFollower))
+                                            <a href="javascript:;" class="btn btn--red btn--block btn-entry unfollowed" onclick="unfollowed({{$stock->id}});" id="unfollowed">
+                                                <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
+                                                <span>Выписаться из складчины</span>
+                                            </a>
                                         @else
-                                        <a href="javascript:;" class="btn btn--block btn-entry" data-stock-id="{{$stock->id}}" id="follows">
+                                            <a href="javascript:;" class="btn btn--block btn-entry" data-stock-id="{{$stock->id}}" id="follows">
+                                                <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
+                                                <span>Записаться в складчину</span>
+                                            </a>
+                                        @endif
+                                        <a href="javascript:;" class="btn btn--block btn-entry" data-stock-id="{{$stock->id}}" id="follows" style="display: none;">
                                             <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
                                             <span>Записаться в складчину</span>
                                         </a>
-                                    @endif
-                                        <a href="javascript:;" class="btn btn--red btn--block btn-entry unfollowed"  onclick="unfollowed({{$stock->id}});"  style="display: none;">
+                                        <a href="javascript:;" class="btn btn--red btn--block btn-entry unfollowed" id="unfoll_js"  onclick="unfollowed({{$stock->id}});"  style="display: none;">
                                             <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
                                             <span>Выписаться из складчины</span>
                                         </a>
 
 
-                                @endif
+                                    @endif
+                               @endif
 
                                 <a href="#" class="btn btn--block">
                                     <span>Сохранить оценку</span>

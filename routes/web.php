@@ -14,6 +14,7 @@ Route::get('/', ['uses'=> 'StockController@index', 'as' => 'index']);
 Route::get('/card/{id}', ['uses'=> 'StockController@showCard', 'as' => 'showCard']);
 Route::get('/moderation', ['uses'=> 'StockController@showModerationStocks']);
 Route::post('/edit_status', ['uses'=> 'StockController@editStatus']);
+Route::get('/messages', ['uses'=> 'MessageController@showMessages']);
 
 Route::get('/login', ['uses' => 'LoginController@login']);
 

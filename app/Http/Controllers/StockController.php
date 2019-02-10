@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Follower;
+use App\Message;
+use App\Notification;
 use App\Repositories\StockRepository;
 use App\Stock;
 use App\Subcategory;
@@ -31,12 +33,17 @@ class StockController extends SiteController
      * Show template for added stock
      */
     public function StockEdit(Category $categorys, Subcategory $subcategorys, Type $types){
-        /**
-         * Get all categories, subcategories and types stocks
-         */
-        $CatSubTypes =  $this->stockRepository->getCategorySubCatTypes($categorys, $subcategorys, $types);
-        $this->content = view(config('settings.theme').'.stockAdd')->with('catSubTypes', $CatSubTypes)->render();
-        return $this->renderOutput();
+          $userRole = Auth::user()->load("role_user")->role_user->load("role")->role->alias;
+          if($userRole == "Admin" || $userRole == "Moderator"){
+              /**
+               * Get all categories, subcategories and types stocks
+               */
+              $CatSubTypes =  $this->stockRepository->getCategorySubCatTypes($categorys, $subcategorys, $types);
+              $this->content = view(config('settings.theme').'.stockAdd')->with('catSubTypes', $CatSubTypes)->render();
+              return $this->renderOutput();
+          }else{
+              return abort(404);
+          }
     }
 
     /**
@@ -129,7 +136,6 @@ class StockController extends SiteController
     public function showCard(Stock $stock, $id){
         $card = $this->stockRepository->getCard($stock, $id);
         $follower = $this->stockRepository->hasFollower($id);
-
         $this->content = view(config('settings.theme').'.contentCard')->with(["stock" => $card, 'hasFollower' => $follower ])->render();
         return $this->renderOutput();
     }
@@ -138,16 +144,15 @@ class StockController extends SiteController
      * Show all stocks where status == moderation for Admin or Moderator change the status on Published
      */
     public function showModerationStocks(Stock $stock){
-        $stocks = $this->stockRepository->getModerationStocks($stock);
-        $this->content = view(config('settings.theme').'.contentIndex')->with(['stocks' =>  $stocks,'viewStatus' => 'moderation'])->render();
-        return $this->renderOutput();
+         $stocks = $this->stockRepository->getModerationStocks($stock);
+         $this->content = view(config('settings.theme').'.contentIndex')->with(['stocks' =>  $stocks,'viewStatus' => 'moderation'])->render();
+         return $this->renderOutput();
     }
-
     /**
      * Edit the stock status
      */
-    public function editStatus(Request $request){
-        dd($request->all());
+    public function editStatus(Request $request, Stock $stock, Message $message, Notification $notification){
+        return  $this->stockRepository->updateStatus($request, $stock, $message, $notification);
     }
 }
 

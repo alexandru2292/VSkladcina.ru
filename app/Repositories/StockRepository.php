@@ -20,6 +20,7 @@ use Session;
 use App\Follower;
 class StockRepository
 {
+    protected $stockCategory;
     public function getStocks($stock){
 
         $stocks = $stock->select('*')->orderBy('id', "DESC")->get();
@@ -480,8 +481,17 @@ class StockRepository
      * @return mixed - all stocks where status == moderation
      */
     public function getModerationStocks($stock){
-        $stocks = $stock->orderBy('id', 'DESC')->where('status', 'moderation')->get();
-        return $stocks;
+        if(Auth::check()){
+            $userRole = Auth::user()->load("role_user")->role_user->load("role")->role->alias;
+            if($userRole == "Admin"){
+              $stocks = $stock->orderBy('id', 'DESC')->where('status', 'moderation')->get();
+              return $stocks;
+            }else{
+             return abort(404);
+            }
+        }else{
+            return abort(404);
+        }
     }
 
     /**
@@ -634,13 +644,105 @@ class StockRepository
      * @return mixed
      */
     public function hasFollower($stock_id){
-        $hasFollower =  Follower::where([['stock_id', $stock_id], ['user_id', '=', Auth::user()->id]])->first();
-
-        if($hasFollower === null){
-            return $hasFollower;
+        if(Auth::user()){
+            $hasFollower =  Follower::where([['stock_id', $stock_id], ['user_id', '=', Auth::user()->id]])->first();
+            if($hasFollower === null){
+                return $hasFollower;
+            }else{
+                $hasFollower->hasFollower =1;
+                return $hasFollower;
+            }
         }else{
-            $hasFollower->hasFollower =1;
-            return $hasFollower;
+            return false;
+        }
+
+    }
+
+    /**
+     * @param $request - dates from status form
+     * @param $stock - the stock from getting relations creator's stock
+     * @param $message - the message for creator's stock
+     * @return \Illuminate\Http\JsonResponse - success message
+     */
+    public function updateStatus($request, $stock, $message, $notification){
+
+        if($request->status == "on_editing" || $request->status == "is_open" || $request->status == "moderation"){
+
+            $stock = $stock->where('id', $request->stock_id)->first();
+            $stock->load("hasUser", "hasManyFollowers", "hasCategory");
+            $stock->status = $request->status;
+            $toCreatorStock = $stock->user_id;
+            /**
+             * Get current logged user for to indicate who sent the message or the notification
+             */
+            $sender = Auth::user()->id;
+
+            /**
+             * After save the status we send message and notification
+             */
+            if($stock->save()){
+
+
+                /**
+                 *
+                 * the system sends a NOTIFICATION to the stock category followers
+                 */ if($request->status == "is_open"){
+
+                    $notificationMsg  =  config('settings.notificationMessage.is_open');
+
+                    /**
+                     * get users who are subscribed to the stock category
+                     */
+                    $this->stockCategory  =  $stock->hasCategory->alias;
+                    $stocks = Stock::with('hasCategory', 'hasManyFollowers')->whereHas('hasCategory', function ($query) {
+                        $query->where('alias', "$this->stockCategory");
+                    })->get();
+
+                    $data = [];
+                    foreach ($stocks as $stock){
+                        foreach ($stock->hasManyFollowers as $key =>  $follower){
+                            /**
+                             * if the admin is subscribed to a stock then(atunci) we do not send a notification
+                             */
+                            if($follower->user_id != $sender){
+                                $data[$key]['user_id'] = $follower->user_id;
+                                $data[$key]['notification'] = $notificationMsg;
+                                $data[$key]['sender_user_id'] = $sender;
+                            }
+                        }
+                    }
+
+                    $ntfSends = $notification->insert($data);
+                    if (!$ntfSends){
+                        return response()->json(['success' => 0, 'successMsg' => 'Ошибка при отправления уведомления ']);
+                    }
+                }
+
+                /**
+                 *
+                 * the system sends a MESSAGE to the stock creator
+                 */
+                if($request->status == "is_open" || $request->status == "on_editing"){
+                    //send  message about status stock -   to user  $stock->hasUser->id
+                    $statusMsg = '';
+                    if($request->status == "is_open" ){$statusMsg  =  config('settings.statusMessage.is_open');}
+                    if($request->status == "on_editing"){$statusMsg = $request->message;}
+
+                    /**
+                     * prepare data
+                     */
+                    $message->user_id = $toCreatorStock;
+                    $message->message = $statusMsg;
+                    $message->sender_user_id = $sender;
+                    if ($message->save()){
+                        return response()->json(['success' => 1, 'successMsg' => 'Сообщение  успешно отправлено']);
+                    }else{
+                        return response()->json(['success' => 0, 'successMsg' => 'Ошибка при отправления сообщения']);
+                    }
+                }
+            }else{
+                return response()->json(['success' => 0, 'successMsg' => 'Ошибка при ияменения статуса']);
+            }
         }
     }
 }

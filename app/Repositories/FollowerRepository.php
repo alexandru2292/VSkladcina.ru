@@ -15,7 +15,7 @@ class FollowerRepository
         /**
          * if you are not following , then(atunci) it subscribe
          */
-        $hasFollowing = Follower::where('stock_id', $stock_id)->first();
+        $hasFollowing = Follower::where([['user_id', Auth::user()->id], ['stock_id', $stock_id]])->first();
 
         if(!$hasFollowing){
             $follower->user_id = Auth::user()->id;

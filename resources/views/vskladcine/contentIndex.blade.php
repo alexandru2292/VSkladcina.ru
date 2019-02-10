@@ -158,7 +158,7 @@
                         @php
                           $userRole =  Auth::user()->load('role_user')->role_user->load('role')->role->alias;
                         @endphp
-                        @if($userRole  == "Admin"|| $userRole == "Moderator" )
+                        @if($userRole  == "Admin"/*|| $userRole == "Moderator"*/ )
                             <div class="filter-item">
                                 <a href="{{ url('/moderation') }}" class="moderation" >На модерации </a>
                             </div>
@@ -178,7 +178,7 @@
                         IF the stocks have status == moderation show theire for Admin and Moderator  --}}
 
                     @if(isset($viewStatus) && $viewStatus == 'moderation')
-                        @if($stock->status= "moderation")
+                        @if($stock->status == "moderation")
                             <div class="card-item">
                                 <div class="card-item__in">
                                     <a  href="{{  route("showCard", ['id' => $stock->id]) }}" style="text-decoration: none">
@@ -235,11 +235,8 @@
                                 </div>
                             </div>
                         @endif
-
                     @else
-
                         {{-- If the stocks don't have status moderation --}}
-
                         @if($stock->status != "moderation" && $stock->status != "on_editing")
                             <div class="card-item">
                                 <div class="card-item__in">
@@ -327,7 +324,6 @@
                                     </div>
                                     <div class="card-item__rating">
                                         <div class="stars">
-
                                             {!! isset($stock->starsView) ? $stock->starsView : '' !!}
                                         </div>
                                     </div>

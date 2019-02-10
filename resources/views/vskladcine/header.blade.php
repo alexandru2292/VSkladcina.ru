@@ -17,7 +17,7 @@
                         <li>
                             <a href="#" class="menu__dropdown-link">
                                 <svg class="icon icon-arrow"><use xlink:href="{{ url('img/icons.svg#icon-arrow') }}"/></svg>
-                                Информация
+                                Информаци
                             </a>
                             <ul class="menu__submenu">
                                 <li><a href="#">О проекте</a></li>
@@ -36,10 +36,13 @@
             </div>
             <div class="header__right">
                 @if(Auth::check())
-                    <a href="{{  route('stockEdit')}}" class="btn btn-stock addStock">
-                        <i class="icon icon-plus"></i>
-                        <span>Создать складчину</span>
-                    </a>
+                    @if( Auth::user()->role_user->load('role')->role->alias  == "Admin" || Auth::user()->role_user->load('role')->role->alias  == "Moderator")
+                        <a href="{{  route('stockEdit')}}" class="btn btn-stock addStock">
+                            <i class="icon icon-plus"></i>
+                            <span>Создать складчину</span>
+                        </a>
+                    @endif
+
                 @endif
                 <a href="#" class="btn btn-stock">
                     <svg class="icon icon-star"><use xlink:href="{{ url('img/icons.svg#icon-star') }}"/></svg>
@@ -48,7 +51,10 @@
                 <div class="header__buttons">
                     <div class="buttons-items">
                         <div class="dropdown dropdown--comments">
-                            <a href="#" class="btn-toggle btn-toggle--reminder btn-toggle--active">
+                            @php
+                                $newMessage = true;
+                            @endphp
+                            <a href="{{ url("/messages") }}" class="btn-toggle btn-toggle--reminder btn-toggle{{ isset($newMessage) ? "--active" : '' }}">
                                 <span><svg class="icon icon-comment"><use xlink:href="{{ url('img/icons.svg#icon-comment') }}"/></svg></span>
                             </a>
                         </div>

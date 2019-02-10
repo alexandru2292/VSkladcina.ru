@@ -881,22 +881,73 @@ $(document).ready(function () {
      */
 
     $("#confirm").on("click", function () {
-
+       var formData = new FormData(document.querySelector("form"));
         /**
          * get status value
          */
-        var value = $("#stockStatus").val();
 
+           var status  = $("#status").val();
+            if(status == "on_editing"){
+                $.fancybox.open({
+                    src  : '#popup-admin-msgToStocker',
+                    type : 'inline',
+                    opts : {
+                        animationEffect: "fade",
+                    }
+                });
+                $("#sendSuccessMess").hide();
+                /**
+                 * Set personalize message from admin to Stocker
+                 */
+                $("#btnSendMess").one("click", function () {
+
+                    var message = $("#messageToStocker").val();
+                   formData.append('message', message);
+                    $.ajax({
+                        url: "/edit_status",
+                        method: 'POST',
+                        contentType: false,
+                        data: formData,
+                        //JQUERY CONVERT THE FILES ARRAYS INTO STRINGS.SO processData:false
+                        processData: false,
+                        success: function (data) {
+                            if(data['success']){
+                                $("#sendSuccessMess").show().text(data['successMsg']);
+                                $("#messageToStocker").val('');
+                                setTimeout(function () {
+                                    $.fancybox.close({
+                                        src  : '#popup-admin-msgToStocker',
+                                        type : 'inline',
+                                        opts : {
+                                            animationEffect: "fade",
+                                        }
+                                    });
+                                }, 1500)
+                            }
+                            if(data['success'] == 0) {
+                                alert(data['successMsg']);
+                            }
+                        }
+                    });
+                });
+                return false;
+            }
         $.ajax({
             url: "/edit_status",
             method: 'POST',
             contentType: false,
-            data: value,
+            data: formData,
             //JQUERY CONVERT THE FILES ARRAYS INTO STRINGS.SO processData:false
             processData: false,
             success: function (data) {
-                if(data['success']) {
-
+                if(data['success']){
+                    $("#changedStatus").show();
+                    setTimeout(function () {
+                        $("#changedStatus").hide();
+                    }, 1500)
+                }
+                if(data['success'] == 0) {
+                    alert(data['successMsg']);
                 }
             }
         });
@@ -978,7 +1029,10 @@ $("#follows").on('click', function () {
         success: function (data) {
             if(data['success']) {
                 $("#follows").hide();
-                $(".unfollowed").show();
+                $("#unfoll_js").show();
+                var currCntFoll = $("#countFollowers").text();
+                var resCntFoll =  parseInt(currCntFoll) + 1;
+                $("#countFollowers").text(resCntFoll);
             }
         }
     });
@@ -987,7 +1041,6 @@ $("#follows").on('click', function () {
 /**
  * UnFollows on stock
  */
-
  function unfollowed(stock_id) {
     $.ajax({
         url: "/un_follows/"+stock_id,
@@ -999,6 +1052,9 @@ $("#follows").on('click', function () {
             if(data['success']) {
                 $(".unfollowed").hide();
                 $("#follows").show();
+                var currCntFoll = $("#countFollowers").text();
+                var resCntFoll =  parseInt(currCntFoll) - 1;
+                $("#countFollowers").text(resCntFoll);
             }
         }
     });

@@ -15,7 +15,7 @@
 @endphp
 <body class="{{ $uri == "404" && $uri == "profile" ? 'page-404' : '' }}" >
             {{-- Check if current uri don't exist hide the div bg_stars --}}
-@if($uri != "404" && $uri !== "profile" && $uri !== "profile/stock/add" && \strpos($uri, 'card') === false)
+@if($uri != "404" && $uri !== "profile" && $uri !== "profile/stock/add" && \strpos($uri, 'card') === false && $uri !== "messages")
 <div class="bg-stars">
     <div class="bg-stars__star-1"></div>
     <div class="bg-stars__star-2"></div>
@@ -46,6 +46,27 @@
         </div>
         <div class="form-group form-buttons">
             <button type="submit" class="btn btn-send">
+                <svg class="icon icon-comment-sm"><use xlink:href="{{ url("img/icons.svg#icon-comment-sm") }}"/></svg>
+                <span>Отправить</span>
+            </button>
+            <button type="submit" class="btn btn--border" data-fancybox-close>
+                <span>Отмена</span>
+            </button>
+        </div>
+    </form>
+
+</div>
+<div id="popup-admin-msgToStocker" class="popup popup-feedback">
+    <div class="popup-title">Напишите сообщение создателю складчине</div>
+    <form action="javascript:;" class="form-validate">
+        <div class="form-group">
+            <input type="text" name="message" id="messageToStocker" required class="form-control" placeholder="Напишите сообщение…">
+        </div>
+        <div class="form-group" id="sendSuccessMess" style="color: #0d95e8; display: none">
+
+        </div>
+        <div class="form-group form-buttons">
+            <button type="submit" class="btn btn-send" id="btnSendMess">
                 <svg class="icon icon-comment-sm"><use xlink:href="{{ url("img/icons.svg#icon-comment-sm") }}"/></svg>
                 <span>Отправить</span>
             </button>
