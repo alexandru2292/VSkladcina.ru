@@ -34,6 +34,7 @@ Route::group(['prefix' => 'profile', 'middleware' => 'auth'], function (){
     Route::get('/messages', ['uses'=> 'MessageController@showMessages']);
 
     Route::post('/showDialog', ['uses' => 'MessageController@showDialog']);
+    Route::post('/ifNewMessage', ['uses' => 'MessageController@ifNewMessage']);
 });
 
 

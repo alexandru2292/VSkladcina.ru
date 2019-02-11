@@ -33,10 +33,34 @@ $('.showMessage').on("click",function(evt){
         method: "POST",
         data: data,
         success: function (data) {
-            $("#showDialog").empty().html(data);
+            $("#showDialog").empty().css("overflow", 'auto').append(data);
+            $("#showDialog").jScrollPane({ autoReinitialise: true});
+        }
+    });
+});
+
+if ($(".showMessage .message-menu__item-img").length > 0){
+    ifNewMessage();
+}
+function ifNewMessage() {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $.ajax({
+        url: "/profile/ifNewMessage",
+        method: "POST",
+        success: function (data) {
             if(data['success']){
-                alert("da ");
+                $("#iconMessage").addClass("btn-toggle--active");
+            }else{
+                $("#iconMessage").removeClass("btn-toggle--active");
             }
         }
     });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    ifNewMessage();
 });

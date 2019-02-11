@@ -10,6 +10,7 @@ class MessageController extends SiteController
 {
     protected $msgRepository;
     protected $dialogs;
+    protected $newMessages;
     public function __construct(MessageRepository $msgRepository)
     {
         $this->msgRepository = $msgRepository;
@@ -31,5 +32,13 @@ class MessageController extends SiteController
     public function showDialog(Request $request){
        $this->dialogs = $this->msgRepository->getDialog($request);
        return response()->json($this->dialogs);
+    }
+
+    /**
+     * Get last Message
+     */
+    public function ifNewMessage(){
+        $this->newMessages = $this->msgRepository->selectNewMessages();
+        return $this->newMessages;
     }
 }

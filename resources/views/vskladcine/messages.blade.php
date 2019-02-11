@@ -15,21 +15,26 @@
                             <div class="message-menu">
 
                                 <div class="message-menu__items">
-                                    <div class="message-menu__item showMessage" data-sender="{{ $message->sender_user_id }}" data-message-id="{{ $message->id }}" >
-                                        {{--<input type="hidden"  >--}}
+
+                                    <div class="message-menu__item showMessage" id="showMessageDialog" data-sender="{{ $message->sender_user_id }}" data-message-id="{{ $message->id }}" >
+
                                         @if(isset($message->avatarHasLink))
                                             <div class="message-menu__item-img">
-                                                <img   style="border-radius: 50%;" src="{{ isset($message->hasSender->avatar) ? $message->hasSender->avatar: ''}}" alt="">
+
+                                                <img   style="border-radius: 50%;" src="{{ isset($message->avatar) ? $message->avatar: ''}}" alt="">
                                             </div>
                                         @else
                                             <div class="message-menu__item-img">
-                                                <img  style="border-radius: 50%;" src="{{ url("img/content/".$message->hasSender->avatar) }}" alt="">
+                                                <img  style="border-radius: 50%;" src="{{ url("img/content/".$message->avatar) }}" alt="">
                                             </div>
                                         @endif
-
                                         <div class="message-menu__item-content">
                                             <div class="message-menu__item-title">
+                                                <input type="hidden" id="sender_user_id" value="{{$message->sender_user_id}}">
                                                 {{ $message->sender }}
+                                               @if(!$message->is_read)
+                                                    <div class="message--new"></div>
+                                                @endif
                                             </div>
                                             <div class="message-menu__item-date">
                                                 {{ $message->sended_date }}
@@ -62,14 +67,14 @@
                                     <div class="comments__items scroll-pane" id="showDialog">
                                         <div class="comment-item" >
                                             <div class="comment-item__main">
-                                                <div class="comment-item__img">
+                                                <div class="comment-item__img ">
                                                     <svg class="icon icon-avatar"><use xlink:href="{{ url("img/icons.svg#icon-avatar") }}"/></svg>
                                                 </div>
                                                 <div class="comment-item__title">
                                                     Администратор
                                                 </div>
                                                 <div class="comment-item__message">
-                                                    <div class="comment-item__date">
+                                                    <div class="comment-item__date ">
                                                         26.04.17, 14:32
                                                     </div>
                                                     <div class="comment-item__text">
@@ -82,24 +87,43 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{--<div class="comment-item">--}}
-                                            {{--<div class="comment-item__main">--}}
-                                                {{--<div class="comment-item__img">--}}
-                                                    {{--<svg class="icon icon-avatar"><use xlink:href="{{ url("img/icons.svg#icon-avatar") }}"/></svg>--}}
-                                                {{--</div>--}}
-                                                {{--<div class="comment-item__title">--}}
-                                                    {{--Вы--}}
-                                                {{--</div>--}}
-                                                {{--<div class="comment-item__message">--}}
-                                                    {{--<div class="comment-item__date">--}}
-                                                        {{--14:28--}}
-                                                    {{--</div>--}}
-                                                    {{--<div class="comment-item__text">--}}
-                                                        {{--Задача организации, в особенности же консультация с широким активом требуют от нас анализа позиций, занимаемых участниками. Задача организации, в особенности же консультация с широким активом требуют от нас анализа позиций, занимаемых участниками в отношении поставленных задач.--}}
-                                                    {{--</div>--}}
-                                                {{--</div>--}}
-                                            {{--</div>--}}
-                                        {{--</div>--}}
+                                        <div class="comment-item">
+                                            <div class="comment-item__main">
+                                                <div class="comment-item__img">
+                                                    <svg class="icon icon-avatar"><use xlink:href="{{ url("img/icons.svg#icon-avatar") }}"/></svg>
+                                                </div>
+                                                <div class="comment-item__title">
+                                                    Вы
+                                                </div>
+                                                <div class="comment-item__message">
+                                                    <div class="comment-item__date">
+                                                        14:28
+                                                    </div>
+                                                    <div class="comment-item__text">
+                                                        Задача организации, в особенности же консультация с широким активом требуют от нас анализа позиций, занимаемых участниками. Задача организации, в особенности же консультация с широким активом требуют от нас анализа позиций, занимаемых участниками в отношении поставленных задач.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="comment-item">
+                                            <div class="comment-item__main">
+                                                <div class="comment-item__img">
+                                                    <svg class="icon icon-avatar"><use xlink:href="{{ url("img/icons.svg#icon-avatar") }}"/></svg>
+                                                </div>
+                                                <div class="comment-item__title">
+                                                    Вы
+                                                </div>
+                                                <div class="comment-item__message">
+                                                    <div class="comment-item__date">
+                                                        14:28
+                                                    </div>
+                                                    <div class="comment-item__text">
+                                                        Задача организации, в особенности же консультация с широким активом требуют от нас анализа позиций, занимаемых участниками. Задача организации, в особенности же консультация с широким активом требуют от нас анализа позиций, занимаемых участниками в отношении поставленных задач.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                     <div class="comment-answer">
 

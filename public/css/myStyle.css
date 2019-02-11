@@ -122,3 +122,11 @@ iframe{
 .IAKANA{
     color: red;
 }
+.message--new{
+    width: 6px;
+    height: 6px;
+    background-color: #de4444;
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 8px;
+}

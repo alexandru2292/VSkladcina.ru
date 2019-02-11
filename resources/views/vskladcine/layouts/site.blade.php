@@ -15,7 +15,7 @@
 @endphp
 <body class="{{ $uri == "404" && $uri == "profile" ? 'page-404' : '' }}" >
             {{-- Check if current uri don't exist hide the div bg_stars --}}
-@if($uri != "404" && $uri !== "profile" && $uri !== "profile/stock/add" && \strpos($uri, 'card') === false && $uri !== "messages")
+@if($uri != "404" && $uri !== "profile" && $uri !== "profile/stock/add" && \strpos($uri, 'card') === false && $uri !== "profile/messages")
 <div class="bg-stars">
     <div class="bg-stars__star-1"></div>
     <div class="bg-stars__star-2"></div>

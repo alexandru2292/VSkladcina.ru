@@ -54,7 +54,7 @@
                             @php
                                 $newMessage = true;
                             @endphp
-                            <a href="{{ url("/profile/messages") }}" class="btn-toggle btn-toggle--reminder btn-toggle{{ isset($newMessage) ? "--active" : '' }}">
+                            <a href="{{ url("/profile/messages") }}" id="iconMessage" class="btn-toggle btn-toggle--reminder">
                                 <span><svg class="icon icon-comment"><use xlink:href="{{ url('img/icons.svg#icon-comment') }}"/></svg></span>
                             </a>
                         </div>
