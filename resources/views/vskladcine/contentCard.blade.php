@@ -42,6 +42,7 @@
                                                 <option value="on_editing" {{ $stock->status == "on_editing" ? "selected" : ''}}>На переделку</option>
                                             </select>
                                         </div>
+
                                         <input type="hidden" name="stock_id" value="{{ $stock->id }}">
                                         <div class="form-group" id="changedStatus" style="color: #3accc6; display: none">
                                             Статуч изменён
