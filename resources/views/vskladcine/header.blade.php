@@ -44,7 +44,7 @@
                     @endif
 
                 @endif
-                <a href="#" class="btn btn-stock">
+                <a href="{{ url("/profile/my_stocks") }}" class="btn btn-stock">
                     <svg class="icon icon-star"><use xlink:href="{{ url('img/icons.svg#icon-star') }}"/></svg>
                     <span>Мои складчины</span>
                 </a>

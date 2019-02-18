@@ -84,7 +84,7 @@ class StockController extends SiteController
         }
     }
     /**
-     * @param Request $request - stock Name with null value from deleted session
+     *  Request $request - stock Name with null value from deleted session
      */
     public function rmSessName(Request $request){
         if(!$request->stockName){
@@ -94,7 +94,7 @@ class StockController extends SiteController
         return response()->json(['success'=> 1]);
     }
     /**
-     * @param Request $request - stock Title with null value from deleted session
+     *  Request $request - stock Title with null value from deleted session
      */
     public function rmSessTitle(Request $request){
         if(!$request->stockTitle){
@@ -103,7 +103,7 @@ class StockController extends SiteController
         return response()->json(['success'=> 1]);
     }
     /**
-     * @param Request $request - stock Paragraph with null value from deleted session
+     *  Request $request - stock Paragraph with null value from deleted session
      */
     public function rmSessParagraph(Request $request){
         if(!$request->stockParagraph){
@@ -112,7 +112,7 @@ class StockController extends SiteController
         return response()->json(['success'=> 1]);
     }
     /**
-     * @param Request $request - stock Paragraph with null value from deleted session
+     *  Request $request - stock Paragraph with null value from deleted session
      */
     public function rmSessYtLink(Request $request){
         if(!$request->link){
@@ -121,7 +121,7 @@ class StockController extends SiteController
         return response()->json(['success'=> 1]);
     }
    /**
-     * @param Request $request - stock Tags with null value from deleted session
+     *  Request $request - stock Tags with null value from deleted session
      */
     public function rmSessTags(Request $request){
         if(!$request->stockTags){
@@ -153,6 +153,14 @@ class StockController extends SiteController
      */
     public function editStatus(Request $request, Stock $stock, Message $message, Notification $notification){
         return  $this->stockRepository->updateStatus($request, $stock, $message, $notification);
+    }
+    /**
+     * get stocks from followers where user_id = logged user
+     */
+    public function getMyStocks(){
+     $myStocks = $this->stockRepository->selectMyStocks();
+     $this->content = view(config('settings.theme').'.myStocks')->with(['myStocks' =>  $myStocks])->render();
+     return $this->renderOutput();
     }
 }
 

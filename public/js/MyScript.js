@@ -537,13 +537,10 @@ $(document).ready(function () {
 /**
  *  /ANULAT
  */
-        var stockTags = $("#stockTags").val();
+        // var stockTags = $("#stockTags").val();
 
-        if (stockTags.length < 1){
-/**
- * Anulat
- */
-            // showVideLink();
+        // if (stockTags.length < 1){
+           // showVideLink();
             //
             // var yt_link = $("#yt_link").val();
             // var split1 =  yt_link.split('?');
@@ -554,16 +551,17 @@ $(document).ready(function () {
             // if (yt_link.length > 23) {
             //     $("#videoContainer").show();
             // }
+
+            // $("#stockTags").css("margin-bottom", "10px");
+        //
+        //     $("#stockTags").show().attr('placeholder',"Поле \"Теги\" обязательно для заполнения").addClass('errorTags');
+        //     return false;
+        // }
+
+        // $("#errorTags").hide();
 /**
  * /Anulat
  */
-            // $("#stockTags").css("margin-bottom", "10px");
-
-            $("#stockTags").show().attr('placeholder',"Поле \"Теги\" обязательно для заполнения").addClass('errorTags');
-            return false;
-        }
-
-        // $("#errorTags").hide();
     });
 
 
@@ -811,6 +809,9 @@ $(document).ready(function () {
                     $("#errorContrComiss").hide();
                     $("#errorDelivery2").hide();
                     $("#infoStockError").hide();
+
+
+
                 }
 
                 if(data['successAdmin']){
@@ -822,8 +823,17 @@ $(document).ready(function () {
                 }
                 if(data['successModerator']){
                     clearFormData();
+                    $.fancybox.open({
+                        src  : '#popup-admin-stock-added',
+                        type : 'inline',
+                        opts : {
+                            animationEffect: "fade",
+                        }
+                    });
                     // $("#success").show().text('Складчина отправлено администратору для проверки');
-                    $("#stockName").attr("placeholder", 'Складчина отправлено администратору для проверки').scrollView();
+                    $("#stockName").scrollView();
+                    $("#stock-added-message").text('Складчина отправлено администратору для проверки');
+
                     // $("#stockName").addClass("successStock");
                     return false;
                 }
@@ -882,6 +892,8 @@ $(document).ready(function () {
 
     $("#confirm").on("click", function () {
        var formData = new FormData(document.querySelector("form"));
+       var stockName =  $(this).data('stock-name');
+        $("#messageToStocker").val("Складчина " + '"'+stockName+'"');
         /**
          * get status value
          */
@@ -896,6 +908,7 @@ $(document).ready(function () {
                     }
                 });
                 $("#sendSuccessMess").hide();
+
                 /**
                  * Set personalize message from admin to Stocker
                  */

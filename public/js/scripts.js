@@ -1,5 +1,5 @@
 svg4everybody(); // support inline svg
-
+var scroll;
 $(document).ready(function() {
 
 	
@@ -9,7 +9,7 @@ $(document).ready(function() {
 	$("html").addClass(user.device.type);
 	
 	if ($('.scroll-pane').length){
-		$('.scroll-pane').jScrollPane({
+		scroll = $('.scroll-pane').jScrollPane({
 			 autoReinitialise: true
 		 });
 	}

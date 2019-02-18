@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Вскладчине</title>
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url('/css/main.css')}}">
     <link rel="stylesheet" href="{{ url('/css/myStyle.css')}}">
@@ -505,15 +506,123 @@
         </ul>
     </div>
 </div>
-
-
+<div id="popup-confirm-message"  class="popup popup-confirm">
+    <div class="popup-title">Вы точно желаете удалить переписку?</div>
+    <div class="form-group form-buttons">
+        <button class="btn" id="confirm-msg-delete" data-sender-id="" data-fancybox-close>
+            <span>Да</span>
+        </button>
+        <button class="btn btn--border" data-fancybox-close>
+            <span>Нет</span>
+        </button>
+    </div>
+</div>
+<div id="popup-complain" class="popup popup-feedback popup-complain">
+    <div class="popup-title">Пожаловаться на складчину</div>
+    <form action="#" class="form-validate">
+        <div class="form-group">
+            <input type="text" name="message" required class="form-control" placeholder="Напишите причину жалобы">
+        </div>
+        <div class="form-group form-buttons">
+            <button type="submit" class="btn btn-send">
+                <svg class="icon icon-comment-sm"><use xlink:href="img/icons.svg#icon-comment-sm"/></svg>
+                <span>Отправить</span>
+            </button>
+            <button type="submit" class="btn btn--border" data-fancybox-close>
+                <span>Отмена</span>
+            </button>
+        </div>
+    </form>
+</div>
+<div id="popup-user" class="popup popup-user">
+    <div class="user">
+        <div class="user__content">
+            <div class="user__img">
+                <img src="img/content/avatar-photo.png" alt="">
+            </div>
+            <div class="user__title">
+                Konstantinopolskiy
+            </div>
+            <div class="user__status">
+                складчик
+            </div>
+            <a href="javascript:void(0);" data-user-id="" class="btn btn--block user__btn-message" id="write-a-message">
+                <svg class="icon icon-comment-sm">
+                    <use xlink:href="img/icons.svg#icon-comment-sm"></use>
+                </svg>
+                <span>Написать сообщение</span>
+            </a>
+        </div>
+        <div class="user__statistics">
+            <div class="statistics">
+                <a href="#" class="statistics__row">
+                      <span>
+                        Участие
+                      </span>
+                        <span>
+                        24
+                      </span>
+                </a>
+                <a href="#" class="statistics__row">
+                      <span>
+                        Проведено
+                      </span>
+                      <span>
+                        7
+                      </span>
+                </a>
+                <a href="#" class="statistics__row">
+                     <span>
+                      Оплачено
+                     </span>
+                     <span>
+                      23
+                     </span>
+                </a>
+                <div class="statistics__row">
+                <span>
+                   Зарегистрирован
+                </span>
+                <span>
+                    27.03.2016
+                </span>
+               </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="popup-complain" class="popup popup-feedback popup-complain">
+    <div class="popup-title">Пожаловаться на складчину</div>
+    <form action="#" class="form-validate">
+        <div class="form-group">
+            <input type="text" name="message" required class="form-control"
+                   placeholder="Напишите причину жалобы">
+        </div>
+        <div class="form-group form-buttons">
+            <button type="submit" class="btn btn-send">
+                <svg class="icon icon-comment-sm">
+                    <use xlink:href="img/icons.svg#icon-comment-sm"/>
+                </svg>
+                <span>Отправить</span>
+            </button>
+            <button type="submit" class="btn btn--border" data-fancybox-close>
+                <span>Отмена</span>
+            </button>
+        </div>
+    </form>
+</div>
+<div id="popup-admin-stock-added" class="popup popup-feedback popup-complain" style="text-align: center">
+    <div class="popup-title" id="stock-added-message"></div>
+</div>
+<!-- receive notifications -->
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-            <script src="{{ url("/vendor/unisharp/laravel-ckeditor/ckeditor.js") }}"></script><script src="{{ url('js/libs.min.js') }}"></script>
+<script src="{{ url("/vendor/unisharp/laravel-ckeditor/ckeditor.js") }}"></script><script src="{{ url('js/libs.min.js') }}"></script>
 <script src="{{ url('js/scripts.js') }}"></script>
 
 <script src="{{ url('js/MyScript.js') }}"></script>
 <script src="{{ url('js/Message.js') }}"></script>
+<script src="{{ asset("js/echo.js") }}"></script>
 <script src="{{ url('js/YoutubeApi.js') }}"></script>
 </body>
 </html>

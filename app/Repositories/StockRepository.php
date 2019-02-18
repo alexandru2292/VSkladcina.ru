@@ -11,7 +11,7 @@ use App\Category;
 use App\Stock;
 use App\TmpCkeditorImage;
 use DB;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Image;
 use Validator;
 use Illuminate\Support\Facades\Input;
@@ -22,14 +22,16 @@ class StockRepository
 {
     protected $stockCategory;
     public function getStocks($stock){
-
         $stocks = $stock->select('*')->orderBy('id', "DESC")->get();
         $stocks->load('hasType');
-
-
         /**
          * Get day,  name month and year created stocks.  EXAMPLE : 02 января 2019
          */
+        $stocks = $this->setCustomSelectStock($stocks);
+        return $stocks;
+    }
+
+    public function setCustomSelectStock($stocks){
         $stocksArr = [];
         foreach ($stocks as $key => $stock){
             $stocksArr = $stocks;
@@ -47,7 +49,6 @@ class StockRepository
              * get year
              */
             $stocksArr[$key]->year =  $dateEvent->format('Y');
-
             /**
              * create the stars block of the block stocks
              */
@@ -60,7 +61,6 @@ class StockRepository
                     $starsView .= " <div class=\"star-item\" ><svg class=\"icon icon-star\" ><use xlink:href = \"img/icons.svg#icon-star\" /></svg></div >";
                 }
             $stocksArr[$key]->starsView = $starsView;
-
             /**
              * Calculate the sum price_contribution
              */
@@ -69,11 +69,9 @@ class StockRepository
              * Customize the number format : example 8 000
              */
             $stocksArr[$key]->price_contribution = number_format($stocksArr[$key]->price_contribution, false, false, ' ');
-
         }
         return $stocksArr;
     }
-
     /**
      * Get all categories, subcategories and types stocks
      */
@@ -358,7 +356,7 @@ class StockRepository
                 /* 'title' => 'required',
                  'big_img' => 'required',*/
                 'min_img' => 'required',
-                'tags' => 'required',
+//                'tags' => 'required',
                 'category_id' => 'required|integer',
                 'type_id' => 'required|integer',
                 'price_contribution' => 'required|integer',
@@ -536,9 +534,25 @@ class StockRepository
         foreach ($stock->hasManyFollowers as $follower){
             $follower->load("hasUser");
         }
+        /**
+         *  Set custom User name - example Alexandru F.
+         */
+         $userName = explode(' ', $stock->hasUser->name);
+         count($userName) > 1 ?  $userName = $userName[0].' '.$userName[1][0].'.' : $userName =  $stock->hasUser->name;
 
-        $stock->countFollowers =  count($stock->hasManyFollowers);
+         $stock->hasUser->name = $userName;
 
+        /**
+         * Mark the image link if creator stock  is logged with social network
+         * :// - if avatar contains a link
+         */
+        if(strpos($stock->hasUser->avatar, '://') > 3 && strpos($stock->hasUser->avatar, '://') < 6){
+            $stock->hasUser->avatarHasLink = 1;
+        }
+
+
+         $stock->countFollowers =  count($stock->hasManyFollowers);
+//        dd($stock);
         return $stock;
     }
 
@@ -745,5 +759,29 @@ class StockRepository
             }
         }
     }
+
+    /**
+     * get stocks from followers where user_id = logged user
+     */
+    public function selectMyStocks(){
+        $loggedUser = Auth::user();
+        $myStocks = Follower::where('user_id', $loggedUser->id)->get();
+        $myStocks->load("hasOneStock");
+        /**
+         * Make collection with stocks
+         */
+        $stocks = [];
+        foreach ($myStocks as $stock){
+            $stocks[] = $stock->hasOneStock;
+        }
+        $stocks = collect($stocks);
+        /**
+         * Set name, date
+         */
+        $myCustomStocks = $this->setCustomSelectStock($stocks);
+        return $myCustomStocks;
+    }
+
+
 }
 

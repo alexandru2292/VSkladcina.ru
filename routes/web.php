@@ -28,6 +28,7 @@ Route::group(['prefix' => 'profile', 'middleware' => 'auth'], function (){
     Route::post('/stock/rmSessParagraph', ['uses'=> 'StockController@rmSessParagraph']);
     Route::post('/stock/rmSessYtLink', ['uses'=> 'StockController@rmSessYtLink']);
     Route::post('/stock/rmSessTags', ['uses'=> 'StockController@rmSessTags']);
+    Route::get('/my_stocks', ['uses'=> 'StockController@getMyStocks']);
     /**
      * The messages
      */
@@ -35,8 +36,13 @@ Route::group(['prefix' => 'profile', 'middleware' => 'auth'], function (){
 
     Route::post('/showDialog', ['uses' => 'MessageController@showDialog']);
     Route::post('/ifNewMessage', ['uses' => 'MessageController@ifNewMessage']);
-});
+    Route::post('/updateIsReadColumn', ['uses' => 'MessageController@updateIsReadColumn']);
+    Route::post('/sendNewMessage', ['uses' => 'MessageController@sendNewMessage']);
+    Route::post('/removeDialog', ['uses' => 'MessageController@removeDialog']);
+    Route::post('/checkIfExistNewMessage', ['uses' => 'MessageController@checkIfExistNewMessage']);
 
+
+});
 
 Auth::routes();
 Route::get('/home', ['uses'=> 'HomeController@index', 'as' => 'home']);
@@ -44,7 +50,6 @@ Route::post('/registerUser', ['uses'=>'Auth\RegisterController@create', 'as' => 
 Route::get('/exit_from_profile', ['uses' => 'ProfileController@exitFromProfile', 'as' => 'profileExit']);
 Route::post('/loginUser', ['uses' => 'Auth\LoginController@login', 'as'=> 'loginUser']);
 Route::get('404', ['as' => '404', 'uses' => 'ErrorController@notfound']);
-
 
 Route::get('logout', ['uses' => '\App\Http\Controllers\Auth\LoginController@logout', 'as'=> 'logout']);
 

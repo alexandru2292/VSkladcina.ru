@@ -48,7 +48,7 @@
                                             Статуч изменён
                                         </div>
                                         <div class="card-buttons">
-                                            <button type="submit" id="confirm" class="btn btn--block">Подтвердить</button>
+                                            <button type="submit" id="confirm" class="btn btn--block" data-stock-name="{{ $stock->name }}">Подтвердить</button>
                                         </div>
                                     </form>
                                 </div>
@@ -146,13 +146,14 @@
                                     Создатель
                                     <div class="user-item-small">
                                         <div class="user-item-small__img">
-                                            <a href="javascript:void(0)" data-src="#popup-user" data-fancybox="">
-                                                <img src="{{url("img/content/photo-user.png") }}" alt="">
+
+                                            <a href="javascript:void(0)" data-src="#popup-user" class="user_item_popup" data-user-id="{{ $stock->hasUser->id }}" data-user-img="{{ $stock->hasUser->avatar }}" data-user-name="{{ $stock->hasUser->name  }}"   data-user-role="{{ $stock->hasUser->load("role_user")->role_user->load('role')->role->name }}" data-fancybox="">
+                                              <img src="{{isset($stock->hasUser->avatarHasLink) ? $stock->hasUser->avatar : url('img/content/'.$stock->hasUser->avatar) }}"  alt="">
                                             </a>
                                         </div>
                                         <div class="user-item-small__title">
-                                            <a href="javascript:void(0)" data-src="#popup-user" data-fancybox="">
-                                                Оля Ф.
+                                            <a href="javascript:void(0)" data-src="#popup-user" class="user_item_popup" data-fancybox="">
+                                                {{ $stock->hasUser->name }}
                                             </a>
                                         </div>
                                     </div>
@@ -331,10 +332,12 @@
                                                 <span>Выписаться из складчины</span>
                                             </a>
                                         @else
-                                            <a href="javascript:;" class="btn btn--block btn-entry" data-stock-id="{{$stock->id}}" id="follows">
-                                                <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
-                                                <span>Записаться в складчину</span>
-                                            </a>
+                                            @if($stock->status != "moderation" && $stock->status != "on_editing")
+                                                <a href="javascript:;" class="btn btn--block btn-entry" data-stock-id="{{$stock->id}}" id="follows">
+                                                    <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
+                                                    <span>Записаться в складчину</span>
+                                                </a>
+                                            @endif
                                         @endif
                                         <a href="javascript:;" class="btn btn--block btn-entry" data-stock-id="{{$stock->id}}" id="follows" style="display: none;">
                                             <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>

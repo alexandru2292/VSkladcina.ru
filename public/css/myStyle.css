@@ -130,3 +130,7 @@ iframe{
     display: inline-block;
     margin-bottom: 8px;
 }
+
+#showDialog .jspContainer {
+    min-height: 289px;
+}
