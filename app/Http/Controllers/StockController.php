@@ -24,7 +24,7 @@ class StockController extends SiteController
      */
     public function index(Stock $stock)
     {
-        $stocks = $this->stockRepository->getStocks($stock);
+        $stocks = $this->stockRepository->getStocks($stock, 0);
         $this->content = view(config('settings.theme').'.contentIndex')->with(['stocks' =>  $stocks])->render();
         return $this->renderOutput();
     }
@@ -32,16 +32,23 @@ class StockController extends SiteController
     /**
      * Show template for added stock
      */
-    public function StockEdit(Category $categorys, Subcategory $subcategorys, Type $types){
-          $userRole = Auth::user()->load("role_user")->role_user->load("role")->role->alias;
+    public function StockEdit(Category $categorys, Subcategory $subcategorys, Type $types, $id = null){
+
+         $userRole = Auth::user()->load("role_user")->role_user->load("role")->role->alias;
           if($userRole == "Admin" || $userRole == "Moderator"){
               /**
                * Get all categories, subcategories and types stocks
                */
-              $CatSubTypes =  $this->stockRepository->getCategorySubCatTypes($categorys, $subcategorys, $types);
-              $this->content = view(config('settings.theme').'.stockAdd')->with('catSubTypes', $CatSubTypes)->render();
+              $CatSubTypes = $this->stockRepository->getCategorySubCatTypes($categorys, $subcategorys, $types);
+              /**
+               * Get the stock for editing
+               */
+              $stock = $this->stockRepository->getStockForEditing($id);
+//              dd($stock);
+              $this->content = view(config('settings.theme').'.stockAdd')->with(['catSubTypes'=> $CatSubTypes, 'stock' => $stock])->render();
               return $this->renderOutput();
           }else{
+
               return abort(404);
           }
     }
@@ -52,7 +59,6 @@ class StockController extends SiteController
      * @return \Illuminate\Http\JsonResponse
      */
     public function stockAdd(Request $request, Stock $stock){
-
 /**
  * Anulat
  */
@@ -69,8 +75,8 @@ class StockController extends SiteController
         /**
          * all data from stockForm
          */
+        $this->stockRepository->allFormData($request, $stock, 'add') ? $result = $this->stockRepository->allFormData($request, $stock, 'add') : '';
 
-        $this->stockRepository->allFormData($request, $stock) ? $result = $this->stockRepository->allFormData($request, $stock) : '';
         return response()->json($result);
     }
 
@@ -83,58 +89,59 @@ class StockController extends SiteController
             $this->stockRepository->uploadImageContent($request);
         }
     }
-    /**
-     *  Request $request - stock Name with null value from deleted session
-     */
-    public function rmSessName(Request $request){
-        if(!$request->stockName){
-            \Session::forget('stockName');
-        }
-
-        return response()->json(['success'=> 1]);
-    }
-    /**
-     *  Request $request - stock Title with null value from deleted session
-     */
-    public function rmSessTitle(Request $request){
-        if(!$request->stockTitle){
-            \Session::forget('textarea_title');
-        }
-        return response()->json(['success'=> 1]);
-    }
-    /**
-     *  Request $request - stock Paragraph with null value from deleted session
-     */
-    public function rmSessParagraph(Request $request){
-        if(!$request->stockParagraph){
-            \Session::forget('text_paragraph');
-        }
-        return response()->json(['success'=> 1]);
-    }
-    /**
-     *  Request $request - stock Paragraph with null value from deleted session
-     */
-    public function rmSessYtLink(Request $request){
-        if(!$request->link){
-            \Session::forget('textareaYtLink');
-        }
-        return response()->json(['success'=> 1]);
-    }
-   /**
-     *  Request $request - stock Tags with null value from deleted session
-     */
-    public function rmSessTags(Request $request){
-        if(!$request->stockTags){
-            \Session::forget('stockTags');
-        }
-        return response()->json(['success'=> 1]);
-    }
+//    /**
+//     *  Request $request - stock Name with null value from deleted session
+//     */
+//    public function rmSessName(Request $request){
+//        if(!$request->stockName){
+//            \Session::forget('stockName');
+//        }
+//
+//        return response()->json(['success'=> 1]);
+//    }
+//    /**
+//     *  Request $request - stock Title with null value from deleted session
+//     */
+//    public function rmSessTitle(Request $request){
+//        if(!$request->stockTitle){
+//            \Session::forget('textarea_title');
+//        }
+//        return response()->json(['success'=> 1]);
+//    }
+//    /**
+//     *  Request $request - stock Paragraph with null value from deleted session
+//     */
+//    public function rmSessParagraph(Request $request){
+//        if(!$request->stockParagraph){
+//            \Session::forget('text_paragraph');
+//        }
+//        return response()->json(['success'=> 1]);
+//    }
+//    /**
+//     *  Request $request - stock Paragraph with null value from deleted session
+//     */
+//    public function rmSessYtLink(Request $request){
+//        if(!$request->link){
+//            \Session::forget('textareaYtLink');
+//        }
+//        return response()->json(['success'=> 1]);
+//    }
+//   /**
+//     *  Request $request - stock Tags with null value from deleted session
+//     */
+//    public function rmSessTags(Request $request){
+//        if(!$request->stockTags){
+//            \Session::forget('stockTags');
+//        }
+//        return response()->json(['success'=> 1]);
+//    }
 
     /**
      * Show the page stock with content
      */
-    public function showCard(Stock $stock, $id){
-        $card = $this->stockRepository->getCard($stock, $id);
+    public function showCard(Stock $stock, $id,$allStatus = null){
+
+        $card = $this->stockRepository->getCard($stock, $id, $allStatus);
         $follower = $this->stockRepository->hasFollower($id);
         $this->content = view(config('settings.theme').'.contentCard')->with(["stock" => $card, 'hasFollower' => $follower ])->render();
         return $this->renderOutput();
@@ -148,7 +155,7 @@ class StockController extends SiteController
          $this->content = view(config('settings.theme').'.contentIndex')->with(['stocks' =>  $stocks,'viewStatus' => 'moderation'])->render();
          return $this->renderOutput();
     }
-    /**
+    /**   $stock = $stock->where([['id', '=', $id], ['status', '!=', 'on_editing']])->first();
      * Edit the stock status
      */
     public function editStatus(Request $request, Stock $stock, Message $message, Notification $notification){
@@ -158,9 +165,25 @@ class StockController extends SiteController
      * get stocks from followers where user_id = logged user
      */
     public function getMyStocks(){
-     $myStocks = $this->stockRepository->selectMyStocks();
-     $this->content = view(config('settings.theme').'.myStocks')->with(['myStocks' =>  $myStocks])->render();
-     return $this->renderOutput();
+        $myStocks = $this->stockRepository->selectMyStocks();
+        $this->content = view(config('settings.theme').'.myStocks')->with(['myStocks' =>  $myStocks])->render();
+        return $this->renderOutput();
+    }
+    /**
+     * Get the stocks with status on_editing
+     */
+    public function getOnEditing(){
+        $myStocks = $this->stockRepository->getStocksWithOnEditingStatus();
+        $this->content = view(config('settings.theme').'.onEditing')->with(['myStocks' =>  $myStocks])->render();
+        return $this->renderOutput();
+    }
+
+    /**
+     * Update the stock
+     */
+    public function stockUpdate(Request $request){
+        $res =  $this->stockRepository->updateTheStock($request);
+        return response()->json($res);
     }
 }
 

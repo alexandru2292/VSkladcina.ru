@@ -3,11 +3,43 @@
         <div class="content-title">
             <h1>Сообщения</h1>
         </div>
+        {{----}}
+        {{--<div class="content-wrapper content-messages hidden">--}}
+            {{--<div class="sidebar">--}}
+
+                {{--<div class="sidebar__box sidebar__box--panel sidebar__box--bg-light">--}}
+                    {{--<div class="message-menu">--}}
+                        {{--<div class="message-menu__title">--}}
+                            {{--Переписки--}}
+                        {{--</div>--}}
+                        {{--<div class="message-menu__items">--}}
+
+                        {{--</div>--}}
+                    {{--</div>--}}
+                    {{--<button class="sidebar__btn-toggle">--}}
+                        {{--<svg class="icon icon-arrow"><use xlink:href="img/icons.svg#icon-arrow"/></svg>--}}
+                    {{--</button>--}}
+                {{--</div>--}}
+            {{--</div>--}}
+            {{--<div class="content">--}}
+                {{--<div class="content__box content__box--bg-light">--}}
+                    {{--<div class="tabs tabs--messages">--}}
+                        {{--<div class="tab-content">--}}
+
+                        {{--</div>--}}
+                    {{--</div>--}}
+                {{--</div>--}}
+
+            {{--</div>--}}
+        {{--</div>--}}
+        {{----}}
+
+        @if(isset($messages) && !empty($messages))
         <div class="content-wrapper content-messages">
             <div class="sidebar">
 
                 <div class="sidebar__box sidebar__box--panel sidebar__box--bg-light">
-                    @if(isset($messages))
+
                         <div class="message-menu__title">
                             Переписки
                         </div>
@@ -53,7 +85,7 @@
                                 <svg class="icon icon-arrow"><use xlink:href="{{ url("img/icons.svg#icon-arrow") }}"/></svg>
                             </button>
                         @endforeach
-                      @endif
+
 
                 </div>
             </div>
@@ -389,17 +421,20 @@
 
             </div>
         </div>
-        <div class="message-missing hidden">
-            <div>
-                <div class="message-missing__title">
-                    Переписка отсутствует
+            @else
+            <div class="message-missing">
+                <div>
+                    <div class="message-missing__title">
+                        Переписка отсутствует
+                    </div>
+                    <div class="message-missing__subtitle">
+                        Вы можете написать любому пользователю, кликнув на его профиль
+                        или найти его на странице всех пользователей сервиса
+                    </div>
+                    <a href="/" class="btn btn--border btn--white message-missing__btn-link">Перейти на главную</a>
                 </div>
-                <div class="message-missing__subtitle">
-                    Вы можете написать любому пользователю, кликнув на его профиль
-                    или найти его на странице всех пользователей сервиса
-                </div>
-                <a href="#" class="btn btn--border btn--white message-missing__btn-link">Перейти на главную</a>
             </div>
-        </div>
+        @endif
+
     </div>
 </div>

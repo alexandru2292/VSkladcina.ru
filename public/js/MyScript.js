@@ -580,8 +580,17 @@ $(document).ready(function () {
         var objFile = $(this)[0].files[0];
         objFormData.append('img_min', objFile);
 
-        var old_img = $("#old_img").val();
+        var old_img = $("#old_img").data('img-name');
         objFormData.append('old_img',old_img);
+
+        /**
+         * append stock_id for stock UPDATE
+         */
+        if($("#createStock").data("stock-id")){
+            var stockId = $("#createStock").data("stock-id");
+            objFormData.append('stockId', stockId);
+        }
+
 
         $.ajax({
             url: "/profile/stock/add",
@@ -606,7 +615,7 @@ $(document).ready(function () {
                     $("#errorImg").empty();
                     $("#ImgMinError").hide();
 
-                    $("#old_img").val(data['img_min']);
+                    $("#old_img").data('img-name',data['img_min']);
                 }
             }
         });
@@ -619,17 +628,18 @@ $(document).ready(function () {
     $("#createStock").on("click", function () {
         var fd = new FormData(document.querySelector("form"));
         // If isset img_min
-        var min_img_hidd = $("#old_img").val().length;
-
+        var min_img_hidd = $("#old_img").data('img-name').length;
         if(min_img_hidd > 0){
-            var min_img = $("#old_img").val();
+            var min_img = $("#old_img").data('img-name');
         }else{
             var min_img = '';
         }
         fd.append("min_imghidden", min_img);
+
         /**
          * prepares the right form data
          */
+
           //name
             if($("#stockName").val() != "Название складчины" || $("#stockName").val().length > 0){
                 var name = $("#stockName").val();
@@ -697,14 +707,22 @@ $(document).ready(function () {
              }
          fd.append("tags", tags);
 
+        if($(this).data('stock-id')){
+            fd.append("stockID", $(this).data('stock-id'));
+            var url = "/profile/stock/update";
+        }else{
+            var url = "/profile/stock/add";
+        }
+
         /**
          * get data from textarea stockInfo
          * @type {*|String|string|*}
          */
         var editor_data = CKEDITOR.instances.stockInfo.getData();
         fd.append("description", editor_data);
+
         $.ajax({
-            url: "/profile/stock/add",
+            url: url,
             method: 'POST',
             contentType: false,
             data: fd,
@@ -797,32 +815,31 @@ $(document).ready(function () {
                     }
                     // $("#errorMinCount").hide();
 
-                }else{
-                    CKEDITOR.instances.stockInfo.setData('Напишите что-нибудь'); // Clear textarea ckeditor
-                    /**
-                     * Clear value OLD min img
-                     */
-                    $("#old_img").val('');
-                    $(".cke_top").css("margin-top:", "30px");
-                    $("#errorMinCount").hide();
-                    $("#errorDateColl").hide();
-                    $("#errorContrComiss").hide();
-                    $("#errorDelivery2").hide();
-                    $("#infoStockError").hide();
-
-
-
                 }
 
                 if(data['successAdmin']){
-                    clearFormData();
-                    $("#stockName").attr("placeholder", 'Складчина была успешно опубликована').scrollView();
+                    /**
+                     * Clear Form data if don't stock-id
+                     */
+                    if($("#createStock").data('stock-id').length < 1){
+
+
+                        CKEDITOR.instances.stockInfo.setData('Напишите что-нибудь'); // Clear textarea ckeditor
+                        /**
+                         * Clear value OLD min img
+                         */
+                        $("#old_img").val('');
+                        // $(".cke_top").css("margin-top:", "30px");
+                        $("#errorMinCount").hide();
+                        $("#errorDateColl").hide();
+                        $("#errorContrComiss").hide();
+                        $("#errorDelivery2").hide();
+                        $("#infoStockError").hide();
+
+                        clearFormData();
+                    }
                     $("#stockName").addClass("successStock");
                     // $("#success").show().text('Складчина была успешно опубликована');
-                    return false;
-                }
-                if(data['successModerator']){
-                    clearFormData();
                     $.fancybox.open({
                         src  : '#popup-admin-stock-added',
                         type : 'inline',
@@ -832,8 +849,51 @@ $(document).ready(function () {
                     });
                     // $("#success").show().text('Складчина отправлено администратору для проверки');
                     $("#stockName").scrollView();
-                    $("#stock-added-message").text('Складчина отправлено администратору для проверки');
 
+                    if(data['action'] == "add"){
+                        $("#stock-added-message").text('Складчина была успешно опубликована');
+                    }else if(data['action'] == "update"){
+                        $("#stock-added-message").text('Складчина была успешно обновлена');
+                    }
+
+                    // $("#stockName").addClass("successStock");
+                    return false;
+
+                }
+                if(data['successModerator']){
+                    /**
+                     * Clear Form data if don't stock-id
+                     */
+                    if($("#createStock").data('stock-id').length < 1){
+                        CKEDITOR.instances.stockInfo.setData('Напишите что-нибудь'); // Clear textarea ckeditor
+                        /**
+                         * Clear value OLD min img
+                         */
+                        $("#old_img").val('');
+                        // $(".cke_top").css("margin-top:", "30px");
+                        $("#errorMinCount").hide();
+                        $("#errorDateColl").hide();
+                        $("#errorContrComiss").hide();
+                        $("#errorDelivery2").hide();
+                        $("#infoStockError").hide();
+
+                        clearFormData();
+                    }
+
+                    $.fancybox.open({
+                        src  : '#popup-admin-stock-added',
+                        type : 'inline',
+                        opts : {
+                            animationEffect: "fade",
+                        }
+                    });
+                    // $("#success").show().text('Складчина отправлено администратору для проверки');
+                    $("#stockName").scrollView();
+                    if(data['action'] == "add"){
+                        $("#stock-added-message").text('Складчина была успешно опубликована');
+                    }else if(data['action'] == "update"){
+                        $("#stock-added-message").text('Складчина была успешно обновлена и передана на проверку!');
+                    }
                     // $("#stockName").addClass("successStock");
                     return false;
                 }
@@ -844,7 +904,7 @@ $(document).ready(function () {
                     // $("#stockName").addClass("successStock");
                 }
                 if(data['useRights']){
-                    alert(data['useRights']);
+                    // alert(data['useRights']);
 
                 }
 
@@ -978,7 +1038,7 @@ $(document).ready(function () {
 
     // When user clicks the 'upload image' button
     $('.upload-img-btn').on('click', function(){
-        createStock
+
         // Add click event on the image upload input
         // field when button is clicked
         $('#image-input').click();
@@ -1072,5 +1132,4 @@ $("#follows").on('click', function () {
         }
     });
 };
-
 

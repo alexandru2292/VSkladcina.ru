@@ -11,16 +11,18 @@
 |
 */
 Route::get('/', ['uses'=> 'StockController@index', 'as' => 'index']);
-Route::get('/card/{id}', ['uses'=> 'StockController@showCard', 'as' => 'showCard']);
-Route::get('/moderation', ['uses'=> 'StockController@showModerationStocks']);
+Route::get('/card/{id}/{allStatus?}', ['uses'=> 'StockController@showCard', 'as' => 'showCard']);
+
 Route::post('/edit_status', ['uses'=> 'StockController@editStatus']);
 
 Route::get('/login', ['uses' => 'LoginController@login']);
 
 Route::group(['prefix' => 'profile', 'middleware' => 'auth'], function (){
     Route::get('/', 'ProfileController@index')->name('profileIndex');
-    Route::get('/stock/add', ['uses'=> 'StockController@StockEdit', 'as' => 'stockEdit']);
+    Route::get('/stock/add/{id?}', ['uses'=> 'StockController@StockEdit', 'as' => 'stockEdit']);
     Route::post('/stock/add', ['uses'=> 'StockController@stockAdd', 'as' => 'stockAdd']);
+    Route::post('/stock/update', ['uses'=> 'StockController@stockUpdate', 'as' => 'stockUpdate']);
+
     Route::post('/stock/add_img_with_ckeditor', ['uses'=> 'StockController@addImgWithCkeditor']);
     Route::post('/stock/store', ['uses'=> 'StockController@store', 'as' => 'stockStore']);
     Route::post('/stock/rmSessName', ['uses'=> 'StockController@rmSessName']);
@@ -29,6 +31,8 @@ Route::group(['prefix' => 'profile', 'middleware' => 'auth'], function (){
     Route::post('/stock/rmSessYtLink', ['uses'=> 'StockController@rmSessYtLink']);
     Route::post('/stock/rmSessTags', ['uses'=> 'StockController@rmSessTags']);
     Route::get('/my_stocks', ['uses'=> 'StockController@getMyStocks']);
+    Route::get('/stock/edit/{id}', ['uses'=> 'StockController@StockEdit', 'as' => "editCard"]);
+
     /**
      * The messages
      */
@@ -41,7 +45,16 @@ Route::group(['prefix' => 'profile', 'middleware' => 'auth'], function (){
     Route::post('/removeDialog', ['uses' => 'MessageController@removeDialog']);
     Route::post('/checkIfExistNewMessage', ['uses' => 'MessageController@checkIfExistNewMessage']);
 
+    Route::get('/stocks_for_moderation', ['uses'=> 'StockController@showModerationStocks']);
+    Route::get('/stocks_for_editing', ['uses'=> 'StockController@getOnEditing']);
 
+
+
+});
+
+Route::group(['prefix' => 'administrator', 'middleware' => 'auth'], function (){
+    Route::get('/', ['uses' => 'AdminController@index', 'as' => 'admin']);
+    Route::get('/deleteStock/{id}', ['uses' => 'AdminController@deleteStock', 'as' => 'deleteStock']);
 });
 
 Auth::routes();

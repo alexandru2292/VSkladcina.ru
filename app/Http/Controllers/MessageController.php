@@ -80,7 +80,7 @@ class MessageController extends SiteController
      * Check if exist new message then return it, else not exist return false
      */
     public function checkIfExistNewMessage(Request $request){
-        $result =  $this->msgRepository->getNewMessageIfExist($request->sender_user_id);
+        $result =  $this->msgRepository->getNewMessageIfExist($request);
         return $result;
     }
 

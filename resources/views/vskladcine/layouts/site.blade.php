@@ -546,7 +546,7 @@
             <div class="user__status">
                 складчик
             </div>
-            <a href="javascript:void(0);" data-user-id="" class="btn btn--block user__btn-message" id="write-a-message">
+            <a href="javascript:void(0);" data-user-id="" class="btn btn--block user__btn-message"   data-src="#popup-user-message" data-fancybox="" id="write-a-message">
                 <svg class="icon icon-comment-sm">
                     <use xlink:href="img/icons.svg#icon-comment-sm"></use>
                 </svg>
@@ -583,7 +583,7 @@
                 <span>
                    Зарегистрирован
                 </span>
-                <span>
+                <span id="created_at">
                     27.03.2016
                 </span>
                </div>
@@ -611,18 +611,42 @@
         </div>
     </form>
 </div>
+<div id="popup-user-message" class="popup popup-feedback popup-complain">
+    <div class="popup-title"></div>
+    <form action="#" class="form-validate">
+        <div class="form-group">
+            <textarea type="text" name="message" required class="form-control"
+                      placeholder="Напишите сообщение..."></textarea>
+        </div>
+        <div class="form-group" id="successSent" style="color: #0d95e8;">
+        </div>
+        <div class="form-group form-buttons">
+            <button type="button" class="btn btn-send" id="btn-send-message">
+                <svg class="icon icon-comment-sm">
+                    <use xlink:href="img/icons.svg#icon-comment-sm"/>
+                </svg>
+                <span>Отправить</span>
+            </button>
+            <button type="submit" class="btn btn--border" data-fancybox-close>
+                <span>Отмена</span>
+            </button>
+
+
+        </div>
+    </form>
+</div>
 <div id="popup-admin-stock-added" class="popup popup-feedback popup-complain" style="text-align: center">
     <div class="popup-title" id="stock-added-message"></div>
 </div>
 <!-- receive notifications -->
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<script src="{{ url("/vendor/unisharp/laravel-ckeditor/ckeditor.js") }}"></script><script src="{{ url('js/libs.min.js') }}"></script>
+<script src="{{ url("https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js") }}"></script>
+<script src="{{ url("/vendor/unisharp/laravel-ckeditor/ckeditor.js") }}"></script>
+<script src="{{ url('js/libs.min.js') }}"></script>
 <script src="{{ url('js/scripts.js') }}"></script>
 
 <script src="{{ url('js/MyScript.js') }}"></script>
 <script src="{{ url('js/Message.js') }}"></script>
-<script src="{{ asset("js/echo.js") }}"></script>
-<script src="{{ url('js/YoutubeApi.js') }}"></script>
+
 </body>
 </html>

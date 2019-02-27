@@ -63,7 +63,7 @@ class LoginController extends SiteController
     public function showLoginForm(StockRepository $stockRep, Stock $stock)
     {
 
-        $stocks = $stockRep->getStocks($stock);
+        $stocks = $stockRep->getStocks($stock, 0);
         $this->content = view(config('settings.theme').'.contentIndex')->with(['stocks' =>  $stocks])->render();
         return $this->renderOutput();
     }

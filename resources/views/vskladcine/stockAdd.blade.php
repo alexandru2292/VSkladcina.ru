@@ -1,11 +1,11 @@
 <div class="wrapper">
     <div class="container">
         <div class="content-title" style="text-align: center">
-            <input type="text"  autocomplete="off" class="content-title__input" name="name"  id="stockName"  placeholder="Название складчины" value="{{ session('stockName') ? session('stockName') : "" }}">
+            <input type="text"  autocomplete="off" class="content-title__input" name="name"  id="stockName"  placeholder="Название складчины" value="{{ isset($stock->name) ? $stock->name : '' }}">
             <span id="errorName" style="color: #de4444; font-weight: 300; margin-top: -8px; display: none">
                 <br>
             </span>
-            <input type="text" autocomplete="off"  class="content-title__input subtitleStock" name="subtitle"   id="textarea_paragraph"  placeholder="Краткое дополнение" value="{{ session('text_paragraph') ? session('text_paragraph') : "" }}">
+            <input type="text" autocomplete="off"  class="content-title__input subtitleStock" name="subtitle"   id="textarea_paragraph"  placeholder="Краткое дополнение" value="{{  isset($stock->subtitle) ? $stock->subtitle : ''  }}">
             {{--<input  class="content-title__input" style="font-size: 25px; color: white" id="textarea_paragraph" placeholder="Напишите что-нибудь" value="{{ session("text_paragraph") ? session("text_paragraph") : ''}}">--}}
             <span id="errorParagraph" style="color: #de4444; font-weight: 300; margin-bottom: 10px; display: none">
                 <br>
@@ -18,10 +18,17 @@
                     <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
                     <div class="sidebar__box">
                         <div class="cover-image">
-                            <div class="cover-image__img cover-image__img--blur" id="ShowBlurClass">
-                                <img id="showImgMin" src="{{ url('img/content/card-photo-2.png') }}" alt="">
-                                <input type="hidden" id="old_img" value="">
-                            </div>
+                            @if(isset($stock->min_img))
+                                <div class="cover-image__img" id="ShowBlurClass">
+                                <img id="showImgMin" src="{{ url(isset($stock->min_img) ? 'img/content/cards/'.$stock->min_img : '' ) }}" alt="">
+                                </div>
+
+                            @else
+                                <div class="cover-image__img cover-image__img--blur" id="ShowBlurClass">
+                                    <img id="showImgMin" src="{{url("img/content/cards/card-photo-2.png")}}" alt="">
+                                </div>
+                            @endif
+                                <input type="hidden" id="old_img" data-img-name="{{ isset($stock->min_img) ? $stock->min_img : '' }}" value="{{ isset($stock->min_img) ? $stock->min_img : '' }}">
                             <div class="cover-image__content">
                                 <div>
                                     <div class="cover-image__title">
@@ -50,7 +57,39 @@
                         <div class="sidebar-toggle__content">
                             <div class="sidebar__box sidebar__box--bg-light">
                                 <div class="form-show">
+                                    @php
+                                        if(Auth::check()){
+                                             $userRole = Auth::user()->load('role_user')->role_user->load('role')->role->alias;
+                                        }
+                                    @endphp
+                                    @if(Auth::check() &&  $userRole == "Admin" && Request::path() != "profile/stock/add")
+                                        <div class="status status">
+                                            <form action="javascript:;">
+                                                <div class="status__title">
+                                                    Изменить статус
+                                                </div>
+
+                                                <div class="statusCard" >
+                                                    <select class="selectpicker" id="status" name="status" style="min-width: 250px " >
+                                                        <option >Выберите статус</option>
+                                                        <option value="moderation" {{ isset($stock->status) && $stock->status == "moderation" ? "selected" : ''}}>На модерации</option>
+                                                        <option value="is_open" {{ isset($stock->status) && $stock->status == "is_open" ? "selected" : ''}}>Опубликовано</option>
+                                                        <option value="on_editing" {{ isset($stock->status) && $stock->status == "on_editing" ? "selected" : ''}}>Отклонено</option>
+                                                    </select>
+                                                </div>
+
+                                                <input type="hidden" name="stock_id" value="{{isset($stock->id) ? $stock->id : '' }}">
+                                                <div class="form-group" id="changedStatus" style="color: #3accc6; display: none">
+                                                    Статуч изменён
+                                                </div>
+                                                <div class="card-buttons">
+                                                    <button type="submit" id="confirm" class="btn btn--block" data-stock-name="{{ isset($stock->id) ?  $stock->name : '' }}">Подтвердить</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    @endif
                                     <div class="form-item">
+
                                         <div class="form-item__title">
                                             Категория
                                         </div>
@@ -59,13 +98,22 @@
                                                @if(isset($catSubTypes['categories']))
                                                     @foreach($catSubTypes['categories'] as $item)
                                                         @if($item->desc)
-                                                            <option value="{{ $item->id }}" data-description="{{ $item->desc }}">{{ $item->name }}</option>
+                                                            @if (isset($stock->hasCategory->alias) && $stock->hasCategory->alias == $item->alias)
+                                                                <option value="{{ $item->id }}"  data-description="{{ $item->desc }}" selected>{{ $item->name }}</option>
+                                                            @else
+                                                                <option value="{{ $item->id }}"  data-description="{{ $item->desc }}">{{ $item->name }}</option>
+                                                            @endif
                                                         @else
-                                                            <option  value="{{ $item->id }}" >{{ $item->name }}</option>
+                                                            @if (isset($stock->hasCategory->alias) && $stock->hasCategory->alias == $item->alias)
+                                                                <option value="{{ $item->id }}"  data-description="{{ $item->desc }}" selected>{{ $item->name }}</option>
+                                                            @else
+                                                                <option value="{{ $item->id }}"  data-description="{{ $item->desc }}">{{ $item->name }}</option>
+                                                            @endif
                                                         @endif
                                                     @endforeach
                                                @endif
                                             </select>
+
                                             <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
                                                {{ $errors->first('category_id') }}
                                             </span>
@@ -79,7 +127,12 @@
                                             <select class="selectpicker selectpicker-check" name="subcategory_id" title="Выберите подкатегорию">
                                                 @if(isset($catSubTypes['subcategories']))
                                                     @foreach($catSubTypes['subcategories'] as $item)
-                                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+
+                                                        @if (isset($stock->hasSubcategory->alias) && $stock->hasSubcategory->alias == $item->alias)
+                                                            <option value="{{ $item->id }}"   selected>{{ $item->name }}</option>
+                                                        @else
+                                                            <option value="{{ $item->id }}" >{{ $item->name }}</option>
+                                                        @endif
                                                     @endforeach
                                                 @endif
                                             </select>
@@ -96,7 +149,11 @@
                                             <select class="selectpicker" id="type_id" name="type_id">
                                                 @if(isset($catSubTypes['types']))
                                                     @foreach($catSubTypes['types'] as $item)
-                                                       <option value="{{ $item->id }}" >{{ $item->name }}</option>
+                                                        @if (isset($stock->hasType->alias) && $stock->hasType->alias == $item->alias)
+                                                            <option value="{{ $item->id }}"   selected>{{ $item->name }}</option>
+                                                        @else
+                                                            <option value="{{ $item->id }}" >{{ $item->name }}</option>
+                                                        @endif
                                                     @endforeach
                                                 @endif
                                             </select>
@@ -112,7 +169,7 @@
                                             Минимальное количество
                                         </div>
                                         <div class="form-item__content">
-                                            <input type="text" class="form-control" name="min_count" value="15">
+                                            <input type="text" class="form-control" name="min_count" value="{{ isset($stock->min_count) ? $stock->min_count : 15 }}">
                                             <span id="errorEmail" role="alert" style="color: #de4444; font-weight: 300">
                                                {{ $errors->first('min_count') }}
                                             </span>
@@ -125,13 +182,12 @@
                                         </div>
                                         <div class="form-item__content">
                                             <select class="selectpicker" name="price_contribution">
-                                                <option>7 500</option>
-                                                <option>10 500</option>
-                                                <option>20 500</option>
-                                                <option>30 500</option>
+                                                <option {{ isset($stock->price_contribution) && $stock->price_contribution == 7500 ? "selected" : ''  }}> 7 500</option>
+                                                <option {{ isset($stock->price_contribution) && $stock->price_contribution == 10500 ? "selected" : ''  }}>10 500</option>
+                                                <option {{ isset($stock->price_contribution) && $stock->price_contribution == 20500 ? "selected" : ''  }}>20 500</option>
+                                                <option {{ isset($stock->price_contribution) && $stock->price_contribution == 30500 ? "selected" : ''  }}>30 500</option>
                                             </select>
                                             <span id="errorContrPrice" role="alert" style="color: #de4444; font-weight: 300">
-
                                             </span>
                                         </div>
                                     </div>
@@ -140,23 +196,23 @@
                                             Взнос (комиссия)
                                         </div>
                                         <div class="form-item__content">
-                                            <input type="text" class="form-control" name="commission_contribution" value="500">
+                                            <input type="text" class="form-control" name="commission_contribution" value="{{ isset($stock->commission_contribution) ? $stock->commission_contribution : 500 }}">
                                             <span id="errorContrComiss" role="alert" style="color: #de4444; font-weight: 300"></span>
                                         </div>
                                     </div>
                                     <div class="form-item">
                                         <div class="form-item__content">
                                             <div class="form-checkbox">
-                                                <input type="checkbox" name="sended_protection" id="form-security" class="checkbox checkbox--toggle" checked>
+                                                <input type="checkbox" name="sended_protection" id="form-security" class="checkbox checkbox--toggle" {{ isset($stock->sended_protection) && $stock->sended_protection == "on"  ? "checked" : '' }}>
                                                 <label for="form-security">Защита отправлений</label>
 
-                                                <input type="checkbox" name="purchase_after" id="form-buy" class="checkbox checkbox--toggle" checked>
+                                                <input type="checkbox" name="purchase_after" id="form-buy" class="checkbox checkbox--toggle" {{ isset($stock->purchase_after) && $stock->purchase_after == "on"  ? "checked" : '' }}>
                                                 <label for="form-buy">Покупка после завершения</label>
 
                                                 <div class="form-item__text">
                                                     Разрешить доступ к контенту складчины после её завершения по последней сумме взноса
                                                 </div>
-                                                <input type="checkbox" name="full_form" id="form-data-full" class="checkbox checkbox--toggle" checked>
+                                                <input type="checkbox" name="full_form" id="form-data-full" class="checkbox checkbox--toggle" {{ isset($stock->full_form) && $stock->full_form == "on"  ? "checked" : '' }}>
                                                 <label for="form-data-full">Полная форма данных при заказе</label>
 
                                             </div>
@@ -170,7 +226,7 @@
                                         </div>
                                         <div class="form-item__content">
                                             <div class="form-date">
-                                                <input type="text" name="date_collection" class="form-control datepicker" readonly placeholder="Выберите дату">
+                                                <input type="text" name="date_collection" class="form-control datepicker" readonly placeholder="Выберите дату" value="{{ isset($stock->date_collection) ? $stock->date_collection : ''  }}">
                                                 <span id="errorDateColl" role="alert" style="color: #de4444; font-weight: 300"></span>
                                             </div>
                                         </div>
@@ -181,10 +237,10 @@
                                         </div>
                                         <div class="form-item__content">
                                             <select class="selectpicker" name="delivery_term">
-                                                <option>18-25 дней</option>
-                                                <option>26-30 дней</option>
-                                                <option>31-40 дней</option>
-                                                <option>40-50 дней</option>
+                                                <option {{ isset($stock->delivery_term)  && $stock->delivery_term == "18-25 дней" ? "selected" : "" }}>18-25 дней</option>
+                                                <option {{ isset($stock->delivery_term)  && $stock->delivery_term == "26-30 дней" ? "selected" : "" }}>26-30 дней</option>
+                                                <option {{ isset($stock->delivery_term)  && $stock->delivery_term == "31-40 дней" ? "selected" : "" }}>31-40 дней</option>
+                                                <option {{ isset($stock->delivery_term)  && $stock->delivery_term == "40-50 дней" ? "selected" : "" }}>40-50 дней</option>
                                             </select>
                                         </div>
                                     </div>
@@ -197,26 +253,25 @@
                                             <div class="form-delivery">
                                                 <div class="form-delivery__row">
                                                     <div>
-                                                        <input type="checkbox" name="delivery[]" value="Доставка 1" id="delivery-1" class="checkbox">
+                                                        <input type="checkbox" name="delivery[]" value="Доставка 1" id="delivery-1" {{ isset($stock->delivery) && strpos($stock->delivery, 'Доставка 1') !== false ? "checked" : ''  }} class="checkbox">
                                                         <label for="delivery-1">Доставка 1</label>
                                                     </div>
                                                     <div>
-                                                        <input type="checkbox" name="delivery[]" value="Доставка 2" id="delivery-2" class="checkbox">
+                                                        <input type="checkbox" name="delivery[]" value="Доставка 2" id="delivery-2" {{ isset($stock->delivery) && strpos($stock->delivery, 'Доставка 2') !== false? "checked" : ''  }} class="checkbox">
                                                         <label for="delivery-2">Доставка 2</label>
                                                     </div>
                                                 </div>
                                                 <div class="form-delivery__row">
                                                     <div>
-                                                        <input type="checkbox" name="delivery[]" value="Доставка 3" id="delivery-3" class="checkbox">
+                                                        <input type="checkbox" name="delivery[]" value="Доставка 3" id="delivery-3" {{ isset($stock->delivery) && strpos($stock->delivery, 'Доставка 3')!== false ? "checked" : ''  }} class="checkbox">
                                                         <label for="delivery-3">Доставка 3</label>
                                                     </div>
                                                     <div>
-                                                        <input type="checkbox" name="delivery[]" value="Доставка 4" id="delivery-4" class="checkbox">
+                                                        <input type="checkbox" name="delivery[]" value="Доставка 4" id="delivery-4" {{ isset($stock->delivery) && strpos($stock->delivery, 'Доставка 4') !== false ? "checked" : ''  }} class="checkbox">
                                                         <label for="delivery-4">Доставка 4</label>
                                                     </div>
                                                 </div>
                                                 <span id="errorDelivery2" style="color: #de4444; font-weight: 300"></span>
-
                                             </div>
                                         </div>
                                         <span id="success" style="color: #008e05; font-weight: 300; text-align: center; display: none">
@@ -227,12 +282,10 @@
 
                                     <div class="form-item">
                                         <div class="form-item__content">
-                                            <button type="submit" class="btn btn--block" role="{{ Auth::user()->role_user->load('role')->role->name }}" id="createStock">
-                                                @if( Auth::user()->role_user->load('role')->role->name  == "Admin")
+                                            <button type="submit" class="btn btn--block" role="{{ Auth::user()->role_user->load('role')->role->name }}" id="createStock" data-stock-id="{{ isset($stock->id) ? $stock->id : '' }}">
+                                                @if( Auth::user()->role_user->load('role')->role->alias  == "Admin")
                                                     Опубликовать
-                                                    @elseif(Auth::user()->role_user->load('role')->role->name  == "Moderator")
-                                                    Опубликовать
-                                                    @else
+                                                    @elseif(Auth::user()->role_user->load('role')->role->alias  == "Moderator")
                                                     Отправить на проверку
                                                 @endif
                                             </button>
@@ -337,7 +390,8 @@
                                 {{--<input type="file" id="image-input" style="display: none;">--}}
 
                                 <div class="editor__block " >
-                                    <textarea rows="15" class="form-control " id="stockInfo" name="description" placeholder="Напишите что-нибудь">Напишите что-нибудь</textarea>
+                                    <textarea rows="15" class="form-control" style="display: none" id="stockInfo" name="description" placeholder="Напишите что-нибудь">{!! isset($stock->description) ? $stock->description : 'Напишите что-нибудь' !!}</textarea>
+
                                     <span id="infoStockError" style="color: #de4444; font-weight: 300">
                                         <br>
                                     </span>
@@ -345,16 +399,13 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
-
                 <div class="content__box content__box--bg-dark">
                     <div class="tags">
                         <div class="tags__title">
                             Теги
                         </div>
-                        <input type="text" autocomplete="off" id="stockTags" placeholder="Укажите теги складчины" value="{{ session('stockTags') ? session('stockTags') : ''}}" class="tags__input">
+                        <input type="text" autocomplete="off" id="stockTags" style="height: auto;" placeholder="Укажите теги складчины" value="{{ session('stockTags') ? session('stockTags') : ''}}" class="tags__input">
                         <span id="errorTags">
                         </span>
                     </div>
@@ -364,14 +415,3 @@
     </div>
 </div>
 
-<div id="popup-link-image" class="popup popup-feedback">
-    <div class="popup-title">Скопируйте линк, нажмите на "Изображение" и вставьте его в поле "Сcылка"</div>
-
-    <input id="url_field" style="width: 100%; outline: none; padding: 5px; border-radius: 3px;" type="url" value="">
-    <div id="successCopied" style="color: #3accc6; font-size: 20px; text-align: center; display: none;">
-        Вы успешно скопировали путь к изображение
-    </div>
-    <div style="width: 100%; text-align: center; padding-top: 10px">
-        <input id="copyLinnk" style="margin: auto;text-align: center" class="btn btn-group-sm" value="Копировать">
-    </div>
-</div>

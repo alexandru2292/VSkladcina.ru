@@ -105,10 +105,8 @@ function scrollBottom() {
             autoReinitialise: true
         });
     }
-    var api = scroll.data('jsp');
-    var height = parseInt($("#showDialog .jspPane").css("height")) + 200;
-    api.scrollBy(0, height);
-
+    var scrollPane = $('.scroll-pane').jScrollPane().data('jsp');
+    scrollPane.scrollToBottom();
     /**
      * if not exist red point on sender user, remove red point to message icon in header
      */
@@ -160,6 +158,7 @@ if ($(".showMessage .message-menu__item-img").length > 0){
     var firstMessageId = $(".getFirstDialog .showMessage").first().data('message-id');
     var senderName = $(showMessage).first().find(".senderName").data('sender-name');
     $("#senderName").empty().text(senderName);
+
     showMessage(firstSenderId, firstMessageId, 0);
 
     setTimeout(function () {
@@ -334,6 +333,7 @@ function showMessage(sender_id, messageId, hideRedPoint){
  */
 $(".removeMessage").on("click", function () {
     var senderId = $(this).data('sender-id');
+    alert(senderId);
     $("#confirm-msg-delete").data('sender-id', senderId);
 });
 
@@ -343,6 +343,7 @@ $(".removeMessage").on("click", function () {
 $("#confirm-msg-delete").on("click", function () {
    var sender_user_id = $(this).data('sender-id');
     var data = {sender_user_id: sender_user_id};
+    console.log(sender_user_id +' ----' + data);
     $.ajax({
         url: "/profile/removeDialog",
         method: "POST",
@@ -368,11 +369,15 @@ function checkIfExistNewMessage(senderId, setTimeOut_read){
      * Set interval for checking if exist new message
      */
     setInterval(function () {
+        /**
+         * Don't have repeat message
+         */
+        var lastMessage =  $("#showDialog .comment-item:last .comment-item__text").text();
 
         $.ajax({
             url: "/profile/checkIfExistNewMessage",
             method: "POST",
-            data: {sender_user_id: senderId},
+            data: {sender_user_id: senderId, lastMessage: lastMessage},
             success: function (data) {
                 if(data['success'] ==1){
                     /**
@@ -391,6 +396,7 @@ function checkIfExistNewMessage(senderId, setTimeOut_read){
                             $("#newMessageId_"+senderId).hide();
                         }, 5000)
                     }
+
                     /**
                      * Scroll bar to bottom window
                      * @type {HTMLElement}
@@ -422,6 +428,8 @@ $(".user_item_popup").on("click", function () {
     var user_name = $(".user_item_popup:first").data('user-name');
     var user_role = $(".user_item_popup:first").data('user-role');
     var user_id = $(".user_item_popup:first").data('user-id');
+    var user_created_at = $(".user_item_popup:first").data('user-created_at');
+
 
     //set image
     if(user_img.split('://').length > 1){
@@ -432,11 +440,53 @@ $(".user_item_popup").on("click", function () {
     //set the user name
 
    $("#popup-user .user__title").text(user_name);
-    //se the user role
+    //set the user role
    $("#popup-user .user__status").text(user_role);
+   //set user_id
    $("#popup-user .user__btn-message").data('user-id', user_id);
-
+   //set user created_at
+    $("#popup-user #created_at").text(user_created_at);
 });
 $("#write-a-message").on("click", function () {
-   alert($(this).data('user-id'))
+    var user_name = $(".user_item_popup:first").data('user-name');
+    $("#popup-user-message .popup-title").text("Сообщение "+user_name);
+
+
 });
+
+
+/**
+ * Send Message to creator stiock
+ */
+$("#btn-send-message").on("click",function () {
+    var messageForUser = $("#popup-user-message textarea[name=message]").val();
+    var user_id = $(".user_item_popup:first").data('user-id');
+    var data = {sender_user_id: user_id, message: messageForUser};
+    $.ajax({
+        url: "/profile/sendNewMessage",
+        method: "POST",
+        data: data,
+        success: function (data) {
+            if(data['success']){
+                $("#successSent").text('Сообщение успешно отправлено');
+                setTimeout(function () {
+                    $.fancybox.close({
+                        src  : '#popup-user-message',
+                        type : 'inline',
+                        opts : {
+                            animationEffect: "fade",
+                        }
+
+                    });
+                    $("#successSent").text('');
+                    $("#popup-user-message textarea[name=message]").val('');
+                }, 2000)
+            }
+        }
+    });
+});
+
+
+
+
+

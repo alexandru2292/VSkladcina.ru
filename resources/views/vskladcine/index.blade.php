@@ -1,5 +1,4 @@
 @extends(config('settings.theme').'.layouts.site')
-
 @section('header')
     {!! $header !!}
 @endsection

@@ -39,7 +39,7 @@
                                                 <option >Выберите статус</option>
                                                 <option value="moderation" {{ $stock->status == "moderation" ? "selected" : ''}}>На модерации</option>
                                                 <option value="is_open" {{ $stock->status == "is_open" ? "selected" : ''}}>Опубликовано</option>
-                                                <option value="on_editing" {{ $stock->status == "on_editing" ? "selected" : ''}}>На переделку</option>
+                                                <option value="on_editing" {{ $stock->status == "on_editing" ? "selected" : ''}}>Отклонено</option>
                                             </select>
                                         </div>
 
@@ -113,6 +113,21 @@
                                 </div>
                             @endif
 
+                            @if($stock->status == "on_editing")
+                            <div class="status status--collection">
+                                <div class="status__title">
+                                    Статус
+                                </div>
+                                <div class="status__row">
+                                    <div>
+                                        Отклонено
+                                    </div>
+                                </div>
+
+                            </div>
+                            @endif
+
+
                             <div class="card-info">
                                 <div class="card-info__item">
                                     Тип складчины
@@ -142,22 +157,27 @@
                                     Складчики
                                     <span id="countFollowers">{{ isset($stock->countFollowers) ? $stock->countFollowers : 0 }}</span>
                                 </div>
-                                <div class="card-info__item">
-                                    Создатель
-                                    <div class="user-item-small">
-                                        <div class="user-item-small__img">
+                               @if(Auth::check() && Auth::user()->id != $stock->hasUser->id)
+                                    <div class="card-info__item">
+                                        Создатель
+                                        <div class="user-item-small">
+                                            <div class="user-item-small__img">
 
-                                            <a href="javascript:void(0)" data-src="#popup-user" class="user_item_popup" data-user-id="{{ $stock->hasUser->id }}" data-user-img="{{ $stock->hasUser->avatar }}" data-user-name="{{ $stock->hasUser->name  }}"   data-user-role="{{ $stock->hasUser->load("role_user")->role_user->load('role')->role->name }}" data-fancybox="">
-                                              <img src="{{isset($stock->hasUser->avatarHasLink) ? $stock->hasUser->avatar : url('img/content/'.$stock->hasUser->avatar) }}"  alt="">
-                                            </a>
-                                        </div>
-                                        <div class="user-item-small__title">
-                                            <a href="javascript:void(0)" data-src="#popup-user" class="user_item_popup" data-fancybox="">
-                                                {{ $stock->hasUser->name }}
-                                            </a>
+                                                <a href="javascript:void(0)" data-src="#popup-user" class="user_item_popup" data-user-id="{{ $stock->hasUser->id }}" data-user-img="{{ $stock->hasUser->avatar }}"
+                                                   data-user-name="{{ $stock->hasUser->name  }}"   data-user-role="{{ $stock->hasUser->load("role_user")->role_user->load('role')->role->name }}"
+                                                   data-user-created_at="{{ $stock->hasUser->date }}"
+                                                   data-fancybox="">
+                                                    <img src="{{isset($stock->hasUser->avatarHasLink) ? $stock->hasUser->avatar : url('img/content/'.$stock->hasUser->avatar) }}"  alt="">
+                                                </a>
+                                            </div>
+                                            <div class="user-item-small__title">
+                                                <a href="javascript:void(0)" data-src="#popup-user" class="user_item_popup" data-fancybox="">
+                                                    {{ $stock->hasUser->name }}
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                               @endif
                                 <div class="rating">
                                     <div class="rating__title">
                                         Обязательная оценка
@@ -324,7 +344,9 @@
                                 </div>
                             </div>
                             <div class="card-buttons">
-                               @if(Auth::check())
+
+
+                               @if(Auth::check() && Auth::user()->id != $stock->hasUser->id)
                                     @if(isset($stock->hasUser->id))
                                         @if(isset($hasFollower) && isset($hasFollower->hasFollower))
                                             <a href="javascript:;" class="btn btn--red btn--block btn-entry unfollowed" onclick="unfollowed({{$stock->id}});" id="unfollowed">
@@ -333,10 +355,12 @@
                                             </a>
                                         @else
                                             @if($stock->status != "moderation" && $stock->status != "on_editing")
-                                                <a href="javascript:;" class="btn btn--block btn-entry" data-stock-id="{{$stock->id}}" id="follows">
-                                                    <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
-                                                    <span>Записаться в складчину</span>
-                                                </a>
+
+                                                    <a href="javascript:;" class="btn btn--block btn-entry" data-stock-id="{{$stock->id}}" id="follows">
+                                                        <svg class="icon icon-entry"><use xlink:href="{{ url("img/icons.svg#icon-entry") }}"/></svg>
+                                                        <span>Записаться в складчину</span>
+                                                    </a>
+
                                             @endif
                                         @endif
                                         <a href="javascript:;" class="btn btn--block btn-entry" data-stock-id="{{$stock->id}}" id="follows" style="display: none;">

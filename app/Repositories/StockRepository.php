@@ -8,6 +8,7 @@
 
 namespace App\Repositories;
 use App\Category;
+use App\Message;
 use App\Stock;
 use App\TmpCkeditorImage;
 use DB;
@@ -21,8 +22,12 @@ use App\Follower;
 class StockRepository
 {
     protected $stockCategory;
-    public function getStocks($stock){
-        $stocks = $stock->select('*')->orderBy('id', "DESC")->get();
+    public function getStocks($stock, $paginate){
+        if($paginate){
+            $stocks = $stock->select('*')->orderBy('id', "DESC")->paginate(5);
+        }else{
+            $stocks = $stock->select('*')->orderBy('id', "DESC")->get();
+        }
         $stocks->load('hasType');
         /**
          * Get day,  name month and year created stocks.  EXAMPLE : 02 января 2019
@@ -35,6 +40,7 @@ class StockRepository
         $stocksArr = [];
         foreach ($stocks as $key => $stock){
             $stocksArr = $stocks;
+
             /**
              * Get day
              */
@@ -44,7 +50,6 @@ class StockRepository
              * get name month
              */
             $stocksArr[$key]->month  = $this->getNameMonth($stock->created_at);
-
             /**
              * get year
              */
@@ -216,7 +221,7 @@ class StockRepository
 
     public function addImgMin($request){
 
-//        dd($request->all());
+
 
         if($request->hasFile('img_min') ){ // if exist img file
             $image = $request->file('img_min'); // file - image
@@ -235,19 +240,33 @@ class StockRepository
                     /**
                      * If change new image delete old img
                      */
-                    if($request->old_img){
-                      if (file_exists(public_path()."/img/content/cards/". $request->old_img)){
-                            unlink(public_path()."/img/content/cards/". $request->old_img);
+
+                    if($request->stockId){
+                        /**
+                         * If action is UPDATE then save img name in Temporary table from "Model : TmpCkeditorImage"
+                         */
+                        //ADD img for Saving
+                         DB::table('tmp_ckeditor_images')->insert(
+                            ['name' => $request->old_img, 'save' => 1]
+                        );
+                    }else{
+                        /**
+                         * IF action is ADD
+                         */
+                        if($request->old_img){
+                            if (file_exists(public_path()."/img/content/cards/". $request->old_img)){
+                                unlink(public_path()."/img/content/cards/". $request->old_img);
+                            }
                         }
                     }
+
 
                     /**
                      * Move img to folder
                      */
-                    $img->fit(config('settings.stockImgMin')['width'],       //folder public                                       name img mini
+                    $img->fit(config('settings.stockImgMin')['width'],
                         config('settings.stockImgMin')['height'])->save('img/content/cards/'.$obj->mini);
                     $imgName = $obj->mini;
-
 
                     /**
                      * Save in session img
@@ -286,7 +305,7 @@ class StockRepository
      * @param $request -> all data Stocks for add in BD
      * @return mixed
      */
-    public function allFormData($request, $stock){
+    public function allFormData($request, $stock, $action){
         /**
          * if the request does not contain all fields of the form return false;
          */
@@ -294,6 +313,8 @@ class StockRepository
         if(count($request->all()) < 5){
             return false;
         }
+
+
 
         /**
          * Get user role
@@ -319,14 +340,13 @@ class StockRepository
             isset($data['min_imghidden']) ? $min_img = $data['min_imghidden'] : $min_img = '';
             $data['min_img'] = $min_img;
             if(isset($data['min_imghidden'])) unset($data['min_imghidden']);
-
             /**
              * check if completed textarea #stockInfo
              */
-
-            if($data['description'] == "<p>Напишите что-нибудь</p>"){
+            if($data['description'] === "<p>Напишите что-нибудь</p>"){
                 $data['description'] = '';
             }
+
             /**
              * Set error messages
              */
@@ -373,8 +393,6 @@ class StockRepository
                 return $result;
             }
 
-            // dd($data);
-
             /** ------------------
              * SAVE IN DATABASE
              * -------------------
@@ -383,16 +401,22 @@ class StockRepository
             $data['delivery'] = implode(', ', $data['delivery']);
 
 
-            isset($userRole) && $userRole == "Admin" ? $data['status'] = "is_open":"";
-            isset($userRole) && $userRole == "Admin" ? $data['star'] = 5 : "";
+            if($action == 'add'){
+                isset($userRole) && $userRole == "Admin" ? $data['status'] = "is_open":"";
+                isset($userRole) && $userRole == "Admin" ? $data['star'] = 5 : "";
 
-
-            if(  isset($userRole) &&  $userRole != "Admin"){
-                $data['status'] = 'moderation';
-                $data['star'] = 0;
+                if(  isset($userRole) &&  $userRole != "Admin"){
+                    $data['status'] = 'moderation';
+                    $data['star'] = 0;
+                }
             }
+
+            if($action == 'update'){
+                isset($userRole) && $userRole == "Moderator" ? $data['status'] = "moderation":"";
+            }
+
             /**
-             * Check count imgs who we  need to  save in DB , if we selected more imgs and after we is canceled them(pe ele), now(acum) we need  deleted their
+             * Check count imgs from CKEDITOR who we  need to  save in DB , if we selected more imgs and after we is canceled them(pe ele), now(acum) we need  deleted their
              */
 
             $explodeImg =  explode('/content/', $data['description']);
@@ -406,6 +430,7 @@ class StockRepository
 
             $explodeImg = implode(', ', $explodeImg);
             $explodeImg = explode(' ', $explodeImg);
+
             /**
              * Select only images elements
              */
@@ -432,24 +457,46 @@ class StockRepository
              * we getting one array with the images name
              * Next - we need delete all images which don't save in the added stock (excepted images from $imagesForStore)
              */
-            $delImgFromFolder = TmpCkeditorImage::whereNotIn('name', $imagesForStore)->get();
+            $delImgFromFolder = TmpCkeditorImage::whereNotIn('name', $imagesForStore)->where('save','!=', 1)->get();
+            /**
+             * Get last min_img which wee ned to save
+             */
+            $lastImg =  TmpCkeditorImage::where([['save','=', 1], ['id', '=',  \DB::raw("(select max(`id`) from tmp_ckeditor_images)")]])->first();
+            if($lastImg){
+                /**
+                 * exclude last img for deleting from folder
+                 */
+                foreach ($delImgFromFolder as $key =>  $item){
+                    if($item->name == $lastImg->name){
+                        unset($delImgFromFolder[$key]);
+                    }
+                }
+
+            }
             /**
              * Delete img-s from folder which we canceled in CKeditor
              */
-
             foreach ($delImgFromFolder as $item){
                 if (file_exists(public_path()."/img/content/cards/". $item->name)){
                     unlink(public_path()."/img/content/cards/". $item->name);
                 }
             }
-            TmpCkeditorImage::select("*")->delete();
 
+            TmpCkeditorImage::select("*")->delete();
 
             /**
              * Store the stock values
              */
-            $stock->fill($data);
-            $stockAdded = $stock->save($data);
+
+           if($action == 'add'){
+               $stock->fill($data);
+               $stockAdded = $stock->save($data);
+           }elseif ($action == 'update'){
+
+               $stock->fill($data);
+               $stockAdded = $stock->update($data);
+
+           }
 
             if($stockAdded){
                 /**
@@ -466,6 +513,7 @@ class StockRepository
                  */
                 isset($userRole) && $userRole === "Admin" ? $result['successAdmin'] = 1 : '';
                 isset($userRole) && $userRole === "Moderator" ? $result['successModerator'] = 1 : '';
+                $result['action'] = $action;
                 $result['success'] = 1;
             }
             return $result;
@@ -474,6 +522,21 @@ class StockRepository
         }
     }
 
+    public function updateTheStock($request){
+        /**
+         * Check if stock id exist in DB
+         */
+
+        $stock = Stock::where('id', $request->stockID)->first();
+
+        if($stock){
+            $result =  $this->allFormData($request, $stock, 'update');
+            return $result;
+        }else{
+            return false;
+        }
+
+    }
     /**
      * @param $stock - The model Stock
      * @return mixed - all stocks where status == moderation
@@ -495,10 +558,15 @@ class StockRepository
     /**
      * Get the dates stock for page card
      */
-    public function getCard($stock, $id){
-
-       $stock = $stock->where('id', $id)->first();
-
+    public function getCard($stock, $id, $allStatus){
+        if($allStatus){
+            $stock = $stock->where('id', '=', $id)->first();
+        }else{
+            $stock = $stock->where([['id', '=', $id], ['status', '!=', 'on_editing']])->first();
+        }
+        if(!$stock){
+            return abort(404);
+        }
         /**
          * Make the foreign key relations
          */
@@ -521,6 +589,7 @@ class StockRepository
         /**
          * set tags
          */
+
         $stock->tags = explode(', ', $stock->tags);
         $a = [];
         foreach ($stock->tags as $tag){
@@ -531,6 +600,7 @@ class StockRepository
         /**
          * set relation with followers
          */
+
         foreach ($stock->hasManyFollowers as $follower){
             $follower->load("hasUser");
         }
@@ -550,9 +620,13 @@ class StockRepository
             $stock->hasUser->avatarHasLink = 1;
         }
 
+        /**
+         * Set custom Date
+         */
+        $dateEvent = \Carbon\Carbon::parse($stock->hasUser->created_at);
+        $stock->hasUser->date =$dateEvent->format('d.m.Y');
 
-         $stock->countFollowers =  count($stock->hasManyFollowers);
-//        dd($stock);
+        $stock->countFollowers =  count($stock->hasManyFollowers);
         return $stock;
     }
 
@@ -642,7 +716,7 @@ class StockRepository
         $file = $request->file('upload');
         $file->move(public_path() . $filePath, $filename);
         /**
-         * Save  in DB the name of the image added from CKEDITOR that(ca) we later delete them(pe ele) from the map
+         * Save  in DB the name of the image added from CKEDITOR that(ca) we later delete them(pe ele) from the folder
          */
         DB::table('tmp_ckeditor_images')->insert(
             ['name' => $filename]
@@ -765,16 +839,24 @@ class StockRepository
      */
     public function selectMyStocks(){
         $loggedUser = Auth::user();
-        $myStocks = Follower::where('user_id', $loggedUser->id)->get();
-        $myStocks->load("hasOneStock");
-        /**
-         * Make collection with stocks
-         */
-        $stocks = [];
-        foreach ($myStocks as $stock){
-            $stocks[] = $stock->hasOneStock;
+        $userRole = Auth::user()->load('role_user')->role_user->load('role')->role->alias;
+        if($userRole != "Moderator" && $userRole != "Admin"){
+            $myStocks = Follower::with('hasOneStock')->whereHas('hasOneStock', function ($query){
+                                  $query->where('status', "is_open");
+                              })->get();
+
+            /**
+             * Make collection with stocks
+             */
+            $stocks = [];
+            foreach ($myStocks as $stock){
+                $stocks[] = $stock->hasOneStock;
+            }
+            $stocks = collect($stocks);
+        } else{
+            $stocks = Stock::where([['status', '!=', 'on_editing'], ['user_id', '=', $loggedUser->id]])->get();
         }
-        $stocks = collect($stocks);
+
         /**
          * Set name, date
          */
@@ -782,6 +864,62 @@ class StockRepository
         return $myCustomStocks;
     }
 
+    public function getStocksWithOnEditingStatus(){
+        $loggedUser = Auth::user()->id;
+        $stock = Stock::where([['status','=','on_editing'], ['user_id', '=', $loggedUser]])->get();
+        return $stock;
+    }
 
+    /**
+     * Get the stock for editing
+     */
+    public function getStockForEditing($id){
+        if($id){
+            if(Auth::user()->load("role_user")->role_user->load("role")->role->alias == "Admin"){
+                $stock =  Stock::where('id','=', $id)->first();
+
+            }elseif(Auth::user()->load("role_user")->role_user->load("role")->role->alias == "Moderator"){
+                $stock =  Stock::where([['id','=', $id], ['status', '=', 'on_editing']])->first();
+            }
+            if(!$stock){
+                return abort(404);
+            }
+            $stock->load('hasCategory', 'hasSubcategory', 'hasType');
+            return $stock;
+
+        }else{
+            return false;
+        }
+
+
+    }
+
+    /**
+     * Delete stock if user with role Admin is logged in Admin Panel
+     */
+    public function removeTheStock($id){
+        /**
+         * Send Message to All Followers on the stock
+         */
+        $stock = Stock::select('*')->where("id", '=', $id)->first()->load("hasManyFollowers");
+
+        if($stock){
+            $msg = "Складчина \"$stock->name\" было удалена!";
+
+            foreach ($stock->hasManyFollowers as $item){
+                $data[] = ['user_id' => intval($item->user_id), 'message' => $msg, 'sender_user_id' => Auth::user()->id];
+            }
+            $sendMessage = DB::table('messages')->insert($data);
+            /**
+             * Delete stock
+             */
+            if($sendMessage){
+                $delete =  Stock::where('id', $id)->delete();
+                if($delete){
+                    return true;
+                }
+            }
+        }
+    }
 }
 

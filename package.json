@@ -21,6 +21,7 @@
     "vue": "^2.5.17"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-media-embed": "^10.1.0",
     "laravel-echo": "^1.5.3",
     "pusher-js": "^4.3.1"
   }

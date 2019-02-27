@@ -343,9 +343,10 @@ class MessageRepository
      * @param $senderId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getNewMessageIfExist($senderId){
+    public function getNewMessageIfExist($request){
+
         $loggedUser = Auth::user()->id;
-        $message = Message::where([['user_id','=',$loggedUser],['sender_user_id','=',$senderId], ['is_read','=',0]])->get();
+        $message = Message::where([['user_id','=',$loggedUser],['sender_user_id','=',$request->sender_user_id], ['is_read','=',0]])->get();
 
         $message->load("hasUser", "hasSender");
 
@@ -359,6 +360,16 @@ class MessageRepository
             $messageIds = [];
 
             foreach ($message as $key => $item){
+                /**
+                 * If message is repeat unset it
+                 */
+                if($item->message == $request->lastMessage){
+                    unset($message[$key]);
+                }
+                /**
+                 * If message == last Message from form the unset it
+                 */
+
                 //get ToDay (Azi)
                 $today = Carbon::today('Europe/Moscow');
                 $today = $today->format('d.m.y');
@@ -393,15 +404,17 @@ class MessageRepository
                 }
                 $avatarLink =  strpos($item->hasSender->avatar, '://');
 
+
                 $content .= $this->viewDialog($avatarLink, $item->hasSender->avatar, $item->hasSender->name, $item->hasSender->id, $item->dateFormat, $item->message, $item->iAreSender);
                 $messageIds[] = $item->id;
+
             }
             /**
              *will the marked that  read
              */
             $updated  =   DB::table('messages')->whereIn('id', $messageIds)->update(['is_read'=>1]);
 
-            return response()->json(['success'=> 1, 'message'=>$content, 'updated_read' => $updated, 'senderId'=>$senderId]);
+            return response()->json(['success'=> 1, 'message'=>$content, 'updated_read' => $updated, 'senderId'=>$request->sender_user_id]);
         }
     }
     public function markMessageThatRead($messagesId){

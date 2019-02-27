@@ -1,93 +1,93 @@
-<div class="menu-mobile">
-    <div class="buttons-items">
-        <div class="dropdown dropdown--comments">
-            <a href="#" class="btn-toggle btn-toggle--reminder btn-toggle--active">
-                <span><svg class="icon icon-comment"><use xlink:href="img/icons.svg#icon-comment"/></svg></span>
-            </a>
-        </div>
-        <div class="dropdown dropdown--reminder">
-            <a href="#" class="btn-toggle btn-toggle--reminder btn-toggle--active">
-                <span><svg class="icon icon-bell"><use xlink:href="img/icons.svg#icon-bell"/></svg></span>
-            </a>
-        </div>
-        <div class="dropdown dropdown-auth">
-            <button class="dropdown-toggle btn-toggle btn-toggle--user" type="button" data-toggle="dropdown">
-                <span><svg class="icon icon-user"><use xlink:href="img/icons.svg#icon-user"/></svg></span>
-            </button>
-            <div class="dropdown-menu">
-                <div class="authorization">
-                    <div class="authorization__title">
-                        Авторизация
-                    </div>
-                    <div class="authorization__social">
-                        <ul class="social">
-                            <li class="social__item"><a class="social__link" href="#"><svg class="icon icon-fb"><use xlink:href="img/icons.svg#icon-fb"/></svg></a></li>
-                            <li class="social__item"><a class="social__link" href="#"><svg class="icon icon-vk"><use xlink:href="img/icons.svg#icon-vk"/></svg></a></li>
-                            <li class="social__item"><a class="social__link" href="#"><svg class="icon icon-twitter"><use xlink:href="img/icons.svg#icon-twitter"/></svg></a></li>
-                            <li class="social__item"><a class="social__link" href="#"><svg class="icon icon-google"><use xlink:href="img/icons.svg#icon-google"/></svg></a></li>
-                            <li class="social__item"><a class="social__link" href="#"><svg class="icon icon-ok"><use xlink:href="img/icons.svg#icon-ok"/></svg></a></li>
-                        </ul>
-                    </div>
-                    <div class="authorization__title">
-                        Авторизация
-                    </div>
-                    <form action="#" class="form-validate">
-                        <div class="form-group">
-                            <input type="text" name="name" required class="form-control" placeholder="Ваше имя">
-                        </div>
-                        <div class="form-group">
-                            <input type="email" name="email" required class="form-control" placeholder="Электронная почта">
-                        </div>
-                        <div class="form-group form-buttons">
-                            <button type="submit" class="btn btn-login">
-                                <span>Войти</span>
-                            </button>
-                        </div>
-                        <div class="form-group form-links">
-                            <a href="javascript:void(0);" data-src="#popup-registration" data-fancybox="">Я не зарегистрирован</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <a href="#" class="btn btn-stock">
-        <svg class="icon icon-star"><use xlink:href="img/icons.svg#icon-star"/></svg>
-        <span>Мои складчины</span>
-    </a>
-    <ul class="menu">
-        <li>
-            <a href="#" class="menu__dropdown-link">
-                <svg class="icon icon-arrow"><use xlink:href="img/icons.svg#icon-arrow"/></svg>
-                Профиль
-            </a>
-            <ul class="menu__submenu active">
-                <li><a href="#">Настройки</a></li>
-                <li><a href="#">Выйти</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#" class="menu__dropdown-link">
-                <svg class="icon icon-arrow"><use xlink:href="img/icons.svg#icon-arrow"/></svg>
-                Информация
-            </a>
-            <ul class="menu__submenu active">
-                <li><a href="#">О проекте</a></li>
-                <li><a href="#">Миссия</a></li>
-                <li><a href="#">Возможности</a></li>
-                <li><a href="#">Правила и инструкции</a></li>
-                <li><a href="#">Вопросы и предложения</a></li>
-                <li><a href="#">Темы для обсуждения</a></li>
-                <li><a href="#">Приглашаем авторов</a></li>
-            </ul>
-        </li>
-        <li><a href="#">Пользователи</a></li>
+{{--<div class="menu-mobile">--}}
+    {{--<div class="buttons-items">--}}
+        {{--<div class="dropdown dropdown--comments">--}}
+            {{--<a href="#" class="btn-toggle btn-toggle--reminder btn-toggle--active">--}}
+                {{--<span><svg class="icon icon-comment"><use xlink:href="img/icons.svg#icon-comment"/></svg></span>--}}
+            {{--</a>--}}
+        {{--</div>--}}
+        {{--<div class="dropdown dropdown--reminder">--}}
+            {{--<a href="#" class="btn-toggle btn-toggle--reminder btn-toggle--active">--}}
+                {{--<span><svg class="icon icon-bell"><use xlink:href="img/icons.svg#icon-bell"/></svg></span>--}}
+            {{--</a>--}}
+        {{--</div>--}}
+        {{--<div class="dropdown dropdown-auth">--}}
+            {{--<button class="dropdown-toggle btn-toggle btn-toggle--user" type="button" data-toggle="dropdown">--}}
+                {{--<span><svg class="icon icon-user"><use xlink:href="img/icons.svg#icon-user"/></svg></span>--}}
+            {{--</button>--}}
+            {{--<div class="dropdown-menu">--}}
+                {{--<div class="authorization">--}}
+                    {{--<div class="authorization__title">--}}
+                        {{--Авторизация--}}
+                    {{--</div>--}}
+                    {{--<div class="authorization__social">--}}
+                        {{--<ul class="social">--}}
+                            {{--<li class="social__item"><a class="social__link" href="#"><svg class="icon icon-fb"><use xlink:href="img/icons.svg#icon-fb"/></svg></a></li>--}}
+                            {{--<li class="social__item"><a class="social__link" href="#"><svg class="icon icon-vk"><use xlink:href="img/icons.svg#icon-vk"/></svg></a></li>--}}
+                            {{--<li class="social__item"><a class="social__link" href="#"><svg class="icon icon-twitter"><use xlink:href="img/icons.svg#icon-twitter"/></svg></a></li>--}}
+                            {{--<li class="social__item"><a class="social__link" href="#"><svg class="icon icon-google"><use xlink:href="img/icons.svg#icon-google"/></svg></a></li>--}}
+                            {{--<li class="social__item"><a class="social__link" href="#"><svg class="icon icon-ok"><use xlink:href="img/icons.svg#icon-ok"/></svg></a></li>--}}
+                        {{--</ul>--}}
+                    {{--</div>--}}
+                    {{--<div class="authorization__title">--}}
+                        {{--Авторизация--}}
+                    {{--</div>--}}
+                    {{--<form action="#" class="form-validate">--}}
+                        {{--<div class="form-group">--}}
+                            {{--<input type="text" name="name" required class="form-control" placeholder="Ваше имя">--}}
+                        {{--</div>--}}
+                        {{--<div class="form-group">--}}
+                            {{--<input type="email" name="email" required class="form-control" placeholder="Электронная почта">--}}
+                        {{--</div>--}}
+                        {{--<div class="form-group form-buttons">--}}
+                            {{--<button type="submit" class="btn btn-login">--}}
+                                {{--<span>Войти</span>--}}
+                            {{--</button>--}}
+                        {{--</div>--}}
+                        {{--<div class="form-group form-links">--}}
+                            {{--<a href="javascript:void(0);" data-src="#popup-registration" data-fancybox="">Я не зарегистрирован</a>--}}
+                        {{--</div>--}}
+                    {{--</form>--}}
+                {{--</div>--}}
+            {{--</div>--}}
+        {{--</div>--}}
+    {{--</div>--}}
+    {{--<a href="#" class="btn btn-stock">--}}
+        {{--<svg class="icon icon-star"><use xlink:href="img/icons.svg#icon-star"/></svg>--}}
+        {{--<span>Мои складчины</span>--}}
+    {{--</a>--}}
+    {{--<ul class="menu">--}}
+        {{--<li>--}}
+            {{--<a href="#" class="menu__dropdown-link">--}}
+                {{--<svg class="icon icon-arrow"><use xlink:href="img/icons.svg#icon-arrow"/></svg>--}}
+                {{--Профиль--}}
+            {{--</a>--}}
+            {{--<ul class="menu__submenu active">--}}
+                {{--<li><a href="#">Настройки</a></li>--}}
+                {{--<li><a href="#">Выйти</a></li>--}}
+            {{--</ul>--}}
+        {{--</li>--}}
+        {{--<li>--}}
+            {{--<a href="#" class="menu__dropdown-link">--}}
+                {{--<svg class="icon icon-arrow"><use xlink:href="img/icons.svg#icon-arrow"/></svg>--}}
+                {{--Информация--}}
+            {{--</a>--}}
+            {{--<ul class="menu__submenu active">--}}
+                {{--<li><a href="#">О проекте</a></li>--}}
+                {{--<li><a href="#">Миссия</a></li>--}}
+                {{--<li><a href="#">Возможности</a></li>--}}
+                {{--<li><a href="#">Правила и инструкции</a></li>--}}
+                {{--<li><a href="#">Вопросы и предложения</a></li>--}}
+                {{--<li><a href="#">Темы для обсуждения</a></li>--}}
+                {{--<li><a href="#">Приглашаем авторов</a></li>--}}
+            {{--</ul>--}}
+        {{--</li>--}}
+        {{--<li><a href="#">Пользователи</a></li>--}}
 
-    </ul>
-    <button type="button" class="menu-mobile__btn-close">
-        <span>Закрыть</span>
-    </button>
-</div>
+    {{--</ul>--}}
+    {{--<button type="button" class="menu-mobile__btn-close">--}}
+        {{--<span>Закрыть</span>--}}
+    {{--</button>--}}
+{{--</div>--}}
 <div class="wrapper">
     <div class="container">
         <div class="content-title">
@@ -157,29 +157,30 @@
                         @php
                             $userRole =  Auth::user()->load('role_user')->role_user->load('role')->role->alias;
                         @endphp
-                        @if($userRole  == "Admin"/*|| $userRole == "Moderator"*/ )
+                        @if($userRole  == "Admin")
                             <div class="filter-item">
-                                <a href="{{ url('/moderation') }}" class="moderation" >На модерации </a>
+                                <a href="{{ url('/profile/stocks_for_moderation') }}" class="moderation" >На модерации </a>
                             </div>
                             <div class="filter-item">
-                                <a href="{{ url('/on_editing') }}" class="moderation" >На переделку </a>
+                                <a href="{{ url('/profile/stocks_for_editing') }}" class="moderation" >Отклонённые </a>
+                            </div>
+                        @endif
+                        @if($userRole == "Moderator")
+                            <div class="filter-item">
+                                <a href="{{ url('/profile/stocks_for_editing') }}" class="moderation">Отклонённые</a>
                             </div>
                         @endif
                     @endauth
                 </div>
             </div>
         </div>
+
         <div class="cards-items">
 
             @if(isset($myStocks))
                 @foreach($myStocks as $stock)
                     {{--
                         IF the stocks have status == moderation show theire for Admin and Moderator  --}}
-
-
-                        @if($stock->status != "moderation" && $stock->status != "on_editing" )
-
-                        {{-- If the stocks don't have status moderation --}}
                             <div class="card-item">
                                 <div class="card-item__in">
                                     <a href="{{ route("showCard", ['id' => $stock->id])  }}" style="text-decoration: none">
@@ -241,6 +242,16 @@
                                                 </div>
                                             </div>
                                         @endif
+                                         @if($stock->status == "moderation")<div class="status status--collection">
+                                                <div class="status__title">
+                                                    Статус
+                                                </div>
+                                                <div class="status__row">
+                                                    На модерации
+                                                </div>
+                                            </div>
+                                         @endif
+
 
                                         <div class="card-item__table">
                                             <table>
@@ -272,8 +283,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                    @endif
                 @endforeach
             @endif
         </div>

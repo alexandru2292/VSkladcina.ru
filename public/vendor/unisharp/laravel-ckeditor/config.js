@@ -35,10 +35,12 @@ CKEDITOR.editorConfig = function( config ) {
 	// Simplify the dialog windows.
 	config.removeDialogTabs = 'image:advanced;link:advanced';
 
+	/**
+	 * Allow tags frame in ckeditor
+	 * @type {string}
+	 */
+	config.extraAllowedContent = 'iframe[*]';
 
-	// config.extraPlugins = 'youtube';
-	// config.youtube_responsive = true;
-	// config.youtube_related = true;
 
 
 	/**

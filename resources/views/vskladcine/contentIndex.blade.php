@@ -118,6 +118,7 @@
             <button type="button" class="filters-btn-toggle">
                 <svg class="icon icon-filter"><use xlink:href="img/icons.svg#icon-filter"/></svg>
             </button>
+
             <div class="filters">
                 <div class="filters__title">
                     Фильтр и сортировка
@@ -158,31 +159,37 @@
                         @php
                           $userRole =  Auth::user()->load('role_user')->role_user->load('role')->role->alias;
                         @endphp
-                        @if($userRole  == "Admin"/*|| $userRole == "Moderator"*/ )
+                        @if($userRole  == "Admin")
                             <div class="filter-item">
-                                <a href="{{ url('/moderation') }}" class="moderation" >На модерации </a>
+                                <a href="{{ url('/profile/stocks_for_moderation') }}" class="moderation" >На модерации </a>
                             </div>
                             <div class="filter-item">
-                                <a href="{{ url('/on_editing') }}" class="moderation" >На переделку </a>
+                                <a href="{{ url('/profile/stocks_for_editing') }}" class="moderation" >Отклонённые </a>
+                            </div>
+                        @endif
+                        @if($userRole == "Moderator")
+                            <div class="filter-item">
+                                <a href="{{ url('/profile/stocks_for_editing') }}" class="moderation">Отклонённые</a>
                             </div>
                         @endif
                     @endauth
                 </div>
             </div>
+
         </div>
+
         <div class="cards-items">
 
             @if(isset($stocks))
                 @foreach($stocks as $stock)
                     {{--
                         IF the stocks have status == moderation show theire for Admin and Moderator  --}}
-
                     @if(isset($viewStatus) && $viewStatus == 'moderation')
                         @if($stock->status == "moderation")
                             <div class="card-item">
                                 <div class="card-item__in">
                                     <a  href="{{  route("showCard", ['id' => $stock->id]) }}" style="text-decoration: none">
-                                        <div class="card-item__bg-image" style="background-image: url('img/content/cards/{{ isset($stock->min_img) ? $stock->min_img : '' }}')">
+                                        <div class="card-item__bg-image" style="background-image: url('{{ url("img/content/cards/$stock->min_img") }}')">
                                             <div class="card-item__title">
                                                 {{ $stock->name }}
                                             </div>
@@ -192,6 +199,19 @@
                                         </div>
                                     </a>
                                     <div class="card-item__info">
+                                        @auth
+                                            @if(Auth::user()->load("role_user")->role_user->load("role")->role->alias == "Admin")
+                                                <a href="{{ route("editCard", ['id' => $stock->id])}}" style="text-decoration: none">
+                                                    <div class="status status--finished">
+                                                        <div class="status__row">
+                                                            <div>
+                                                                Редактировать складчину
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            @endif
+                                        @endauth
                                         @if($stock->status == "moderation")
                                             <div class="status status--collection">
                                                 <div class="status__title">
@@ -240,6 +260,7 @@
                         @if($stock->status != "moderation" && $stock->status != "on_editing")
                             <div class="card-item">
                                 <div class="card-item__in">
+
                                     <a href="{{ route("showCard", ['id' => $stock->id])  }}" style="text-decoration: none">
                                         <div class="card-item__bg-image" style="background-image: url('img/content/cards/{{ isset($stock->min_img) ? $stock->min_img : '' }}')">
                                             <div class="card-item__title">
@@ -251,6 +272,21 @@
                                         </div>
                                     </a>
                                     <div class="card-item__info">
+
+                                       @auth
+                                            @if(Auth::user()->load("role_user")->role_user->load("role")->role->alias == "Admin")
+                                                <a href="{{ route("editCard", ['id' => $stock->id])}}" style="text-decoration: none">
+                                                    <div class="status status--finished">
+                                                        <div class="status__row">
+                                                            <div>
+                                                                Редактировать складчину
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            @endif
+                                       @endauth
+
                                         @if($stock->status == "finished")
                                             <div class="status status--finished">
                                                 <div class="status__row">
