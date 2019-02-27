@@ -27,7 +27,7 @@ class AdminController extends SiteController
 
         $res =  $this->stockRepository->removeTheStock($id);
         if($res){
-            return response()->json(['success' => 1]);
+            return response()->json($res);
         }
 
     }

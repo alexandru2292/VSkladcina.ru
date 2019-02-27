@@ -901,24 +901,39 @@ class StockRepository
         /**
          * Send Message to All Followers on the stock
          */
+
         $stock = Stock::select('*')->where("id", '=', $id)->first()->load("hasManyFollowers");
 
         if($stock){
-            $msg = "Складчина \"$stock->name\" было удалена!";
 
-            foreach ($stock->hasManyFollowers as $item){
-                $data[] = ['user_id' => intval($item->user_id), 'message' => $msg, 'sender_user_id' => Auth::user()->id];
-            }
-            $sendMessage = DB::table('messages')->insert($data);
-            /**
-             * Delete stock
-             */
-            if($sendMessage){
-                $delete =  Stock::where('id', $id)->delete();
-                if($delete){
-                    return true;
+            if(isset($stock->hasManyFollowers)){
+                $msg = "Складчина \"$stock->name\" было удалена!";
+                $data = [];
+
+                foreach ($stock->hasManyFollowers as $item){
+
+                    $data[] = ['user_id' => intval($item->user_id), 'message' => $msg, 'sender_user_id' => Auth::user()->id];
                 }
+
+                if($data){
+                    $msgSent =  DB::table('messages')->insert($data);
+                }
+
             }
+            /** Delete the stock
+            */
+
+            $delete =  Stock::where('id', $id)->delete();
+
+                if($delete){
+
+                    if(isset($msgSent)){
+                        $result['messageSent'] = 1;
+                    }
+
+                    $result['success'] = 1;
+                    return $result;
+                }
         }
     }
 }

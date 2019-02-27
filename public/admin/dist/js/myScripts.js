@@ -47,7 +47,12 @@ $("#confirm-msg-delete").on("click", function () {
 
                 $("#myModal").hide();
                 $("#stock_"+stockId).hide();
-                $("#successModal .modal-content h2").text("Складчина успешно удалена!");
+
+                if(data['messageSent']){
+                    $("#successModal .modal-content h2").text("Складчина успешно удалена! Всем пользователям было отправлено сообщение об удаление.");
+                }else{
+                    $("#successModal .modal-content h2").text("Складчина успешно удалена!");
+                }
                 $("#successModal").show();
                 /**
                  * If onclick on X fot closing modal
